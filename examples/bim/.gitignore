@@ -3,3 +3,6 @@ dist/
 coverage/
 # Written by scripts/inline-wasm.mjs from the installed web-ifc.
 src/generated/
+.env
+.env.*
+!.env.example
