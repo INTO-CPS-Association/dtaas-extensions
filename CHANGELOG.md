@@ -11,11 +11,10 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `examples/soil-kit`, a kit made from the `hello-kit` template: the
   `soil-profile` substrate, the `soil-depth` anchor kind, the soil presets, a
   page and the `soil_sensor` table it adds to the services. The root checks
-  and tests it as it does `hello-kit`, and `kitBundle.test.ts` builds and mounts
+  and tests it as it does `hello-kit`. `kitBundle.test.ts` builds and mounts
   its deployed bundle.
 - `@mui/icons-material` as a development dependency, for the icon of the
   soil-kit's page.
-
 - API version `1.5.0`: the optional `unit` of `SignalSample` and `Sampled`, the
   unit a source gave with a value. A kit compares it with the unit it expects
   and no longer has to assume one from the name of the quantity. A host that

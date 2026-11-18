@@ -223,12 +223,12 @@ among it, so it is about 6.7 MB. An operator copies it to
 `extensions/bim/index.js` next to the client's `env.js` and lists it in
 `REACT_APP_EXTENSIONS_DEPLOYED`.
 
-The client does not share `react-dom/client` yet, and the `aec` substrate calls
-its `createRoot`. The bundle therefore carries a CommonJS copy of that module,
+The `aec` substrate calls `createRoot` of `react-dom/client`, which the client
+does not share yet. The bundle therefore carries a CommonJS copy of that module,
 which a browser cannot run, and the substrate fails to load from a deployed
 bundle. The page and every other contribution work. `test/kit/kitBundle.test.ts`
-marks the check as a known failure, so it starts to fail, and is to be turned
-into an ordinary test, once the client shares the module.
+marks the check as a known failure. Once the client shares the module the check
+passes, the marked test fails and the mark is removed.
 
 ### Peers
 

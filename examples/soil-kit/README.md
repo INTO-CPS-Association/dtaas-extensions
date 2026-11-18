@@ -19,8 +19,8 @@ yarn build:kit soil-kit   # writes examples/soil-kit/dist/deploy/soil/index.js
 ```
 
 The root tests also build the deployed bundle, run it with the client's shared
-modules and pass it through the conformance check, and they check every source
-file against the SDK's lint rules for kits.
+modules and pass it through the conformance check. They check every source file
+against the SDK's lint rules for kits as well.
 
 The folder is also a project of its own, with `package.json`, `tsconfig.json`,
 `vite.config.ts`, `jest.config.json` and `tests/`, so it can be copied out of
