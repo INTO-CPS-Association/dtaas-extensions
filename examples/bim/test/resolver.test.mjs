@@ -31,7 +31,9 @@ const SCENE = [
 
 test('resolves a binding by GlobalId', () => {
   const { resolved, unresolved } = resolveBindings(
-    [binding({ globalId: '0_sgz7bzz4Jh2ckU1ehFe$' })], SCENE);
+    [binding({ globalId: '0_sgz7bzz4Jh2ckU1ehFe$' })],
+    SCENE,
+  );
 
   assert.equal(unresolved.length, 0);
   assert.equal(resolved[0].object.nodeName, 'HX-1');
@@ -39,7 +41,9 @@ test('resolves a binding by GlobalId', () => {
 
 test('reports a binding whose object is not in the model, instead of dropping it', () => {
   const { resolved, unresolved } = resolveBindings(
-    [binding({ globalId: '0000000000000000000000' })], SCENE);
+    [binding({ globalId: '0000000000000000000000' })],
+    SCENE,
+  );
 
   assert.equal(resolved.length, 0);
   assert.match(unresolved[0].reason, /re-exported/);
@@ -48,10 +52,13 @@ test('reports a binding whose object is not in the model, instead of dropping it
 test('keeps the good bindings when one fails', () => {
   // A single bad binding must not cost the others. This is the ordinary state
   // of a manifest that has drifted from its model.
-  const { resolved, unresolved } = resolveBindings([
-    binding({ globalId: '0_sgz7bzz4Jh2ckU1ehFe$' }),
-    binding({ globalId: '0000000000000000000000' }),
-  ], SCENE);
+  const { resolved, unresolved } = resolveBindings(
+    [
+      binding({ globalId: '0_sgz7bzz4Jh2ckU1ehFe$' }),
+      binding({ globalId: '0000000000000000000000' }),
+    ],
+    SCENE,
+  );
 
   assert.equal(resolved.length, 1);
   assert.equal(unresolved.length, 1);
@@ -63,7 +70,9 @@ test('reports a binding with no selector instead of throwing', () => {
   const noSelector = { ...binding({ globalId: '0_sgz7bzz4Jh2ckU1ehFe$' }) };
   delete noSelector.selector;
   const { resolved, unresolved } = resolveBindings(
-    [noSelector, binding({ globalId: '0_sgz7bzz4Jh2ckU1ehFe$' })], SCENE);
+    [noSelector, binding({ globalId: '0_sgz7bzz4Jh2ckU1ehFe$' })],
+    SCENE,
+  );
 
   assert.equal(resolved.length, 1);
   assert.equal(unresolved.length, 1);
@@ -93,7 +102,9 @@ test('says an express id does not survive a re-export', () => {
 
 test('handles an empty model without throwing', () => {
   const { resolved, unresolved } = resolveBindings(
-    [binding({ globalId: '0_sgz7bzz4Jh2ckU1ehFe$' })], []);
+    [binding({ globalId: '0_sgz7bzz4Jh2ckU1ehFe$' })],
+    [],
+  );
 
   assert.equal(resolved.length, 0);
   assert.equal(unresolved.length, 1);

@@ -21,17 +21,18 @@ export function SourceCheckNotice({ check }: Readonly<{ check: SourceCheck | nul
     return (
       <Alert severity="warning" sx={{ mb: 2 }}>
         <AlertTitle>The model file is not the one the sensor manifest was written for.</AlertTitle>
-        {`The manifest records a SHA-256 beginning ${short(check.expected)} and the IFC file `
-          + `loaded has one beginning ${short(check.actual)}. A re-export changes the GlobalIds, `
-          + 'so sensors may sit on the wrong objects or on none.'}
+        {`The manifest records a SHA-256 beginning ${short(check.expected)} and the IFC file ` +
+          `loaded has one beginning ${short(check.actual)}. A re-export changes the GlobalIds, ` +
+          'so sensors may sit on the wrong objects or on none.'}
       </Alert>
     );
   }
-  const quiet = check.state === 'unknown'
-    ? 'The sensor manifest records no hash of its model, so the file was not compared with it.'
-    : check.state === 'unchecked'
-      ? `The model file was not compared with the sensor manifest: ${check.reason}.`
-      : null;
+  const quiet =
+    check.state === 'unknown'
+      ? 'The sensor manifest records no hash of its model, so the file was not compared with it.'
+      : check.state === 'unchecked'
+        ? `The model file was not compared with the sensor manifest: ${check.reason}.`
+        : null;
   if (quiet === null) return null;
   return (
     <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>

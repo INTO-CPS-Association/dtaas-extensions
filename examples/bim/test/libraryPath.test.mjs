@@ -19,8 +19,22 @@ test('a folder inside the library is kept, without a trailing slash', () => {
 
 test('a folder that could leave the library is refused', () => {
   const cases = [
-    '', '/etc', '..', '.', 'a/../b', 'a/./b', 'a//b', 'a\\b', 'projects/%2e%2e/secret',
-    'a/%2E', 'a\u0000b', '..%2F..%2Fetc', 'a%2F..%2Fb', 'a%5Cb', null, undefined,
+    '',
+    '/etc',
+    '..',
+    '.',
+    'a/../b',
+    'a/./b',
+    'a//b',
+    'a\\b',
+    'projects/%2e%2e/secret',
+    'a/%2E',
+    'a\u0000b',
+    '..%2F..%2Fetc',
+    'a%2F..%2Fb',
+    'a%5Cb',
+    null,
+    undefined,
   ];
   for (const raw of cases) assert.equal(normaliseLibraryPath(raw), null, String(raw));
 });

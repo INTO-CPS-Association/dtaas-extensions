@@ -54,10 +54,7 @@ function barOf(scheme: string) {
 }
 
 /** One colour scale: its bar, its two ends and how many sensors use it. */
-function ScaleLegend(props: {
-  readonly quantity: Quantity;
-  readonly sensors: number;
-}) {
+function ScaleLegend(props: { readonly quantity: Quantity; readonly sensors: number }) {
   const { scheme = '', domain = [] } = props.quantity;
   return (
     <Paper variant="outlined" sx={{ p: 1 }}>
@@ -84,15 +81,11 @@ export function HeatLegend({ colours }: { readonly colours: MarkerColours }) {
     return (
       <Paper variant="outlined" sx={{ p: 1 }}>
         <Caption text="Heatmap" />
-        <Typography variant="body2">
-          No current reading to colour by.
-        </Typography>
+        <Typography variant="body2">No current reading to colour by.</Typography>
       </Paper>
     );
   }
-  return scales.map((q) => (
-    <ScaleLegend key={q.key} quantity={q} sensors={colours.countOf(q)} />
-  ));
+  return scales.map((q) => <ScaleLegend key={q.key} quantity={q} sensors={colours.countOf(q)} />);
 }
 
 interface ClassLegendProps {
@@ -120,9 +113,7 @@ function ClassRow({ entry, selected, onPick }: ClassRowProps) {
       sx={{ gap: 0.75, py: 0.2, minHeight: 32, borderRadius: 1 }}
     >
       <Swatch colour={entry.colour} />
-      <Typography variant="body2">
-        {entry.ifcClass.replace(/^Ifc/, '')}
-      </Typography>
+      <Typography variant="body2">{entry.ifcClass.replace(/^Ifc/, '')}</Typography>
       <Typography variant="body2" color="text.secondary" sx={COUNT}>
         {entry.count}
       </Typography>
@@ -131,11 +122,7 @@ function ClassRow({ entry, selected, onPick }: ClassRowProps) {
 }
 
 /** What the colours of the model mean. A row lights its class. */
-export function ClassLegend({
-  classes,
-  highlighted,
-  onPick,
-}: ClassLegendProps) {
+export function ClassLegend({ classes, highlighted, onPick }: ClassLegendProps) {
   if (classes.length === 0) return null;
   return (
     <Paper variant="outlined" sx={{ p: 1 }}>
@@ -155,10 +142,7 @@ export function ClassLegend({
 }
 
 /** The keys, written from the same table that binds them. */
-export function HelpPanel(props: {
-  readonly open: boolean;
-  readonly onClose: () => void;
-}) {
+export function HelpPanel(props: { readonly open: boolean; readonly onClose: () => void }) {
   return (
     <Dialog open={props.open} onClose={props.onClose} maxWidth="xs" fullWidth>
       <DialogTitle>Shortcuts</DialogTitle>

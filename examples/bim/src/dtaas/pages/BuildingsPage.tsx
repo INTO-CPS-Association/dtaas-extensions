@@ -92,9 +92,7 @@ function BuildingsView(props: Readonly<PanelProps>) {
 function RejectedFolder({ route, directory, list }: Readonly<PanelProps>) {
   return (
     <Stack spacing={2}>
-      <Alert severity="error">
-        &quot;{route.rejected}&quot; is not a folder in your library.
-      </Alert>
+      <Alert severity="error">&quot;{route.rejected}&quot; is not a folder in your library.</Alert>
       <DirectoryPicker list={list} value={directory} onChange={route.selectDirectory} />
     </Stack>
   );
@@ -118,7 +116,11 @@ function BuildingsPage() {
   return (
     <Page title="Building Models" description={DESCRIPTION}>
       {directory === null ? (
-        <RejectedFolder route={route} directory={normaliseLibraryPath(fallback) ?? ''} list={list} />
+        <RejectedFolder
+          route={route}
+          directory={normaliseLibraryPath(fallback) ?? ''}
+          list={list}
+        />
       ) : (
         <BuildingsView route={route} directory={directory} list={list} />
       )}

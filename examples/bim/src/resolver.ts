@@ -107,8 +107,11 @@ function resolveOne<T extends SceneObject>(
     const object = byGlobalId.get(selector.globalId);
     return object
       ? { object }
-      : { reason: `no object carries GlobalId ${selector.globalId}. The model may `
-                + 'have been re-exported, which changes every GlobalId in it.' };
+      : {
+          reason:
+            `no object carries GlobalId ${selector.globalId}. The model may ` +
+            'have been re-exported, which changes every GlobalId in it.',
+        };
   }
 
   if (selector.nodeName !== undefined) {
@@ -120,8 +123,11 @@ function resolveOne<T extends SceneObject>(
     // does not say which, and picking either would be a guess presented as a
     // fact.
     if (found.length > 1) {
-      return { reason: `${found.length} objects are named ${selector.nodeName}, so `
-                     + 'this does not name one. Use a globalId.' };
+      return {
+        reason:
+          `${found.length} objects are named ${selector.nodeName}, so ` +
+          'this does not name one. Use a globalId.',
+      };
     }
     return { object: found[0] };
   }
@@ -130,8 +136,11 @@ function resolveOne<T extends SceneObject>(
     const object = byExpressId.get(selector.expressId);
     return object
       ? { object }
-      : { reason: `no object has express id ${selector.expressId}. An express id is `
-                + 'a position in one file and does not survive a re-export.' };
+      : {
+          reason:
+            `no object has express id ${selector.expressId}. An express id is ` +
+            'a position in one file and does not survive a re-export.',
+        };
   }
 
   // The schema refuses an empty selector, so this is only reachable if a

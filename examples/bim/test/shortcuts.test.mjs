@@ -25,18 +25,21 @@ function view() {
 
 function context(scene) {
   const calls = [];
-  return [{
-    view: scene,
-    // No bindings, which is the ordinary case: most models declare no sensors.
-    bindings: [],
-    refresh: () => calls.push('refresh'),
-    frame: () => calls.push('frame'),
-    frameSelection: () => calls.push('frameSelection'),
-    look: (from) => calls.push(`look:${from}`),
-    hovered: () => 'w1',
-    toggleHelp: () => calls.push('help'),
-    toggleFullscreen: () => calls.push('fullscreen'),
-  }, calls];
+  return [
+    {
+      view: scene,
+      // No bindings, which is the ordinary case: most models declare no sensors.
+      bindings: [],
+      refresh: () => calls.push('refresh'),
+      frame: () => calls.push('frame'),
+      frameSelection: () => calls.push('frameSelection'),
+      look: (from) => calls.push(`look:${from}`),
+      hovered: () => 'w1',
+      toggleHelp: () => calls.push('help'),
+      toggleFullscreen: () => calls.push('fullscreen'),
+    },
+    calls,
+  ];
 }
 
 function press(key, scene) {
@@ -71,8 +74,11 @@ test('a toggle says whether it is on and an action does not', () => {
   for (const entry of SHORTCUTS) {
     if (entry.on) assert.equal(typeof entry.on(scene), 'boolean', entry.key);
   }
-  assert.equal(SHORTCUTS.find((e) => e.key === 'f').on, undefined,
-    'fitting the model is an action, so its button should never light up');
+  assert.equal(
+    SHORTCUTS.find((e) => e.key === 'f').on,
+    undefined,
+    'fitting the model is an action, so its button should never light up',
+  );
 });
 
 test('the transparency key turns transparency on and off', () => {
@@ -136,7 +142,10 @@ test('typing in a field is typing, not a shortcut', () => {
   for (const tagName of ['INPUT', 'TEXTAREA', 'SELECT']) {
     assert.equal(handleKey({ key: 't', target: { tagName } }, ctx), false);
   }
-  assert.equal(handleKey({ key: 't', target: { tagName: 'DIV', isContentEditable: true } }, ctx), false);
+  assert.equal(
+    handleKey({ key: 't', target: { tagName: 'DIV', isContentEditable: true } }, ctx),
+    false,
+  );
   assert.equal(scene.state.transparent, false);
 });
 

@@ -56,13 +56,16 @@ export function useChosenModel(options: ChosenModelOptions): ChosenModel {
   const { models, directory, selected, onSelect } = options;
   const { chosen, setPick } = useSelectedModel(options);
 
-  const choose = useCallback((model: BimModel) => {
-    onSelect?.(model.name);
-    if (selected === undefined) setPick({ directory, model });
-  }, [directory, onSelect, selected, setPick]);
+  const choose = useCallback(
+    (model: BimModel) => {
+      onSelect?.(model.name);
+      if (selected === undefined) setPick({ directory, model });
+    },
+    [directory, onSelect, selected, setPick],
+  );
 
   const current = chosen
-    ? models?.find((model) => model.ifcPath === chosen.ifcPath) ?? chosen
+    ? (models?.find((model) => model.ifcPath === chosen.ifcPath) ?? chosen)
     : null;
   // An empty `selected` is a host saying "nothing yet", and not a name.
   const missing = Boolean(selected) && models !== null && chosen === null;

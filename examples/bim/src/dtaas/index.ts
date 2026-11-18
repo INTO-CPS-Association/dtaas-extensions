@@ -15,10 +15,7 @@
 
 import { lazy } from 'react';
 import ApartmentIcon from '@mui/icons-material/Apartment';
-import {
-  defineExtension,
-  type LazySubstrateAdapterSpec,
-} from '@into-cps-association/dtaas-sdk';
+import { defineExtension, type LazySubstrateAdapterSpec } from '@into-cps-association/dtaas-sdk';
 import anchorKinds from './anchors.js';
 import configSchema from './config.js';
 import converters from './converters.js';

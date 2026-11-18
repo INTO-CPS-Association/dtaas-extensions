@@ -31,12 +31,14 @@ const TEMPLATE = `DATA;
 #1= IFCPROJECT('0FHQg$qdvEPQB6VPH27kii',#18,'Project Number',$,$,'Project Name','Project Status',(#22),#167926);`;
 const MANIFEST = {
   model: { source: 'hospital-a.ifc', source_sha256: 'unknown', converter: 'test' },
-  bindings: [{
-    selector: { globalId: 'r204TempSensor00000001' },
-    label: 'Room 204 temperature',
-    source: { live: { transport: 'mqtt', topic: TOPIC } },
-    display: { unit: '°C', ramp: [18, 26] },
-  }],
+  bindings: [
+    {
+      selector: { globalId: 'r204TempSensor00000001' },
+      label: 'Room 204 temperature',
+      source: { live: { transport: 'mqtt', topic: TOPIC } },
+      display: { unit: '°C', ramp: [18, 26] },
+    },
+  ],
 };
 // A manifest whose one topic is the MQTT wildcard for every topic.
 const WILD_MANIFEST = {
@@ -66,11 +68,21 @@ function serveFiles() {
 function App() {
   const location = useLocation();
   const page = React.createElement(BuildingsPage);
-  return React.createElement(React.Fragment, null,
-    React.createElement('div', { 'data-testid': 'location' }, `${location.pathname}${location.search}`),
-    React.createElement(Routes, null,
+  return React.createElement(
+    React.Fragment,
+    null,
+    React.createElement(
+      'div',
+      { 'data-testid': 'location' },
+      `${location.pathname}${location.search}`,
+    ),
+    React.createElement(
+      Routes,
+      null,
       React.createElement(Route, { path: '/bim', element: page }),
-      React.createElement(Route, { path: '/bim/models/:model', element: page })));
+      React.createElement(Route, { path: '/bim/models/:model', element: page }),
+    ),
+  );
 }
 
 function show(route, env = {}) {
@@ -168,16 +180,22 @@ async function showHospitalA(env = {}) {
   const { host } = show('/bim/models/hospital-a?dir=common/models', env);
   await screen.findByTestId('canvas');
   const view = new SceneView(new Group(), { storeys: [], objects: {} });
-  await act(async () => canvas.props.onReady({
-    view, frame: () => {}, look: () => {}, drawField: () => {},
-  }));
+  await act(async () =>
+    canvas.props.onReady({
+      view,
+      frame: () => {},
+      look: () => {},
+      drawField: () => {},
+    }),
+  );
   await screen.findByText('Waiting');
   return host;
 }
 
-const emit = (host, value, channel = 'measured') => act(() => {
-  host.signals.emit({ twinId: 'h', signalPath: TOPIC, channel, ts: Date.now(), value });
-});
+const emit = (host, value, channel = 'measured') =>
+  act(() => {
+    host.signals.emit({ twinId: 'h', signalPath: TOPIC, channel, ts: Date.now(), value });
+  });
 
 test('a reading pushed through host.signals reaches the sensor card of its binding', async () => {
   const host = await showHospitalA();
@@ -238,11 +256,16 @@ test('a manifest with a wildcard topic is refused and nothing is subscribed', as
 });
 
 /** A measured reading stamped 45 s ago, as a controller with a late clock stamps it. */
-const emitLate = (host) => act(() => {
-  host.signals.emit({
-    twinId: 'h', signalPath: TOPIC, channel: 'measured', ts: Date.now() - 45_000, value: 21.5,
+const emitLate = (host) =>
+  act(() => {
+    host.signals.emit({
+      twinId: 'h',
+      signalPath: TOPIC,
+      channel: 'measured',
+      ts: Date.now() - 45_000,
+      value: 21.5,
+    });
   });
-});
 
 test('by default a reading stamped 45 s ago is shown as not live', async () => {
   const host = await showHospitalA();

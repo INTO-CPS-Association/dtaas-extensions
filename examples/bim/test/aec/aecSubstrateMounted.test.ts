@@ -58,22 +58,14 @@ describe('a mounted aec substrate', () => {
 
   it('draws the converted model of the source in the container', async () => {
     const { container } = await mounted();
-    expect(mockScene.load).toHaveBeenCalledWith(
-      expect.stringContaining('room.glb'),
-    );
-    expect(container.querySelector('[aria-label="Building model"]')).not.toBe(
-      null,
-    );
+    expect(mockScene.load).toHaveBeenCalledWith(expect.stringContaining('room.glb'));
+    expect(container.querySelector('[aria-label="Building model"]')).not.toBe(null);
   });
 
   it('puts a marker on the object an anchor names', async () => {
     const { adapter } = await mounted();
     expect(adapter.resolve(ANCHOR)).toEqual({ substrate: 'aec', id: 'a/b' });
-    expect(mockScene.markers.add).toHaveBeenCalledWith(
-      'a/b',
-      { name: 'wall' },
-      'a/b',
-    );
+    expect(mockScene.markers.add).toHaveBeenCalledWith('a/b', { name: 'wall' }, 'a/b');
   });
 
   it('reports an anchor whose object is not in the model', async () => {
@@ -88,15 +80,8 @@ describe('a mounted aec substrate', () => {
     const { adapter } = await mounted();
     const target = adapter.resolve(ANCHOR)!;
     adapter.apply(target, encoding({ fill: '#ff0000', text: '21 °C' }));
-    expect(mockControls.colour).toHaveBeenCalledWith(
-      'a/b',
-      { id: 'e' },
-      '#ff0000',
-    );
-    expect(mockScene.markers.relabel).toHaveBeenCalledWith(
-      mockMarkers.get('a/b'),
-      'a/b 21 °C',
-    );
+    expect(mockControls.colour).toHaveBeenCalledWith('a/b', { id: 'e' }, '#ff0000');
+    expect(mockScene.markers.relabel).toHaveBeenCalledWith(mockMarkers.get('a/b'), 'a/b 21 °C');
     adapter.apply(target, encoding({ visible: false }));
     expect(mockMarkers.get('a/b')).toMatchObject({
       dot: { visible: false },
@@ -134,9 +119,7 @@ describe('a mounted aec substrate', () => {
 
   it('says what to do when the converted model cannot be loaded', async () => {
     mockScene.load.mockRejectedValueOnce(new Error('internal address'));
-    await expect(mounted()).rejects.toThrow(
-      'Open the model once on the Buildings page',
-    );
+    await expect(mounted()).rejects.toThrow('Open the model once on the Buildings page');
     expect(mockScene.dispose).toHaveBeenCalled();
   });
 });

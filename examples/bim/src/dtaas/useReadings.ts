@@ -100,13 +100,19 @@ function useReadings(signals: SignalsService, bindings: Binding[]): LiveReadings
   useEffect(() => {
     if (topics.length === 0) return undefined;
     const byTopic = bindingsByTopic(bindings);
-    const stops = CHANNELS.map((channel) => signals.subscribe(topics, channel, (sample) =>
-      setByChannel((previous) => ({
-        ...previous,
-        [channel]: withSample(
-          previous[channel], byTopic.get(sample.signalPath) ?? [], sample, channel,
-        ),
-      }))));
+    const stops = CHANNELS.map((channel) =>
+      signals.subscribe(topics, channel, (sample) =>
+        setByChannel((previous) => ({
+          ...previous,
+          [channel]: withSample(
+            previous[channel],
+            byTopic.get(sample.signalPath) ?? [],
+            sample,
+            channel,
+          ),
+        })),
+      ),
+    );
     return () => stops.forEach((stop) => stop());
   }, [signals, bindings, topics, setByChannel]);
   const readings = useMemo(() => merged(byChannel), [byChannel]);

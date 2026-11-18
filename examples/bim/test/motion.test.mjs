@@ -12,14 +12,26 @@ import assert from 'node:assert/strict';
 
 import { BoxGeometry, Group, Mesh, PerspectiveCamera, Vector3 } from 'three';
 import {
-  FLIGHT_MS, PULSE_GROWTH, PULSE_MS, createFlight, createMarkers, ease, movedBeyond, pulseFactor,
+  FLIGHT_MS,
+  PULSE_GROWTH,
+  PULSE_MS,
+  createFlight,
+  createMarkers,
+  ease,
+  movedBeyond,
+  pulseFactor,
 } from '../dist/esm/viewer/index.js';
 
 function rig() {
   const camera = new PerspectiveCamera(45, 1, 0.1, 1000);
   camera.position.set(0, 0, 10);
   let updates = 0;
-  const controls = { target: new Vector3(), update: () => { updates += 1; } };
+  const controls = {
+    target: new Vector3(),
+    update: () => {
+      updates += 1;
+    },
+  };
   return { camera, controls, updates: () => updates };
 }
 
@@ -103,7 +115,10 @@ describe('movedBeyond', () => {
     const before = new Matrix4().makeTranslation(10, 5, 20);
     assert.equal(movedBeyond(before, new Matrix4().makeTranslation(10 + 1e-7, 5, 20)), false);
     assert.equal(movedBeyond(before, new Matrix4().makeTranslation(10.01, 5, 20)), true);
-    assert.equal(movedBeyond(before, new Matrix4().makeRotationY(0.01).setPosition(10, 5, 20)), true);
+    assert.equal(
+      movedBeyond(before, new Matrix4().makeRotationY(0.01).setPosition(10, 5, 20)),
+      true,
+    );
   });
 });
 
@@ -124,8 +139,11 @@ describe('the pulse of a picked marker', () => {
       model.add(node);
       return {
         binding: {
-          selector: { globalId }, id: `S${i}`, label: `S${i}`,
-          source: { live: { transport: 'mqtt', topic: `t/${i}` } }, display: { unit: '°C' },
+          selector: { globalId },
+          id: `S${i}`,
+          label: `S${i}`,
+          source: { live: { transport: 'mqtt', topic: `t/${i}` } },
+          display: { unit: '°C' },
         },
         object: { node },
       };
@@ -173,8 +191,11 @@ describe('going to a sensor from the view', () => {
       model.add(node);
       return {
         binding: {
-          selector: { globalId }, id: `S${i}`, label: `S${i}`,
-          source: { live: { transport: 'mqtt', topic: `t/${i}` } }, display: { unit: '°C' },
+          selector: { globalId },
+          id: `S${i}`,
+          label: `S${i}`,
+          source: { live: { transport: 'mqtt', topic: `t/${i}` } },
+          display: { unit: '°C' },
         },
         object: { node },
       };
@@ -197,7 +218,9 @@ describe('going to a sensor from the view', () => {
     const label = [...overlay.querySelectorAll('[data-bim-label]')].find((el) => el.title === 'S1');
     assert.equal(label.style.pointerEvents, 'auto');
     let reachedViewer = false;
-    overlay.addEventListener('click', () => { reachedViewer = true; });
+    overlay.addEventListener('click', () => {
+      reachedViewer = true;
+    });
     label.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     assert.deepEqual(picked, ['b']);
     assert.equal(reachedViewer, false);

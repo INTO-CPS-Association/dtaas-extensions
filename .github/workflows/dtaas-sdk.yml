@@ -102,12 +102,19 @@ jobs:
         run: yarn install --frozen-lockfile --ignore-scripts --network-timeout 1000000
       - name: Build and install the packed SDK
         run: yarn sdk
+      - name: Check formatting
+        run: yarn format:check
+      - name: Lint
+        run: yarn lint
       - name: Type-check
         run: yarn typecheck
       # The Node test runner suite runs against the built package, then Jest
       # runs the aec substrate tests and builds and mounts the deployed bundle.
-      - name: Node test runner and Jest suites
-        run: yarn test
+      # Each suite has its own coverage gate.
+      - name: Node test runner and Jest suites with coverage gates
+        run: yarn test:coverage
+      - name: Build, pack, install and smoke-test the package
+        run: yarn test:e2e
 
   # Publishing runs only in the association's repository, so a fork or a
   # personal copy never publishes @into-cps-association/dtaas-sdk.

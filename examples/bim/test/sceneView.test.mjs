@@ -28,9 +28,12 @@ function object(globalId, ifcClass, y, height = 3) {
 function building() {
   const model = new Group();
   for (const mesh of [
-    object('w1', 'IfcWall', 0), object('s1', 'IfcSlab', 3, 0.3),
-    object('w2', 'IfcWall', 3.3), object('s2', 'IfcSlab', 6.3, 0.3),
-  ]) model.add(mesh);
+    object('w1', 'IfcWall', 0),
+    object('s1', 'IfcSlab', 3, 0.3),
+    object('w2', 'IfcWall', 3.3),
+    object('s2', 'IfcSlab', 6.3, 0.3),
+  ])
+    model.add(mesh);
   model.updateMatrixWorld(true);
 
   const tree = {
@@ -85,7 +88,10 @@ test('everything is visible until a floor is chosen', () => {
   const view = building();
   view.refreshVisibility();
 
-  assert.equal([...view.meshes.values()].every((m) => m.visible), true);
+  assert.equal(
+    [...view.meshes.values()].every((m) => m.visible),
+    true,
+  );
 });
 
 test('choosing a floor hides what is not on it', () => {
@@ -167,14 +173,25 @@ test('hover changes nothing while hover highlighting is off', () => {
 test('the heatmap colours by zone, and two objects in one zone share a material', () => {
   const view = building();
   view.state.heat = 'storey';
-  view.applyReadings([binding('w1')], new Map([['w1', { value: 10, receivedAt: NOW }]]),
-    'live', 30, NOW);
+  view.applyReadings(
+    [binding('w1')],
+    new Map([['w1', { value: 10, receivedAt: NOW }]]),
+    'live',
+    30,
+    NOW,
+  );
   view.refreshMaterials();
 
-  assert.equal(view.meshes.get('w1').material, view.meshes.get('s1').material,
-    'both are on L1, so both take the L1 colour');
-  assert.notEqual(view.meshes.get('w2').material, view.meshes.get('w1').material,
-    'L2 has no reading, so it keeps its own colour');
+  assert.equal(
+    view.meshes.get('w1').material,
+    view.meshes.get('s1').material,
+    'both are on L1, so both take the L1 colour',
+  );
+  assert.notEqual(
+    view.meshes.get('w2').material,
+    view.meshes.get('w1').material,
+    'L2 has no reading, so it keeps its own colour',
+  );
 });
 
 test('stale readings leave every object in its own colour', () => {
@@ -184,8 +201,13 @@ test('stale readings leave every object in its own colour', () => {
   const own = view.meshes.get('w1').material;
 
   view.state.heat = 'storey';
-  view.applyReadings([binding('w1')],
-    new Map([['w1', { value: 10, receivedAt: NOW - 600_000 }]]), 'live', 30, NOW);
+  view.applyReadings(
+    [binding('w1')],
+    new Map([['w1', { value: 10, receivedAt: NOW - 600_000 }]]),
+    'live',
+    30,
+    NOW,
+  );
   view.refreshMaterials();
 
   assert.equal(view.meshes.get('w1').material, own);
@@ -212,7 +234,10 @@ test('resetting puts a model back to how it opened', () => {
   view.reset();
 
   assert.equal(view.state.storey, null);
-  assert.equal([...view.meshes.values()].every((m) => m.visible), true);
+  assert.equal(
+    [...view.meshes.values()].every((m) => m.visible),
+    true,
+  );
 });
 
 test('a scope the readings do not divide is not offered', () => {
@@ -286,7 +311,10 @@ describe('the Per Sensor scope', () => {
   /** Two walls three metres apart, with a sensor beside each. */
   function twoZones() {
     const model = new Group();
-    for (const [id, x] of [['s1', -3], ['s2', 3]]) {
+    for (const [id, x] of [
+      ['s1', -3],
+      ['s2', 3],
+    ]) {
       const mesh = new Mesh(new BoxGeometry(0.1, 0.1, 0.1), new MeshStandardMaterial());
       mesh.position.set(x, 1.2, 0);
       mesh.userData.globalId = id;
@@ -334,10 +362,16 @@ describe('the Per Sensor scope', () => {
     const view = twoZones();
     const before = view.meshes.get('floor').material;
     view.state.heat = 'sensor';
-    view.applyReadings([bind('s1'), bind('s2')], new Map([
-      ['s1', { value: 10, receivedAt: NOW }],
-      ['s2', { value: 30, receivedAt: NOW }],
-    ]), 'live', 30, NOW);
+    view.applyReadings(
+      [bind('s1'), bind('s2')],
+      new Map([
+        ['s1', { value: 10, receivedAt: NOW }],
+        ['s2', { value: 30, receivedAt: NOW }],
+      ]),
+      'live',
+      30,
+      NOW,
+    );
     view.refreshMaterials();
 
     assert.equal(view.meshes.get('floor').material, before);

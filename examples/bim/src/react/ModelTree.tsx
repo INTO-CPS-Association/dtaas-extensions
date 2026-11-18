@@ -8,8 +8,15 @@
 
 import { useDeferredValue, useMemo, useState } from 'react';
 import {
-  Box, List, ListItemButton, ListItemText, ListSubheader, TextField, ToggleButton,
-  ToggleButtonGroup, Typography,
+  Box,
+  List,
+  ListItemButton,
+  ListItemText,
+  ListSubheader,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
 } from '@mui/material';
 import { groupEntries, readableClass, type GroupBy, type TreeEntry } from '../viewer/modelTree.js';
 
@@ -30,24 +37,35 @@ export function ModelTree({ entries, floors, selected, onPick }: Readonly<ModelT
   // The search runs on the deferred query, so typing stays quick on a model
   // of tens of thousands of objects while the list catches up.
   const search = useDeferredValue(query);
-  const groups = useMemo(() => groupEntries(entries, by, search, floors), [entries, by, search, floors]);
+  const groups = useMemo(
+    () => groupEntries(entries, by, search, floors),
+    [entries, by, search, floors],
+  );
   const found = groups.reduce((total, group) => total + group.entries.length, 0);
   let budget = MAX_ROWS;
 
   return (
     <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 1 }}>
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap', mb: 1 }}>
-        <Typography variant="subtitle2" sx={{ flex: '1 1 auto' }}>Model</Typography>
+        <Typography variant="subtitle2" sx={{ flex: '1 1 auto' }}>
+          Model
+        </Typography>
         <ToggleButtonGroup
           size="small"
           exclusive
           value={by}
-          onChange={(_event, value: GroupBy | null) => { if (value) setBy(value); }}
+          onChange={(_event, value: GroupBy | null) => {
+            if (value) setBy(value);
+          }}
           aria-label="Group The Objects"
         >
           {/* Title Case as written: the theme's default turns button text into capitals. */}
-          <ToggleButton value="storey" sx={{ textTransform: 'none' }}>By Floor</ToggleButton>
-          <ToggleButton value="class" sx={{ textTransform: 'none' }}>By Class</ToggleButton>
+          <ToggleButton value="storey" sx={{ textTransform: 'none' }}>
+            By Floor
+          </ToggleButton>
+          <ToggleButton value="class" sx={{ textTransform: 'none' }}>
+            By Class
+          </ToggleButton>
         </ToggleButtonGroup>
       </Box>
       <TextField
@@ -82,7 +100,11 @@ export function ModelTree({ entries, floors, selected, onPick }: Readonly<ModelT
                   >
                     <ListItemText
                       primary={entry.name}
-                      secondary={by === 'storey' ? readableClass(entry.ifcClass) : entry.storey ?? undefined}
+                      secondary={
+                        by === 'storey'
+                          ? readableClass(entry.ifcClass)
+                          : (entry.storey ?? undefined)
+                      }
                     />
                   </ListItemButton>
                 ))}

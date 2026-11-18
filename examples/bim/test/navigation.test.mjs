@@ -11,8 +11,19 @@ import assert from 'node:assert/strict';
 
 import { BoxGeometry, Group, Mesh, PerspectiveCamera, Vector3 } from 'three';
 import {
-  CUBE_MARGIN_PX, CUBE_SIZE_PX, FAR_PLANE, PARALLEL_FOV, PERSPECTIVE_FOV, SHORTCUTS, SceneView,
-  backOff, createViewCube, cubeViewport, directionAt, frameFrom, setParallel,
+  CUBE_MARGIN_PX,
+  CUBE_SIZE_PX,
+  FAR_PLANE,
+  PARALLEL_FOV,
+  PERSPECTIVE_FOV,
+  SHORTCUTS,
+  SceneView,
+  backOff,
+  createViewCube,
+  cubeViewport,
+  directionAt,
+  frameFrom,
+  setParallel,
 } from '../dist/esm/viewer/index.js';
 
 const key = (letter) => SHORTCUTS.find((shortcut) => shortcut.key === letter);
@@ -137,7 +148,9 @@ describe('frameFrom', () => {
 describe('the parallel view', () => {
   test('backs off by as much as the lens narrows', () => {
     assert.equal(backOff(45, 45), 1);
-    assert.ok(Math.abs(backOff(45, 1.5) - Math.tan(Math.PI / 8) / Math.tan(0.75 * Math.PI / 180)) < 1e-12);
+    assert.ok(
+      Math.abs(backOff(45, 1.5) - Math.tan(Math.PI / 8) / Math.tan((0.75 * Math.PI) / 180)) < 1e-12,
+    );
   });
 
   test('keeps the same thing in shot and comes back to where it was', () => {
@@ -148,8 +161,11 @@ describe('the parallel view', () => {
     setParallel(camera, controls, true);
     assert.equal(camera.fov, PARALLEL_FOV);
     const factor = backOff(PERSPECTIVE_FOV, PARALLEL_FOV);
-    assert.ok(Math.abs(camera.position.distanceTo(controls.target)
-      - before.distanceTo(controls.target) * factor) < 1e-6);
+    assert.ok(
+      Math.abs(
+        camera.position.distanceTo(controls.target) - before.distanceTo(controls.target) * factor,
+      ) < 1e-6,
+    );
     assert.ok(Math.abs(camera.far - 100 * factor) < 1e-6);
     setParallel(camera, controls, true);
     assert.equal(camera.fov, PARALLEL_FOV);

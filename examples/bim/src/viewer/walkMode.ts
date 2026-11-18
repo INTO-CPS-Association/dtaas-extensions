@@ -53,7 +53,11 @@ function heading(camera: Camera, controls: WalkControls): Vector3 {
  * Stand at eye height above `floorY`, where the camera is now, looking
  * straight ahead in the direction it was looking.
  */
-export function startWalking(camera: PerspectiveCamera, controls: WalkControls, floorY: number): void {
+export function startWalking(
+  camera: PerspectiveCamera,
+  controls: WalkControls,
+  floorY: number,
+): void {
   const ahead = heading(camera, controls);
   camera.position.y = floorY + EYE_HEIGHT_M;
   // Framing a large site sets the near plane metres out, which would cut
@@ -65,8 +69,14 @@ export function startWalking(camera: PerspectiveCamera, controls: WalkControls, 
 }
 
 /** Move and turn for one frame of `seconds`, with the keys held. Answers whether anything moved. */
-export function stepWalk(camera: Camera, controls: WalkControls, keys: WalkKeys, seconds: number): boolean {
-  const turn = (Number(keys.left) - Number(keys.right)) * TURN_SPEED_DEG_S * (Math.PI / 180) * seconds;
+export function stepWalk(
+  camera: Camera,
+  controls: WalkControls,
+  keys: WalkKeys,
+  seconds: number,
+): boolean {
+  const turn =
+    (Number(keys.left) - Number(keys.right)) * TURN_SPEED_DEG_S * (Math.PI / 180) * seconds;
   const walk = (Number(keys.forward) - Number(keys.back)) * WALK_SPEED_M_S * seconds;
   if (turn === 0 && walk === 0) return false;
   const ahead = heading(camera, controls);
@@ -84,7 +94,10 @@ export function stepWalk(camera: Camera, controls: WalkControls, keys: WalkKeys,
 /** Which walking key an arrow key is, or null for any other key. */
 export function walkKeyOf(key: string): keyof WalkKeys | null {
   const map: Record<string, keyof WalkKeys> = {
-    ArrowUp: 'forward', ArrowDown: 'back', ArrowLeft: 'left', ArrowRight: 'right',
+    ArrowUp: 'forward',
+    ArrowDown: 'back',
+    ArrowLeft: 'left',
+    ArrowRight: 'right',
   };
   return map[key] ?? null;
 }

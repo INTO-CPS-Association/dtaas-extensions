@@ -87,10 +87,7 @@ test('the arguments are split at the top level only', () => {
   assert.equal(args.length, 9);
   // The list stays one argument, and so does a string holding a comma.
   assert.equal(args[7], '(#22)');
-  assert.deepEqual(
-    entityArguments("#1= IFCPROJECT('a, b',$);", 'IFCPROJECT'),
-    ["'a, b'", '$'],
-  );
+  assert.deepEqual(entityArguments("#1= IFCPROJECT('a, b',$);", 'IFCPROJECT'), ["'a, b'", '$']);
 });
 
 test('a doubled quote inside an argument stays inside it', () => {
@@ -129,7 +126,15 @@ test('a file with no project or building names nothing', () => {
 });
 
 test('template text, job numbers and empty values are not names', () => {
-  for (const value of ['Project Name', 'BUILDING NAME', 'Default', '34372', '39043-02', '  ', null]) {
+  for (const value of [
+    'Project Name',
+    'BUILDING NAME',
+    'Default',
+    '34372',
+    '39043-02',
+    '  ',
+    null,
+  ]) {
     assert.equal(usableName(value), null, String(value));
   }
   assert.equal(usableName('  FEAS - Kommunehospital '), 'FEAS - Kommunehospital');
@@ -138,12 +143,14 @@ test('template text, job numbers and empty values are not names', () => {
 test('a name two files give is left out for both', () => {
   // Both substation models are "SWiM district cooling substation", and their
   // file names are what tells them apart.
-  const titles = uniqueNames(new Map([
-    ['substation_ok.ifc', 'SWiM district cooling substation'],
-    ['substation_faults.ifc', 'SWiM district cooling substation'],
-    ['Building_1911_AK_v2.ifc', 'Pædagogisk Center'],
-    ['Building_1912_AK_v4.ifc', null],
-  ]));
+  const titles = uniqueNames(
+    new Map([
+      ['substation_ok.ifc', 'SWiM district cooling substation'],
+      ['substation_faults.ifc', 'SWiM district cooling substation'],
+      ['Building_1911_AK_v2.ifc', 'Pædagogisk Center'],
+      ['Building_1912_AK_v4.ifc', null],
+    ]),
+  );
   assert.deepEqual([...titles], [['Building_1911_AK_v2.ifc', 'Pædagogisk Center']]);
 });
 
@@ -182,10 +189,14 @@ test('each model is paired with the geometry, tree and manifest beside it', () =
 });
 
 test('the listing and file addresses are built under the library', () => {
-  assert.equal(contentsUrl('http://host/jane', 'common/models'),
-    'http://host/jane/api/contents/common/models');
-  assert.equal(contentsUrl('http://host/jane/', 'common/models'),
-    'http://host/jane/api/contents/common/models');
+  assert.equal(
+    contentsUrl('http://host/jane', 'common/models'),
+    'http://host/jane/api/contents/common/models',
+  );
+  assert.equal(
+    contentsUrl('http://host/jane/', 'common/models'),
+    'http://host/jane/api/contents/common/models',
+  );
 });
 
 test('a size reads in the unit a person expects', () => {
@@ -203,7 +214,9 @@ test('a file name reads with spaces for its separators and keeps its case', () =
 function withFetch(handler, run) {
   const original = globalThis.fetch;
   globalThis.fetch = handler;
-  return run().finally(() => { globalThis.fetch = original; });
+  return run().finally(() => {
+    globalThis.fetch = original;
+  });
 }
 
 /** A response whose body arrives in the chunks given. */
@@ -214,13 +227,18 @@ function streamed(chunks, status = 206) {
   return {
     ok: status >= 200 && status < 300,
     status,
-    get cancelled() { return cancelled; },
+    get cancelled() {
+      return cancelled;
+    },
     body: {
       getReader: () => ({
-        read: async () => (index < chunks.length
-          ? { done: false, value: encoder.encode(chunks[index++]) }
-          : { done: true, value: undefined }),
-        cancel: async () => { cancelled = true; },
+        read: async () =>
+          index < chunks.length
+            ? { done: false, value: encoder.encode(chunks[index++]) }
+            : { done: true, value: undefined },
+        cancel: async () => {
+          cancelled = true;
+        },
       }),
     },
   };
@@ -229,7 +247,10 @@ function streamed(chunks, status = 206) {
 test('only the start of the file is asked for', async () => {
   let asked;
   await withFetch(
-    async (url, init) => { asked = { url, init }; return streamed([PAEDAGOGISK]); },
+    async (url, init) => {
+      asked = { url, init };
+      return streamed([PAEDAGOGISK]);
+    },
     () => readIfcName('http://host/jane/', 'common/models/Building_1911_AK_v2.ifc'),
   );
   assert.equal(asked.url, 'http://host/jane/files/common/models/Building_1911_AK_v2.ifc');
@@ -277,9 +298,12 @@ test('a response with no stream is read from its buffer, to the limit', async ()
 test('a name that cannot be read is null, and never a failure', async () => {
   const cases = [
     async () => ({ ok: false, status: 404 }),
-    async () => { throw new TypeError('network down'); },
+    async () => {
+      throw new TypeError('network down');
+    },
   ];
   for (const handler of cases) {
+    // eslint-disable-next-line no-await-in-loop -- each case swaps the global fetch in turn
     const name = await withFetch(handler, () => readIfcName('http://host/jane/', 'x.ifc'));
     assert.equal(name, null);
   }

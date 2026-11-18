@@ -50,8 +50,17 @@ export type ModelStyle = 'shaded' | 'mono' | 'classes' | 'wireframe';
 
 /** The shell of a building: what makes it opaque from outside. Sensors and the equipment they sit on are never here, because they are what a person is trying to see. */
 export const SHELL = new Set([
-  'IfcWall', 'IfcWallStandardCase', 'IfcSlab', 'IfcRoof', 'IfcCurtainWall',
-  'IfcPlate', 'IfcMember', 'IfcCovering', 'IfcWindow', 'IfcDoor', 'IfcRailing',
+  'IfcWall',
+  'IfcWallStandardCase',
+  'IfcSlab',
+  'IfcRoof',
+  'IfcCurtainWall',
+  'IfcPlate',
+  'IfcMember',
+  'IfcCovering',
+  'IfcWindow',
+  'IfcDoor',
+  'IfcRailing',
 ]);
 
 function highlight(colour: number): MeshStandardMaterial {
@@ -75,7 +84,10 @@ export class Palette {
 
   /** A class picked from the legend. Opaque, unlike the two above. */
   readonly highlighted = new MeshStandardMaterial({
-    color: new Color(HIGHLIGHTED_COLOUR), metalness: 0, roughness: 1, side: DoubleSide,
+    color: new Color(HIGHLIGHTED_COLOUR),
+    metalness: 0,
+    roughness: 1,
+    side: DoubleSide,
   });
 
   /** The material each object arrived with, so it can be given back. */
@@ -86,7 +98,12 @@ export class Palette {
   private readonly ghosts = new Map<Material, MeshStandardMaterial>();
 
   /** The single colour style, one material for every object. */
-  readonly mono = new MeshStandardMaterial({ color: MONO_COLOUR, metalness: 0, roughness: 1, side: DoubleSide });
+  readonly mono = new MeshStandardMaterial({
+    color: MONO_COLOUR,
+    metalness: 0,
+    roughness: 1,
+    side: DoubleSide,
+  });
 
   private readonly classes = new Map<number, MeshStandardMaterial>();
 
@@ -94,10 +111,16 @@ export class Palette {
 
   /** The material of the class at `index` in the sorted list of classes. */
   classAt(index: number): MeshStandardMaterial {
-    const colour = CLASS_COLOURS[((index % CLASS_COLOURS.length) + CLASS_COLOURS.length) % CLASS_COLOURS.length];
+    const colour =
+      CLASS_COLOURS[((index % CLASS_COLOURS.length) + CLASS_COLOURS.length) % CLASS_COLOURS.length];
     let material = this.classes.get(colour);
     if (!material) {
-      material = new MeshStandardMaterial({ color: colour, metalness: 0, roughness: 1, side: DoubleSide });
+      material = new MeshStandardMaterial({
+        color: colour,
+        metalness: 0,
+        roughness: 1,
+        side: DoubleSide,
+      });
       this.classes.set(colour, material);
     }
     return material;
@@ -129,7 +152,10 @@ export class Palette {
     let material = this.heat.get(colour);
     if (!material) {
       material = new MeshStandardMaterial({
-        color: colour, metalness: 0, roughness: 1, side: DoubleSide,
+        color: colour,
+        metalness: 0,
+        roughness: 1,
+        side: DoubleSide,
       });
       this.heat.set(colour, material);
     }

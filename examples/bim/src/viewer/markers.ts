@@ -9,8 +9,13 @@
  */
 
 import {
-  Box3, Mesh, MeshBasicMaterial, SphereGeometry, Vector3,
-  type Object3D, type PerspectiveCamera,
+  Box3,
+  Mesh,
+  MeshBasicMaterial,
+  SphereGeometry,
+  Vector3,
+  type Object3D,
+  type PerspectiveCamera,
   type Raycaster,
 } from 'three';
 import { valueText } from '../alerts.js';
@@ -71,7 +76,11 @@ export function worldPerPixel(distance: number, fovDegrees: number, heightPx: nu
  * across. Never below 1, so a marker seen close keeps its own size.
  */
 export function markerScale(
-  radius: number, distance: number, fovDegrees: number, heightPx: number, minPx: number,
+  radius: number,
+  distance: number,
+  fovDegrees: number,
+  heightPx: number,
+  minPx: number,
 ): number {
   const wanted = (minPx / 2) * worldPerPixel(distance, fovDegrees, heightPx);
   return Math.max(1, wanted / radius);
@@ -79,8 +88,11 @@ export function markerScale(
 
 /** A marker's colour: its value on the ramp while current, grey otherwise. */
 export function markerColour(
-  binding: Binding, reading: Reading | undefined, feed: FeedState,
-  staleAfter = DEFAULT_STALE_AFTER_S, now = Date.now(),
+  binding: Binding,
+  reading: Reading | undefined,
+  feed: FeedState,
+  staleAfter = DEFAULT_STALE_AFTER_S,
+  now = Date.now(),
 ): number {
   const ramp = displayOf(binding).ramp;
   if (!ramp || !reading || !isLive(reading, feed, staleAfter, now)) return NO_READING_COLOUR;
@@ -114,8 +126,12 @@ export interface MarkerSet {
    * marker and is `performance.now()` unless a test passes its own clock.
    */
   place: (
-    camera: PerspectiveCamera, width: number, height: number,
-    selected: string | null, shown: (globalId: string) => boolean, now?: number,
+    camera: PerspectiveCamera,
+    width: number,
+    height: number,
+    selected: string | null,
+    shown: (globalId: string) => boolean,
+    now?: number,
   ) => void;
   /** The object of the sensor whose dot the ray hits first, or null. */
   pick: (ray: Raycaster) => string | null;
@@ -124,14 +140,21 @@ export interface MarkerSet {
 
 /** One dot, its ring and its label, at the centre of its object. */
 function buildMarker(
-  model: Object3D, binding: Binding, node: Object3D, shape: SphereGeometry, overlay: HTMLElement,
+  model: Object3D,
+  binding: Binding,
+  node: Object3D,
+  shape: SphereGeometry,
+  overlay: HTMLElement,
   onPick?: (globalId: string) => void,
 ): Marker {
   // Drawn over the geometry they sit on, or a sensor inside a wall is
   // invisible from outside, which defeats the purpose of a marker. The ring is
   // drawn first and the dot over it.
   const ring = new Mesh(shape, new MeshBasicMaterial({ color: RING_COLOUR, depthTest: false }));
-  const dot = new Mesh(shape, new MeshBasicMaterial({ color: NO_READING_COLOUR, depthTest: false }));
+  const dot = new Mesh(
+    shape,
+    new MeshBasicMaterial({ color: NO_READING_COLOUR, depthTest: false }),
+  );
   ring.renderOrder = 2;
   dot.renderOrder = 3;
   ring.layers.set(MARKER_LAYER);
@@ -168,13 +191,22 @@ function buildMarker(
   }
   overlay.appendChild(label);
   return {
-    binding, globalId: objectOf(binding), dot, ring, label, live: false, colour: NO_READING_COLOUR,
+    binding,
+    globalId: objectOf(binding),
+    dot,
+    ring,
+    label,
+    live: false,
+    colour: NO_READING_COLOUR,
   };
 }
 
 /** Take one marker's latest reading into its colour and its label. */
 function readMarker(
-  marker: Marker, readings: Map<string, Reading>, feed: FeedState, staleAfter: number,
+  marker: Marker,
+  readings: Map<string, Reading>,
+  feed: FeedState,
+  staleAfter: number,
 ): void {
   const reading = marker.globalId ? readings.get(marker.globalId) : undefined;
   marker.live = isLive(reading, feed, staleAfter);
@@ -190,13 +222,18 @@ function disposeMarker(marker: Marker): void {
 
 /** Size, colour and label one marker for this frame. */
 function placeOne(
-  marker: Marker, radius: number, camera: PerspectiveCamera,
-  size: { width: number; height: number }, selected: boolean, shown: boolean, pulse = 1,
+  marker: Marker,
+  radius: number,
+  camera: PerspectiveCamera,
+  size: { width: number; height: number },
+  selected: boolean,
+  shown: boolean,
+  pulse = 1,
 ): void {
   const where = marker.dot.getWorldPosition(new Vector3());
   const minPx = selected ? SELECTED_MARKER_MIN_PX : MARKER_MIN_PX;
-  const scale = pulse
-    * markerScale(radius, camera.position.distanceTo(where), camera.fov, size.height, minPx);
+  const scale =
+    pulse * markerScale(radius, camera.position.distanceTo(where), camera.fov, size.height, minPx);
   marker.dot.scale.setScalar(scale);
   marker.ring.scale.setScalar(scale * RING_SCALE);
   marker.dot.visible = shown;
@@ -220,7 +257,8 @@ export function createMarkers(
   const radius = Math.max(modelRadius * MARKER_SHARE_OF_MODEL, MIN_RADIUS_M);
   const shape = new SphereGeometry(radius, 16, 12);
   const markers = resolved.map(({ binding, object }) =>
-    buildMarker(model, binding, object.node, shape, overlay, onPick));
+    buildMarker(model, binding, object.node, shape, overlay, onPick),
+  );
   // The pulse starts when the selection changes to a sensor, whatever picked
   // it: a click on the model, a card or a key.
   let lastSelected: string | null = null;
@@ -243,8 +281,15 @@ export function createMarkers(
       for (const marker of markers) {
         const id = marker.globalId;
         const picked = id !== undefined && id === selected;
-        placeOne(marker, radius, camera, { width, height }, picked,
-          id === undefined || shown(id), picked ? pulse : 1);
+        placeOne(
+          marker,
+          radius,
+          camera,
+          { width, height },
+          picked,
+          id === undefined || shown(id),
+          picked ? pulse : 1,
+        );
       }
     },
     pick(ray) {
@@ -252,7 +297,10 @@ export function createMarkers(
       // The dots are on their own layer, which a ray does not see unless asked.
       const layers = ray.layers.mask;
       ray.layers.enable(MARKER_LAYER);
-      const hit = ray.intersectObjects(shown.map((marker) => marker.dot), false)[0];
+      const hit = ray.intersectObjects(
+        shown.map((marker) => marker.dot),
+        false,
+      )[0];
       ray.layers.mask = layers;
       return shown.find((marker) => marker.dot === hit?.object)?.globalId ?? null;
     },

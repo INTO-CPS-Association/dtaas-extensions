@@ -50,7 +50,9 @@ test('a hash written in capitals still matches', () => {
 test('a different hash is a mismatch that names both', () => {
   const other = '0'.repeat(64);
   assert.deepEqual(compareSource(other, ABC_HASH), {
-    state: 'mismatch', expected: other, actual: ABC_HASH,
+    state: 'mismatch',
+    expected: other,
+    actual: ABC_HASH,
   });
 });
 

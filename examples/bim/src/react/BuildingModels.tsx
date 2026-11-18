@@ -37,9 +37,7 @@ import {
   Typography,
 } from '@mui/material';
 import { displayOf, type Binding } from '../binding.js';
-import {
-  zonesOf, DEFAULT_STALE_AFTER_S, type FeedState, type Reading,
-} from '../readings.js';
+import { zonesOf, DEFAULT_STALE_AFTER_S, type FeedState, type Reading } from '../readings.js';
 import { handleKey, type LookFrom, type PropertyTree, type SceneView } from '../viewer/index.js';
 import FloorPicker from './FloorPicker.js';
 import ModelTree from './ModelTree.js';
@@ -71,24 +69,25 @@ import { useModelList } from './useModelList.js';
 const BimCanvas = lazy(() => import('./BimCanvas.js'));
 
 const SAVING =
-  'Saving the conversion to the library, so the next visit loads it instead '
-  + 'of converting again. A large model takes a moment.';
+  'Saving the conversion to the library, so the next visit loads it instead ' +
+  'of converting again. A large model takes a moment.';
 
-const STORED =
-  'Stored in the library. The next visit loads this model without converting it.';
+const STORED = 'Stored in the library. The next visit loads this model without converting it.';
 
 const NOT_STORED =
   'The conversion could not be stored, so this model will convert again next time.';
 
 const CONVERTS_HERE =
-  'No converted geometry sits beside this model, so it is read from the IFC '
-  + 'file in your browser. That takes a moment the first time.';
+  'No converted geometry sits beside this model, so it is read from the IFC ' +
+  'file in your browser. That takes a moment the first time.';
 
 /** Why a model is not drawn, when converting it would exhaust the tab. */
 function tooLargeMessage(model: BimModel): string {
-  return `${model.title} is ${formatSize(model.sizeBytes)}, and an IFC file above `
-    + `${formatSize(MAX_CONVERT_BYTES)} is not converted in the browser. Convert it `
-    + 'outside the browser and put the GLB beside it in the library to draw it here.';
+  return (
+    `${model.title} is ${formatSize(model.sizeBytes)}, and an IFC file above ` +
+    `${formatSize(MAX_CONVERT_BYTES)} is not converted in the browser. Convert it ` +
+    'outside the browser and put the GLB beside it in the library to draw it here.'
+  );
 }
 
 /** Says whether a model already has geometry beside it, in one word. */
@@ -143,8 +142,7 @@ function ModelPicker({
         }}
         // Only the name in the closed control. The size and the state belong in
         // the menu, where there is room for them.
-        renderValue={(value) =>
-          models.find((model) => model.ifcPath === value)?.title ?? ''}
+        renderValue={(value) => models.find((model) => model.ifcPath === value)?.title ?? ''}
       >
         {models.map((model) => (
           <MenuItem key={model.ifcPath} value={model.ifcPath}>
@@ -303,10 +301,11 @@ export function BuildingModels({
 }: Readonly<BuildingModelsProps>) {
   const listing = useModelList(libraryUrl, directory, list);
   const { models } = listing;
-  const {
-    chosen, current, missing, choose,
-  } = useChosenModel({
-    models, directory, selected: selectedModel, onSelect: onSelectModel,
+  const { chosen, current, missing, choose } = useChosenModel({
+    models,
+    directory,
+    selected: selectedModel,
+    onSelect: onSelectModel,
   });
   const [problem, setProblem] = useState<Problem | null>(null);
   const [note, setNote] = useState<string | null>(null);
@@ -339,7 +338,8 @@ export function BuildingModels({
   // belongs to the model it was made for, so a model is never described by
   // the save of the last one, however it came to be chosen.
   const [saved, setSaved] = useState<{ model: BimModel | null; state: SaveState }>({
-    model: null, state: 'idle',
+    model: null,
+    state: 'idle',
   });
   const save = saved.model === chosen ? saved.state : 'idle';
   useBindingsReport(bindings, onBindingsChange);
@@ -427,18 +427,23 @@ export function BuildingModels({
   }, [handle, bindings, readings, feed, staleAfter]);
 
   const onReport = useCallback((message: string) => setNote(message), []);
-  const onHover = useCallback((globalId: string | null) => { hovered.current = globalId; }, []);
+  const onHover = useCallback((globalId: string | null) => {
+    hovered.current = globalId;
+  }, []);
   const onSelect = useCallback((globalId: string | null) => setSelected(globalId), []);
   // A card picks its object the way a click on the model does and puts it in
   // shot, since a sensor named on a card is often out of sight.
-  const focus = useCallback((globalId: string) => {
-    setSelected(globalId);
-    if (!handle) return;
-    handle.view.state.selected = globalId;
-    handle.view.refreshMaterials();
-    handle.frameSelection?.();
-    bump((n) => n + 1);
-  }, [handle]);
+  const focus = useCallback(
+    (globalId: string) => {
+      setSelected(globalId);
+      if (!handle) return;
+      handle.view.state.selected = globalId;
+      handle.view.refreshMaterials();
+      handle.frameSelection?.();
+      bump((n) => n + 1);
+    },
+    [handle],
+  );
   const source = useSourceCheck(chosen, libraryUrl, sourceSha256);
 
   // A conversion just finished in the canvas. Hand it to the host to store, and
@@ -454,21 +459,24 @@ export function BuildingModels({
   const shownProblem = listing.problem ?? problem;
   // Checked before the canvas mounts, because mounting it starts the download.
   const tooLarge = chosen !== null && tooLargeToConvert(chosen);
-  const onConverted = useCallback((glb: Uint8Array) => {
-    if (!chosen || !onPersistGeometry) return;
-    const model = chosen;
-    setSaved({ model, state: 'saving' });
-    onPersistGeometry(model, glb)
-      .then(() => {
-        setSaved({ model, state: 'stored' });
-        reload();
-      })
-      .catch(() => {
-        // The drawing is already on screen, so nothing is lost now. The page
-        // says so, because the cost lands on the next visit, which reconverts.
-        setSaved({ model, state: 'failed' });
-      });
-  }, [chosen, onPersistGeometry, reload]);
+  const onConverted = useCallback(
+    (glb: Uint8Array) => {
+      if (!chosen || !onPersistGeometry) return;
+      const model = chosen;
+      setSaved({ model, state: 'saving' });
+      onPersistGeometry(model, glb)
+        .then(() => {
+          setSaved({ model, state: 'stored' });
+          reload();
+        })
+        .catch(() => {
+          // The drawing is already on screen, so nothing is lost now. The page
+          // says so, because the cost lands on the next visit, which reconverts.
+          setSaved({ model, state: 'failed' });
+        });
+    },
+    [chosen, onPersistGeometry, reload],
+  );
   const onReady = useCallback((ready: ViewerHandle) => {
     setHandle(ready);
     setSelected(null);
@@ -482,28 +490,34 @@ export function BuildingModels({
   const latest = useRef({ readings, feed, staleAfter });
   latest.current = { readings, feed, staleAfter };
   /** Work the zones out again from the latest readings and repaint everything that shows them. */
-  const repaint = useCallback((view: SceneView) => {
-    const now = latest.current;
-    view.applyReadings(bindings, now.readings, now.feed, now.staleAfter);
-    view.refresh();
-    handle?.drawField();
-    bump((n) => n + 1);
-  }, [bindings, handle]);
-
-  const shortcutContext = useCallback((view: SceneView) => ({
-    view,
-    bindings,
-    refresh: () => repaint(view),
-    frame: () => handle?.frame(),
-    frameSelection: () => handle?.frameSelection?.(),
-    look: (from: LookFrom) => handle?.look(from),
-    hovered: () => hovered.current,
-    toggleHelp: () => setHelpOpen((open) => !open),
-    toggleFullscreen: () => {
-      if (document.fullscreenElement) void document.exitFullscreen();
-      else void document.documentElement.requestFullscreen?.();
+  const repaint = useCallback(
+    (view: SceneView) => {
+      const now = latest.current;
+      view.applyReadings(bindings, now.readings, now.feed, now.staleAfter);
+      view.refresh();
+      handle?.drawField();
+      bump((n) => n + 1);
     },
-  }), [handle, bindings, repaint]);
+    [bindings, handle],
+  );
+
+  const shortcutContext = useCallback(
+    (view: SceneView) => ({
+      view,
+      bindings,
+      refresh: () => repaint(view),
+      frame: () => handle?.frame(),
+      frameSelection: () => handle?.frameSelection?.(),
+      look: (from: LookFrom) => handle?.look(from),
+      hovered: () => hovered.current,
+      toggleHelp: () => setHelpOpen((open) => !open),
+      toggleFullscreen: () => {
+        if (document.fullscreenElement) void document.exitFullscreen();
+        else void document.documentElement.requestFullscreen?.();
+      },
+    }),
+    [handle, bindings, repaint],
+  );
 
   // The keyboard reaches the viewer only while a model is open, so a page with
   // nothing loaded does not swallow keys that belong to the application.
@@ -518,11 +532,16 @@ export function BuildingModels({
   }, [handle, shortcutContext]);
 
   return (
-    <Box sx={{
-      // `minWidth: 0` is what stops a flex child growing to fit its contents.
-      // Without it a wide canvas pushes the whole page sideways.
-      width: '100%', minWidth: 0, flexGrow: 1, p: 3, overflowX: 'hidden',
-    }}
+    <Box
+      sx={{
+        // `minWidth: 0` is what stops a flex child growing to fit its contents.
+        // Without it a wide canvas pushes the whole page sideways.
+        width: '100%',
+        minWidth: 0,
+        flexGrow: 1,
+        p: 3,
+        overflowX: 'hidden',
+      }}
     >
       {/* The headline says what failed, which is the part a person acts on.
           The address and the likely cause follow it, so a long diagnostic line
@@ -540,20 +559,13 @@ export function BuildingModels({
       <Box sx={{ mb: 3 }}>
         {models === null && <CircularProgress size={24} />}
         {models?.length === 0 && (
-          <Typography variant="body2">
-            No IFC file is in the shared library yet.
-          </Typography>
+          <Typography variant="body2">No IFC file is in the shared library yet.</Typography>
         )}
         {models !== null && models.length > 0 && (
           <>
             <ModelPicker models={models} chosen={chosen} onChoose={choose} />
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ display: 'block', mt: 1 }}
-            >
-              {models.length} IFC {models.length === 1 ? 'model' : 'models'} in
-              the shared library.
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+              {models.length} IFC {models.length === 1 ? 'model' : 'models'} in the shared library.
             </Typography>
           </>
         )}
@@ -574,11 +586,7 @@ export function BuildingModels({
       )}
 
       {save === 'saving' && (
-        <Alert
-          severity="info"
-          icon={<CircularProgress size={18} />}
-          sx={{ mb: 2 }}
-        >
+        <Alert severity="info" icon={<CircularProgress size={18} />} sx={{ mb: 2 }}>
           {SAVING}
         </Alert>
       )}
@@ -603,11 +611,7 @@ export function BuildingModels({
         <Paper sx={{ p: 1 }}>
           {/* The model being drawn, named above its own drawing, so the page
               says what is on screen without a scroll back to the menu. */}
-          <Stack
-            direction="row"
-            spacing={1}
-            sx={{ alignItems: 'center', px: 1, pt: 1, pb: 0.5 }}
-          >
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center', px: 1, pt: 1, pb: 0.5 }}>
             {/* From the listing, like the chip beside it: a model can be chosen
                 before its name has been read from its file, and the object picked
                 from the menu keeps the file name it had then. */}
@@ -620,9 +624,13 @@ export function BuildingModels({
             // The floor picker sits on the toolbar's row, after its last
             // button, so the controls above the drawing take one line. It
             // wraps to the next line when the page is too narrow for both.
-            <Box sx={{
-              display: 'flex', flexWrap: 'wrap', alignItems: 'center', columnGap: 1,
-            }}
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                columnGap: 1,
+              }}
             >
               <Toolbar
                 view={handle.view}
@@ -639,11 +647,12 @@ export function BuildingModels({
                   repaint(handle.view);
                 }}
               />
-
             </Box>
           )}
           {tooLarge && (
-            <Alert severity="warning" sx={{ m: 1 }}>{tooLargeMessage(chosen)}</Alert>
+            <Alert severity="warning" sx={{ m: 1 }}>
+              {tooLargeMessage(chosen)}
+            </Alert>
           )}
           {!tooLarge && (
             <Suspense fallback={<CircularProgress sx={{ m: 4 }} />}>
@@ -664,9 +673,14 @@ export function BuildingModels({
             </Suspense>
           )}
           {handle && (
-            <Box sx={{
-              display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap', alignItems: 'flex-start',
-            }}
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                mt: 1,
+                flexWrap: 'wrap',
+                alignItems: 'flex-start',
+              }}
             >
               <Box sx={{ flex: '1 1 320px', minWidth: 0 }}>
                 <ObjectPanel
@@ -700,9 +714,15 @@ export function BuildingModels({
                 />
                 {handle.view.state.heat !== 'off' && (
                   <HeatLegend
-                    zones={zonesOf(bindings, readings, handle.view.state.heat,
-                      (id) => handle.view.zoneFor(id), feed, staleAfter)}
-                    unit={displayOf(bindings[0] ?? { display: {} } as Binding).unit}
+                    zones={zonesOf(
+                      bindings,
+                      readings,
+                      handle.view.state.heat,
+                      (id) => handle.view.zoneFor(id),
+                      feed,
+                      staleAfter,
+                    )}
+                    unit={displayOf(bindings[0] ?? ({ display: {} } as Binding)).unit}
                     coloured={handle.view.liveCount(bindings, readings, feed, staleAfter)}
                   />
                 )}

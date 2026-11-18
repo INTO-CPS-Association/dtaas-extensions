@@ -91,10 +91,12 @@ function startListing(
       post(pairModels(entries));
       return titled(libraryUrl, entries).then((models) => post(models));
     })
-    .catch((error: unknown) => post([], {
-      summary: 'The shared library could not be listed.',
-      detail: messageOf(error),
-    }));
+    .catch((error: unknown) =>
+      post([], {
+        summary: 'The shared library could not be listed.',
+        detail: messageOf(error),
+      }),
+    );
   return () => {
     current = false;
   };

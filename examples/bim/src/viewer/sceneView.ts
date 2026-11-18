@@ -10,8 +10,15 @@ import { Box3, type Group, Mesh, type Object3D, Plane, Vector3 } from 'three';
 
 import { displayOf, objectOf, type Binding } from '../binding.js';
 import {
-  DEFAULT_STALE_AFTER_S, availableScopes, isLive, zoneOf, zonesOf,
-  type FeedState, type HeatScope, type Reading, type Zones,
+  DEFAULT_STALE_AFTER_S,
+  availableScopes,
+  isLive,
+  zoneOf,
+  zonesOf,
+  type FeedState,
+  type HeatScope,
+  type Reading,
+  type Zones,
 } from '../readings.js';
 import { bandOf, bandsFrom, FLOOR_MARGIN_M, type Band } from '../storeys.js';
 import { type Glow } from './glow.js';
@@ -168,7 +175,10 @@ export class SceneView {
   /** The middle of the model, where a vertical cut starts. */
   private readonly middle = new Vector3();
 
-  constructor(model: Group, private readonly tree: PropertyTree = {}) {
+  constructor(
+    model: Group,
+    private readonly tree: PropertyTree = {},
+  ) {
     const box = new Box3();
     model.traverse((node: Object3D) => {
       const mesh = node as Mesh & { isMesh?: boolean };
@@ -233,9 +243,12 @@ export class SceneView {
 
   classColours(): Map<string, string> {
     if (this.state.style === 'classes') {
-      return new Map(this.classesSorted().map((ifcClass, index) => [
-        ifcClass, `#${CLASS_COLOURS[index % CLASS_COLOURS.length].toString(16).padStart(6, '0')}`,
-      ]));
+      return new Map(
+        this.classesSorted().map((ifcClass, index) => [
+          ifcClass,
+          `#${CLASS_COLOURS[index % CLASS_COLOURS.length].toString(16).padStart(6, '0')}`,
+        ]),
+      );
     }
     const seen = new Map<string, string>();
     for (const [globalId, mesh] of this.meshes) {
@@ -257,10 +270,13 @@ export class SceneView {
   entries(): TreeEntry[] {
     return [...this.meshes].map(([globalId, mesh]) => {
       const facts = this.factsOf(globalId);
-      const ifcClass = facts?.ifcClass ?? (mesh.userData.ifcClass as string | undefined) ?? 'IfcProduct';
+      const ifcClass =
+        facts?.ifcClass ?? (mesh.userData.ifcClass as string | undefined) ?? 'IfcProduct';
       const base = this.base.get(globalId);
-      const band = base === undefined ? undefined
-        : this.bands.find((candidate) => base >= candidate.from && base < candidate.to);
+      const band =
+        base === undefined
+          ? undefined
+          : this.bands.find((candidate) => base >= candidate.from && base < candidate.to);
       const values = Object.values(facts?.properties ?? {})
         .flatMap((set) => Object.values(set ?? {}))
         .map((value) => String(value));
@@ -315,8 +331,13 @@ export class SceneView {
   ): void {
     this.buildField(bindings);
     this.zones = zonesOf(
-      bindings, readings, this.state.heat,
-      (globalId) => this.zoneFor(globalId), feed, staleAfter, now,
+      bindings,
+      readings,
+      this.state.heat,
+      (globalId) => this.zoneFor(globalId),
+      feed,
+      staleAfter,
+      now,
     );
   }
 
@@ -423,7 +444,9 @@ export class SceneView {
       case 'wireframe':
         return this.palette.wireOf(own);
       case 'classes':
-        return this.palette.classAt(this.classesSorted().indexOf(String(mesh.userData.ifcClass ?? '')));
+        return this.palette.classAt(
+          this.classesSorted().indexOf(String(mesh.userData.ifcClass ?? '')),
+        );
       default:
         return own;
     }
@@ -438,8 +461,7 @@ export class SceneView {
     // Below the cursor and below the selection, so pointing at one object
     // still says which one, and above the heatmap, since a person who asked
     // where the walls are is asking that and not what temperature they are.
-    if (this.state.highlightedClass
-      && mesh.userData.ifcClass === this.state.highlightedClass) {
+    if (this.state.highlightedClass && mesh.userData.ifcClass === this.state.highlightedClass) {
       return this.palette.highlighted;
     }
 
@@ -478,9 +500,8 @@ export class SceneView {
     }
 
     if (this.glow === null) return;
-    const selected = this.state.selected === null
-      ? undefined
-      : this.meshes.get(this.state.selected);
+    const selected =
+      this.state.selected === null ? undefined : this.meshes.get(this.state.selected);
     // A halo around an object the floor filter has hidden is a glow around
     // nothing, on a floor the object is not even on.
     if (selected?.visible) this.glow.show(selected);
@@ -563,7 +584,8 @@ export class SceneView {
     let lowest: number | undefined;
     for (const [globalId, base] of this.base) {
       if (band && !(base >= band.from && base < band.to)) continue;
-      if (!String(this.meshes.get(globalId)?.userData.ifcClass ?? '').startsWith('IfcWall')) continue;
+      if (!String(this.meshes.get(globalId)?.userData.ifcClass ?? '').startsWith('IfcWall'))
+        continue;
       if (lowest === undefined || base < lowest) lowest = base;
     }
     this.wallBases.set(band, lowest);
@@ -647,11 +669,16 @@ export class SceneView {
     const { min, max } = box;
     // The corner of the box farthest along each plane's normal is the one
     // most on the kept side. If even that one is beyond the plane, all of it is.
-    return planes.every((plane) => plane.distanceToPoint(this.corner.set(
-      plane.normal.x >= 0 ? max.x : min.x,
-      plane.normal.y >= 0 ? max.y : min.y,
-      plane.normal.z >= 0 ? max.z : min.z,
-    )) >= 0);
+    return planes.every(
+      (plane) =>
+        plane.distanceToPoint(
+          this.corner.set(
+            plane.normal.x >= 0 ? max.x : min.x,
+            plane.normal.y >= 0 ? max.y : min.y,
+            plane.normal.z >= 0 ? max.z : min.z,
+          ),
+        ) >= 0,
+    );
   }
 
   /** Whether a point is on the kept side of every cut, so a click there lands on something drawn. */
@@ -733,9 +760,11 @@ export class SceneView {
   ): number {
     return bindings.filter((binding) => {
       const globalId = objectOf(binding);
-      return globalId !== undefined
-        && isLive(readings.get(globalId), feed, staleAfter, now)
-        && displayOf(binding).ramp !== undefined;
+      return (
+        globalId !== undefined &&
+        isLive(readings.get(globalId), feed, staleAfter, now) &&
+        displayOf(binding).ramp !== undefined
+      );
     }).length;
   }
 

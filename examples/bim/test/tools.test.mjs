@@ -11,11 +11,27 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  BoxGeometry, Group, Mesh, MeshStandardMaterial, PerspectiveCamera, Scene, Vector3,
+  BoxGeometry,
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  PerspectiveCamera,
+  Scene,
+  Vector3,
 } from 'three';
 import {
-  CLOSE_M, GRID_DROP_M, GRID_MIN_SPAN_M, SHORTCUTS, SceneView, angleAt, createGrid,
-  createMeasure, distanceText, gridSpan, measureText, polygonArea,
+  CLOSE_M,
+  GRID_DROP_M,
+  GRID_MIN_SPAN_M,
+  SHORTCUTS,
+  SceneView,
+  angleAt,
+  createGrid,
+  createMeasure,
+  distanceText,
+  gridSpan,
+  measureText,
+  polygonArea,
 } from '../dist/esm/viewer/index.js';
 
 function box(globalId, y, size = [8, 3, 4]) {
@@ -74,7 +90,10 @@ describe('createGrid', () => {
     const scene = new Scene();
     const grid = createGrid(scene, new Group());
     assert.equal(scene.children.length, 0);
-    assert.doesNotThrow(() => { grid.setVisible(true); grid.dispose(); });
+    assert.doesNotThrow(() => {
+      grid.setVisible(true);
+      grid.dispose();
+    });
   });
 });
 
@@ -156,13 +175,22 @@ describe('createMeasure', () => {
     assert.equal(dots().length, 0);
     measure.addPoint(new Vector3(0, 0, 0));
     measure.place(camera, 200, 200);
-    assert.deepEqual(dots().map((dot) => dot.style.display), ['block']);
+    assert.deepEqual(
+      dots().map((dot) => dot.style.display),
+      ['block'],
+    );
     assert.match(dots()[0].style.transform, /^translate\(100px, 100px\)/);
     measure.addPoint(new Vector3(1, 0, 0));
     measure.place(camera, 200, 200);
-    assert.deepEqual(dots().map((dot) => dot.style.display), ['block', 'block']);
+    assert.deepEqual(
+      dots().map((dot) => dot.style.display),
+      ['block', 'block'],
+    );
     measure.clear();
-    assert.deepEqual(dots().map((dot) => dot.style.display), ['none', 'none']);
+    assert.deepEqual(
+      dots().map((dot) => dot.style.display),
+      ['none', 'none'],
+    );
   });
 
   test('clears and gives everything back on dispose', () => {
@@ -315,6 +343,11 @@ describe('measuring an area and an angle', () => {
       key('d').run({ view: scene, refresh: () => undefined });
       seen.push([scene.state.measuring, key('d').badge(scene)]);
     }
-    assert.deepEqual(seen, [['length', 'Length'], ['area', 'Area'], ['angle', 'Angle'], [null, undefined]]);
+    assert.deepEqual(seen, [
+      ['length', 'Length'],
+      ['area', 'Area'],
+      ['angle', 'Angle'],
+      [null, undefined],
+    ]);
   });
 });

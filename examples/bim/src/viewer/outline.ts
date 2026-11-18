@@ -9,13 +9,7 @@
  * and the disposal: hiding a wall hides its outline at no cost here.
  */
 
-import {
-  BufferGeometry,
-  EdgesGeometry,
-  LineBasicMaterial,
-  LineSegments,
-  type Mesh,
-} from 'three';
+import { BufferGeometry, EdgesGeometry, LineBasicMaterial, LineSegments, type Mesh } from 'three';
 
 /** A desaturated blue-grey at low opacity, so it reads as a shadow in a crease and not as ink over the model. */
 const OUTLINE_COLOUR = 0x33525f;

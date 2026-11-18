@@ -71,9 +71,10 @@ const { DirectoryPicker } = await import('../dist/esm/react/DirectoryPicker.js')
 function workspace({ files, heads = {}, json = {}, listing = 'ok' }) {
   const state = { files: [...files], heads, json, listing, gate: null, cached: null };
   const page = () => new Response('<!doctype html>', { headers: { 'content-type': 'text/html' } });
-  const data = (value) => new Response(JSON.stringify(value), {
-    headers: { 'content-type': 'application/json' },
-  });
+  const data = (value) =>
+    new Response(JSON.stringify(value), {
+      headers: { 'content-type': 'application/json' },
+    });
   globalThis.fetch = async (url, init = {}) => {
     const address = String(url);
     if (address.includes('/api/contents/')) {
@@ -144,7 +145,10 @@ afterEach(() => {
 });
 
 test('the menu is named by the heading above it', async () => {
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   show();
 
   assert.ok(await screen.findByRole('combobox', { name: /^IFC Model/ }));
@@ -162,7 +166,10 @@ test('a model is listed by its file name until its own name is read', async () =
 
   await screen.findByText(/2 IFC models in the shared library/);
   let options = await menuOptions(user);
-  assert.ok(options.some((text) => text.startsWith('Building 1911 AK v2')), options.join(' | '));
+  assert.ok(
+    options.some((text) => text.startsWith('Building 1911 AK v2')),
+    options.join(' | '),
+  );
 
   await act(async () => {
     library.gate.resolve();
@@ -170,9 +177,15 @@ test('a model is listed by its file name until its own name is read', async () =
   });
 
   options = (await screen.findAllByRole('option')).map((option) => option.textContent);
-  assert.ok(options.some((text) => text.startsWith('Pædagogisk Center')), options.join(' | '));
+  assert.ok(
+    options.some((text) => text.startsWith('Pædagogisk Center')),
+    options.join(' | '),
+  );
   // A template nobody filled in names nothing, so its file name stays.
-  assert.ok(options.some((text) => text.startsWith('Building 1912 AK v4')), options.join(' | '));
+  assert.ok(
+    options.some((text) => text.startsWith('Building 1912 AK v4')),
+    options.join(' | '),
+  );
 });
 
 test('a name two files share is shown by neither', async () => {
@@ -185,8 +198,14 @@ test('a name two files share is shown by neither', async () => {
 
   await screen.findByText(/2 IFC models/);
   const options = await menuOptions(user);
-  assert.ok(options.some((text) => text.startsWith('substation ok')), options.join(' | '));
-  assert.ok(options.some((text) => text.startsWith('substation faults')), options.join(' | '));
+  assert.ok(
+    options.some((text) => text.startsWith('substation ok')),
+    options.join(' | '),
+  );
+  assert.ok(
+    options.some((text) => text.startsWith('substation faults')),
+    options.join(' | '),
+  );
   assert.ok(!options.some((text) => text.includes('SWiM district cooling')), options.join(' | '));
 });
 
@@ -214,7 +233,10 @@ test('the heading names the model once its name arrives, not only if it came fir
 });
 
 test('a model with no geometry says it is read from the IFC file', async () => {
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
   show({ onPersistGeometry: async () => {} });
 
@@ -226,7 +248,10 @@ test('a model with no geometry says it is read from the IFC file', async () => {
 });
 
 test('a stored conversion is said while it happens and after it lands', async () => {
-  const library = workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  const library = workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const store = deferred();
   const stored = [];
   const user = userEvent.setup();
@@ -248,7 +273,11 @@ test('a stored conversion is said while it happens and after it lands', async ()
 
   // The file the host wrote, which the page finds when it reads the directory
   // again.
-  library.files.push({ name: 'Building_1912_AK_v4.glb', path: `${DIRECTORY}/Building_1912_AK_v4.glb`, size: 3 });
+  library.files.push({
+    name: 'Building_1912_AK_v4.glb',
+    path: `${DIRECTORY}/Building_1912_AK_v4.glb`,
+    size: 3,
+  });
   await act(async () => {
     store.resolve();
     await store.promise;
@@ -259,7 +288,10 @@ test('a stored conversion is said while it happens and after it lands', async ()
 });
 
 test('after a save the model reads as converted, and the drawing is not redrawn', async () => {
-  const library = workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  const library = workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
   show({ onPersistGeometry: async () => {} });
 
@@ -268,7 +300,11 @@ test('after a save the model reads as converted, and the drawing is not redrawn'
   const heading = screen.getByRole('heading', { name: 'Building 1912 AK v4' });
   assert.ok(within(heading.parentElement).getByText('From IFC'));
 
-  library.files.push({ name: 'Building_1912_AK_v4.glb', path: `${DIRECTORY}/Building_1912_AK_v4.glb`, size: 3 });
+  library.files.push({
+    name: 'Building_1912_AK_v4.glb',
+    path: `${DIRECTORY}/Building_1912_AK_v4.glb`,
+    size: 3,
+  });
   await act(async () => {
     canvas.props.onConverted(new Uint8Array([1, 2, 3]));
   });
@@ -282,9 +318,16 @@ test('after a save the model reads as converted, and the drawing is not redrawn'
 });
 
 test('a refused store is said, and nothing breaks', async () => {
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
-  show({ onPersistGeometry: async () => { throw new Error('HTTP 403'); } });
+  show({
+    onPersistGeometry: async () => {
+      throw new Error('HTTP 403');
+    },
+  });
 
   await screen.findByText(/1 IFC model/);
   await choose(user, 'Building 1912 AK v4');
@@ -302,7 +345,11 @@ test('choosing another model clears the message about the last one', async () =>
     heads: { 'Building_1912_AK_v4.ifc': TEMPLATE, 'Building_Deli_AK_v1.ifc': TEMPLATE },
   });
   const user = userEvent.setup();
-  show({ onPersistGeometry: async () => { throw new Error('refused'); } });
+  show({
+    onPersistGeometry: async () => {
+      throw new Error('refused');
+    },
+  });
 
   await screen.findByText(/2 IFC models/);
   await choose(user, 'Building 1912 AK v4');
@@ -316,7 +363,10 @@ test('choosing another model clears the message about the last one', async () =>
 });
 
 test('without a way to store, the canvas is never asked for the bytes', async () => {
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
   show();
 
@@ -357,11 +407,17 @@ function withSidecars(manifest) {
     files: [
       ifc('Building_1912_AK_v4.ifc'),
       { name: 'Building_1912_AK_v4.json', path: `${DIRECTORY}/Building_1912_AK_v4.json` },
-      { name: 'Building_1912_AK_v4.manifest.json', path: `${DIRECTORY}/Building_1912_AK_v4.manifest.json` },
+      {
+        name: 'Building_1912_AK_v4.manifest.json',
+        path: `${DIRECTORY}/Building_1912_AK_v4.manifest.json`,
+      },
     ],
     heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
     json: {
-      'Building_1912_AK_v4.json': { storeys: [{ name: 'L1' }], objects: { w1: { ifcClass: 'IfcWall' } } },
+      'Building_1912_AK_v4.json': {
+        storeys: [{ name: 'L1' }],
+        objects: { w1: { ifcClass: 'IfcWall' } },
+      },
       'Building_1912_AK_v4.manifest.json': manifest,
     },
   });
@@ -369,12 +425,14 @@ function withSidecars(manifest) {
 
 const MANIFEST = {
   model: { source: 'Building_1912_AK_v4.ifc', source_sha256: 'unknown', converter: 'test' },
-  bindings: [{
-    selector: { globalId: 'wallTemperature0000001' },
-    label: 'Wall temperature',
-    source: { live: { transport: 'mqtt', topic: 'swim/b/w1' } },
-    display: { unit: '°C', ramp: [4, 16] },
-  }],
+  bindings: [
+    {
+      selector: { globalId: 'wallTemperature0000001' },
+      label: 'Wall temperature',
+      source: { live: { transport: 'mqtt', topic: 'swim/b/w1' } },
+      display: { unit: '°C', ramp: [4, 16] },
+    },
+  ],
 };
 
 test('the property tree and the manifest beside a model reach the canvas', async () => {
@@ -387,7 +445,10 @@ test('the property tree and the manifest beside a model reach the canvas', async
 
   await act(async () => {});
   assert.deepEqual(canvas.props.tree.objects, { w1: { ifcClass: 'IfcWall' } });
-  assert.deepEqual(canvas.props.bindings.map((b) => b.label), ['Wall temperature']);
+  assert.deepEqual(
+    canvas.props.bindings.map((b) => b.label),
+    ['Wall temperature'],
+  );
 });
 
 test('a manifest that cannot be read says so', async () => {
@@ -434,7 +495,10 @@ test('a manifest with a wildcard topic is refused whole', async () => {
 
 test('an IFC file too large to convert in the browser is named and never downloaded', async () => {
   const big = 201 * 1024 * 1024;
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc', big)], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc', big)],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
   show();
 
@@ -457,9 +521,12 @@ function building() {
     return mesh;
   };
   for (const mesh of [
-    box('w1', 'IfcWall', 0), box('s1', 'IfcSlab', 3),
-    box('w2', 'IfcWall', 3.3), box('s2', 'IfcSlab', 6.3),
-  ]) model.add(mesh);
+    box('w1', 'IfcWall', 0),
+    box('s1', 'IfcSlab', 3),
+    box('w2', 'IfcWall', 3.3),
+    box('s2', 'IfcSlab', 6.3),
+  ])
+    model.add(mesh);
   model.updateMatrixWorld(true);
   return new SceneView(model, {
     storeys: [{ name: 'L1' }, { name: 'L2' }],
@@ -482,14 +549,19 @@ async function viewerReady() {
       view,
       frame: () => {},
       look: (from) => looked.push(from),
-      drawField: () => { painted.count += 1; },
+      drawField: () => {
+        painted.count += 1;
+      },
     });
   });
   return { view, looked, painted };
 }
 
 test('once the viewer is ready, the legend lists the classes and their counts', async () => {
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
   show();
 
@@ -498,12 +570,17 @@ test('once the viewer is ready, the legend lists the classes and their counts', 
   await viewerReady();
 
   const legend = screen.getByText('In This Model').parentElement;
-  const rows = within(legend).getAllByRole('button').map((row) => row.textContent);
+  const rows = within(legend)
+    .getAllByRole('button')
+    .map((row) => row.textContent);
   assert.deepEqual(rows.sort(), ['Slab2', 'Wall2']);
 });
 
 test('picking a class in the legend lights it, and picking it again clears it', async () => {
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
   show();
 
@@ -520,7 +597,10 @@ test('picking a class in the legend lights it, and picking it again clears it', 
 });
 
 test('a keyboard shortcut reaches the viewer', async () => {
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
   show();
 
@@ -537,14 +617,21 @@ test('a viewer left alone is painted once, not over and over', async () => {
   // A host that passes no readings used to get a new empty map on every
   // render. The effect that applies readings depends on it and repaints, which
   // rendered again, so the page repainted the model without end.
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
   show();
 
   await screen.findByText(/1 IFC model/);
   await choose(user, 'Building 1912 AK v4');
   const { painted } = await viewerReady();
-  await act(async () => { await new Promise((resolve) => { setTimeout(resolve, 50); }); });
+  await act(async () => {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 50);
+    });
+  });
 
   assert.equal(painted.count, 1);
 });
@@ -572,7 +659,10 @@ test('a property tree that cannot be read leaves the model drawing without it', 
 });
 
 test('choosing a floor shows that floor', async () => {
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
   show();
 
@@ -590,7 +680,10 @@ test('the floor picker sits on the toolbar row, right after its last button', as
   // One line of controls above the drawing. jsdom has no layout, so this
   // checks the structure that produces it: the toolbar and the floor picker
   // are siblings in one wrapping row, with the picker after the toolbar.
-  workspace({ files: [ifc('Building_1912_AK_v4.ifc')], heads: { 'Building_1912_AK_v4.ifc': TEMPLATE } });
+  workspace({
+    files: [ifc('Building_1912_AK_v4.ifc')],
+    heads: { 'Building_1912_AK_v4.ifc': TEMPLATE },
+  });
   const user = userEvent.setup();
   show();
 
@@ -628,7 +721,9 @@ test('a folder the picker cannot list says so inside the dialog', async () => {
   const list = async () => {
     throw new Error('permission denied');
   };
-  render(React.createElement(DirectoryPicker, { list, value: 'common/models', onChange: () => {} }));
+  render(
+    React.createElement(DirectoryPicker, { list, value: 'common/models', onChange: () => {} }),
+  );
 
   await user.click(screen.getByRole('button', { name: 'Folder: common/models' }));
   const dialog = await screen.findByRole('dialog');

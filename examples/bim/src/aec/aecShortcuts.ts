@@ -48,12 +48,12 @@ const toggle = (
   on: (c) => c.state[field],
 });
 
-const view = (
-  key: string,
-  label: string,
-  icon: string,
-  from: ViewName,
-): Option => ({ key, label, icon, run: (c) => c.look(from) });
+const view = (key: string, label: string, icon: string, from: ViewName): Option => ({
+  key,
+  label,
+  icon,
+  run: (c) => c.look(from),
+});
 
 /** The heatmap of the Buildings page, here the colours the declaration gives
  * the markers: all of them, one colour rule at a time, or none. */

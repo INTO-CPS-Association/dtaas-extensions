@@ -44,8 +44,16 @@ export function matches(entry: TreeEntry, query: string): boolean {
   if (words.length === 0) return true;
   let haystack = haystacks.get(entry);
   if (haystack === undefined) {
-    haystack = [entry.name, entry.ifcClass, readableClass(entry.ifcClass), entry.globalId,
-      entry.storey ?? '', ...entry.values].join('\n').toLowerCase();
+    haystack = [
+      entry.name,
+      entry.ifcClass,
+      readableClass(entry.ifcClass),
+      entry.globalId,
+      entry.storey ?? '',
+      ...entry.values,
+    ]
+      .join('\n')
+      .toLowerCase();
     haystacks.set(entry, haystack);
   }
   return words.every((word) => haystack.includes(word));

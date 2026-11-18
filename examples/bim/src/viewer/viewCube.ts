@@ -49,7 +49,12 @@ const CAMERA_DISTANCE = 4;
 const HALF_EXTENT = 1.05;
 
 /** Where the square goes, in CSS pixels from the top left, and in the units `setViewport` wants. */
-export function cubeViewport(width: number, height: number, size = CUBE_SIZE_PX, margin = CUBE_MARGIN_PX) {
+export function cubeViewport(
+  width: number,
+  height: number,
+  size = CUBE_SIZE_PX,
+  margin = CUBE_MARGIN_PX,
+) {
   const side = Math.max(0, Math.min(size, width - 2 * margin, height - 2 * margin));
   const left = width - margin - side;
   const top = height - margin - side;
@@ -108,7 +113,12 @@ const CUBE_EDGE_COLOUR = 0x8a9aa4;
 export function createViewCube(): ViewCube {
   const scene = new Scene();
   const camera = new OrthographicCamera(
-    -HALF_EXTENT, HALF_EXTENT, HALF_EXTENT, -HALF_EXTENT, 0.1, 100,
+    -HALF_EXTENT,
+    HALF_EXTENT,
+    HALF_EXTENT,
+    -HALF_EXTENT,
+    0.1,
+    100,
   );
   const materials: Material[] = CUBE_FACES.map((name) => {
     const map = faceTexture(name);
@@ -118,7 +128,10 @@ export function createViewCube(): ViewCube {
   const geometry = new BoxGeometry(1, 1, 1);
   const cube = new Mesh(geometry, materials);
   scene.add(cube);
-  const edges = new LineSegments(new EdgesGeometry(geometry), new LineBasicMaterial({ color: CUBE_EDGE_COLOUR }));
+  const edges = new LineSegments(
+    new EdgesGeometry(geometry),
+    new LineBasicMaterial({ color: CUBE_EDGE_COLOUR }),
+  );
   scene.add(edges);
 
   const direction = new Vector3();

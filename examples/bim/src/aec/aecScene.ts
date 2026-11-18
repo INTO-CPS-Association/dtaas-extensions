@@ -158,9 +158,7 @@ export class AecScene {
   refresh() {
     this.appearance.refresh();
     const { storey } = this.appearance.state;
-    this.markers.showOnly(
-      (m) => !storey || this.factsOf(m.globalId)?.storey === storey,
-    );
+    this.markers.showOnly((m) => !storey || this.factsOf(m.globalId)?.storey === storey);
     this.invalidate();
   }
 

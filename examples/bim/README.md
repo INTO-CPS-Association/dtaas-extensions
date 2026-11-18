@@ -65,12 +65,7 @@ because it needs `zod`. `./react` validates every manifest it loads, so it needs
 ## Use
 
 ```js
-import {
-  resolveBindings,
-  topicOf,
-  displayOf,
-  rampColour,
-} from '@into-cps-association/bim-kit';
+import { resolveBindings, topicOf, displayOf, rampColour } from '@into-cps-association/bim-kit';
 
 // Whatever loaded the geometry produces these. A GLB written by
 // ifc_explorer.to_glb carries globalId in glTF `extras` on every node.
@@ -363,21 +358,42 @@ yarn typecheck
 yarn test
 ```
 
-| Command          | What it does                                                                |
-| ---------------- | --------------------------------------------------------------------------- |
-| `yarn sdk`       | Build, pack and install the SDK of this repository                          |
-| `yarn wasm`      | Inline `web-ifc.wasm` into `src/generated/wasm.ts`                          |
-| `yarn build`     | ES modules and type declarations into `dist/esm/`                           |
-| `yarn build:kit` | The deployed bundle, into `dist/deploy/bim/index.js`                        |
-| `yarn typecheck` | Type check the sources, the Jest tests and `vite.config.ts`                 |
-| `yarn test:node` | Build, then run `test/*.test.mjs` with the Node test runner against `dist/` |
-| `yarn test:jest` | Run the Jest tests of `test/aec/` and `test/kit/`                           |
-| `yarn test`      | Both suites                                                                 |
+| Command              | What it does                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| `yarn sdk`           | Build, pack and install the SDK of this repository                                    |
+| `yarn wasm`          | Inline `web-ifc.wasm` into `src/generated/wasm.ts`                                    |
+| `yarn build`         | ES modules and type declarations into `dist/esm/`                                     |
+| `yarn build:kit`     | The deployed bundle, into `dist/deploy/bim/index.js`                                  |
+| `yarn typecheck`     | Type check the sources, the Jest tests and `vite.config.ts`                           |
+| `yarn format:check`  | Check the formatting with Prettier (`yarn format` rewrites it)                        |
+| `yarn lint`          | Lint with ESLint                                                                      |
+| `yarn test:node`     | Build, then run `test/*.test.mjs` with the Node test runner against `dist/`           |
+| `yarn test:jest`     | Run the Jest tests of `test/aec/` and `test/kit/`                                     |
+| `yarn test`          | Both suites                                                                           |
+| `yarn test:coverage` | Both suites with their coverage gates                                                 |
+| `yarn test:e2e`      | Build, pack and install the package in a clean project, then import every entry point |
 
 The Node suite imports from `dist/`, not from `src/`. A test that passes on the
 source and fails on the artifact is a test that did not do its job. The tests of
 the `aec` substrate and of the deployed bundle run under Jest, against the
 TypeScript source and the built bundle.
+
+The coverage gates sit at or just below what the code reaches today, so a
+change that drops coverage fails and one that raises it can raise the gate.
+
+| Suite                              | Lines | Statements | Branches | Functions |
+| ---------------------------------- | ----- | ---------- | -------- | --------- |
+| Node test runner, over `dist/esm/` | 86 %  | not given  | 94 %     | 92 %      |
+| Jest, over `src/aec/`              | 88 %  | 87 %       | 73 %     | 85 %      |
+
+The Node test runner measures the built modules its tests import and leaves out
+the inlined WebAssembly. It reports no statement figure. The thresholds are in
+the `test:node:coverage` script and in `jest.config.json`.
+
+ESLint runs the recommended JavaScript and TypeScript rules, the classic React
+hooks rules and the import boundaries the SDK asks of every kit. The limits of
+25 lines for a function and 250 lines for a file are reported as warnings, since
+part of the code is still above them.
 
 `test/fixtures/` holds three IFC files from the buildingSMART Certification
 datasets, copyright buildingSMART International Ltd. and licensed CC BY 4.0,

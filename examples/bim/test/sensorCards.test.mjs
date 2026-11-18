@@ -25,13 +25,15 @@ const binding = {
 };
 
 test('the label and the age of a reading sit on lines of their own', () => {
-  render(React.createElement(SensorCards, {
-    bindings: [binding],
-    readings: new Map(),
-    feed: 'live',
-    selected: null,
-    onSelect: () => {},
-  }));
+  render(
+    React.createElement(SensorCards, {
+      bindings: [binding],
+      readings: new Map(),
+      feed: 'live',
+      selected: null,
+      onSelect: () => {},
+    }),
+  );
 
   // A binding with no id of its own is titled by its label as well, so the
   // label under the title is the caption, the span.

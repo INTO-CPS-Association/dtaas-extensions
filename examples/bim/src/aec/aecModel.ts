@@ -15,9 +15,7 @@ export function modelAddress(source: string, modelsDirectory: string): string {
   const named = /^(lib:\/\/|https?:\/\/)/.test(source)
     ? source
     : `lib://${modelsDirectory}/${modelName(source)}`;
-  return named.toLowerCase().endsWith('.ifc')
-    ? `${named.slice(0, -'.ifc'.length)}.glb`
-    : named;
+  return named.toLowerCase().endsWith('.ifc') ? `${named.slice(0, -'.ifc'.length)}.glb` : named;
 }
 
 /** A bare model name, refused when it could leave the models folder. */

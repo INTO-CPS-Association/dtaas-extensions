@@ -14,14 +14,23 @@
       }
     ]
   },
-  "transformIgnorePatterns": [
-    "/node_modules/(?!(@into-cps-association/dtaas-sdk|three)/)"
-  ],
+  "transformIgnorePatterns": ["/node_modules/(?!(@into-cps-association/dtaas-sdk|three)/)"],
   "moduleNameMapper": {
     "^src/(.*?)(\\.js)?$": "<rootDir>/src/$1",
     "^(\\.{1,2}/.*)\\.js$": "$1"
   },
   "setupFiles": ["<rootDir>/test/aec/setupTests.ts"],
   "setupFilesAfterEnv": ["<rootDir>/test/aec/jest.setup.ts"],
-  "testRegex": "/test/(aec|kit)/.*\\.test\\.tsx?$"
+  "testRegex": "/test/(aec|kit)/.*\\.test\\.tsx?$",
+  "collectCoverageFrom": ["src/aec/**/*.{ts,tsx}"],
+  "coverageDirectory": "coverage/jest",
+  "coverageReporters": ["text-summary", "lcov", "json"],
+  "coverageThreshold": {
+    "global": {
+      "statements": 87,
+      "branches": 73,
+      "functions": 85,
+      "lines": 88
+    }
+  }
 }

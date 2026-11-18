@@ -66,16 +66,21 @@ export function useSourceCheck(
     // reaches `onSourceBytes` with the bytes the canvas already has.
     if (!model?.geometryPath || !compares || tooLargeToConvert(model)) return undefined;
     let live = true;
-    void fetchDigest(model, libraryUrl).then((found) => { if (live) setDigest(found); });
-    return () => { live = false; };
+    void fetchDigest(model, libraryUrl).then((found) => {
+      if (live) setDigest(found);
+    });
+    return () => {
+      live = false;
+    };
   }, [model, libraryUrl, compares]);
 
   const onSourceBytes = useCallback((bytes: Uint8Array) => {
     const model = current.current;
     // Hashed at once, because the converter may take the buffer over.
-    if (model) void digestFor(model, bytes).then((found) => {
-      if (current.current === found.model) setDigest(found);
-    });
+    if (model)
+      void digestFor(model, bytes).then((found) => {
+        if (current.current === found.model) setDigest(found);
+      });
   }, []);
 
   const check = model === null || expected === null ? null : resultOf(expected, model, digest);

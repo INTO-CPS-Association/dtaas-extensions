@@ -7,13 +7,7 @@
  * set of shell classes are the Buildings page's.
  */
 
-import {
-  Color,
-  DoubleSide,
-  type Material,
-  type Mesh,
-  MeshStandardMaterial,
-} from 'three';
+import { Color, DoubleSide, type Material, type Mesh, MeshStandardMaterial } from 'three';
 import type { ObjectFacts } from './aecTree.js';
 
 export const SELECTED_COLOUR = 0xffff00;
@@ -88,8 +82,7 @@ function highlight(colour: number) {
 
 /** The colour of a material as a CSS colour, grey when it has none. */
 function colourOf(material: Material | Material[] | undefined): string {
-  const first = (Array.isArray(material) ? material[0] : material) as
-    { color?: Color } | undefined;
+  const first = (Array.isArray(material) ? material[0] : material) as { color?: Color } | undefined;
   return first?.color ? `#${first.color.getHexString()}` : '#9e9e9e';
 }
 
@@ -153,8 +146,7 @@ export class Appearance {
     this.meshes.forEach((list, globalId) => {
       const facts = this.factsOf(globalId);
       const shown =
-        isShown(this.classOf(globalId), facts, this.state) &&
-        !this.hidden.includes(globalId);
+        isShown(this.classOf(globalId), facts, this.state) && !this.hidden.includes(globalId);
       list.forEach((mesh) => {
         Object.assign(mesh, { visible: shown });
         Object.assign(mesh, { material: this.materialFor(globalId, mesh) });
@@ -175,9 +167,7 @@ export class Appearance {
       const colour = known?.colour ?? colourOf(this.base.get(mesh));
       found.set(ifcClass, { ifcClass, colour, count: (known?.count ?? 0) + 1 });
     });
-    return [...found.values()].sort((a, b) =>
-      a.ifcClass.localeCompare(b.ifcClass),
-    );
+    return [...found.values()].sort((a, b) => a.ifcClass.localeCompare(b.ifcClass));
   }
 
   /** Back to the model as it opened. */

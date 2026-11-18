@@ -40,9 +40,7 @@ export const CELL_M = 0.25;
 export const CUT_M = 1.2;
 
 /** What stops the field. Furniture is not here: air moves over a desk. */
-export const BLOCKS = new Set([
-  'IfcWall', 'IfcWallStandardCase', 'IfcColumn', 'IfcCurtainWall',
-]);
+export const BLOCKS = new Set(['IfcWall', 'IfcWallStandardCase', 'IfcColumn', 'IfcCurtainWall']);
 
 /**
  * The ground and what grows on it. They are not part of the building: the
@@ -259,10 +257,14 @@ export function buildField(
   // gables and close nothing, and a sensor beside one was shut into the few
   // cells between the wall and the eaves.
   const inside = blocked.slice();
-  outside.forEach((out, cell) => { if (out) inside[cell] = 1; });
+  outside.forEach((out, cell) => {
+    if (out) inside[cell] = 1;
+  });
   let owner = walkOwners(inside, nx, nz, seeds);
   const room = new Array<number>(sources.length).fill(0);
-  owner.forEach((index) => { if (index >= 0) room[index] += 1; });
+  owner.forEach((index) => {
+    if (index >= 0) room[index] += 1;
+  });
   if (room.some((cells) => cells < MIN_ROOM_CELLS)) owner = walkOwners(blocked, nx, nz, seeds);
   if (!owner.some((index) => index >= 0)) return null;
 
@@ -284,13 +286,22 @@ export function outsideOf(blocked: Uint8Array, nx: number, nz: number): Uint8Arr
     outside[cell] = 1;
     queue.push(cell);
   };
-  for (let ix = 0; ix < nx; ix += 1) { visit(ix, 0); visit(ix, nz - 1); }
-  for (let iz = 0; iz < nz; iz += 1) { visit(0, iz); visit(nx - 1, iz); }
+  for (let ix = 0; ix < nx; ix += 1) {
+    visit(ix, 0);
+    visit(ix, nz - 1);
+  }
+  for (let iz = 0; iz < nz; iz += 1) {
+    visit(0, iz);
+    visit(nx - 1, iz);
+  }
   for (let head = 0; head < queue.length; head += 1) {
     const cell = queue[head];
     const ix = cell % nx;
     const iz = Math.floor(cell / nx);
-    visit(ix + 1, iz); visit(ix - 1, iz); visit(ix, iz + 1); visit(ix, iz - 1);
+    visit(ix + 1, iz);
+    visit(ix - 1, iz);
+    visit(ix, iz + 1);
+    visit(ix, iz - 1);
   }
   return outside;
 }

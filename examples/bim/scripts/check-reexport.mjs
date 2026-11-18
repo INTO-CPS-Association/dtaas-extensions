@@ -80,8 +80,11 @@ export function checkBindings(manifest, objects) {
   return {
     total: bindings.length,
     survived: resolved.map(({ binding }) => ({ label: binding.label, selector: binding.selector })),
-    lost: unresolved.map(({ binding, reason }) => (
-      { label: binding.label, selector: binding.selector, reason })),
+    lost: unresolved.map(({ binding, reason }) => ({
+      label: binding.label,
+      selector: binding.selector,
+      reason,
+    })),
   };
 }
 
@@ -119,7 +122,9 @@ export function formatReport(report) {
 async function main(argv) {
   const [manifestPath, modelPath] = argv.filter((arg) => !arg.startsWith('--'));
   if (!manifestPath || !modelPath) {
-    console.error('usage: node scripts/check-reexport.mjs <manifest.json> <model.ifc|model.glb> [--json]');
+    console.error(
+      'usage: node scripts/check-reexport.mjs <manifest.json> <model.ifc|model.glb> [--json]',
+    );
     return 2;
   }
   const report = await compare(manifestPath, modelPath);
@@ -130,7 +135,12 @@ async function main(argv) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main(process.argv.slice(2)).then(
-    (code) => { process.exitCode = code; },
-    (error) => { console.error(error.message); process.exitCode = 2; },
+    (code) => {
+      process.exitCode = code;
+    },
+    (error) => {
+      console.error(error.message);
+      process.exitCode = 2;
+    },
   );
 }

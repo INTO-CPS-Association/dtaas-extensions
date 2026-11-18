@@ -35,7 +35,12 @@ describe('cornerViewport', () => {
   });
 
   test('never lets the square cross the far edge', () => {
-    for (const [width, height] of [[800, 600], [200, 200], [40, 300], [300, 40]]) {
+    for (const [width, height] of [
+      [800, 600],
+      [200, 200],
+      [40, 300],
+      [300, 40],
+    ]) {
       const { x, y, side } = cornerViewport(width, height);
 
       assert.ok(x + side <= width, `${x} + ${side} > ${width}`);

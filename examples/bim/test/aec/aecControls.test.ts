@@ -33,9 +33,7 @@ function fakeScene() {
   const state = initialState();
   const view = {
     markers: {
-      all: new Map([
-        ['a/b', { name: 'Seat 1', dot: { material: { color: { set } } } }],
-      ]),
+      all: new Map([['a/b', { name: 'Seat 1', dot: { material: { color: { set } } } }]]),
     },
     appearance: {
       state,

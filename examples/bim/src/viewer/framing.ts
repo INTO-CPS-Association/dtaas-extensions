@@ -137,6 +137,13 @@ export function frameObject(
   const direction = camera.position.clone().sub(controls.target);
   if (direction.lengthSq() === 0) direction.set(...LOOK_FROM.corner);
   const depth = sphereOf(model)?.radius ?? sphere.radius;
-  place(camera, controls, sphere.centre, Math.max(sphere.radius, MIN_FRAME_RADIUS_M), direction, depth);
+  place(
+    camera,
+    controls,
+    sphere.centre,
+    Math.max(sphere.radius, MIN_FRAME_RADIUS_M),
+    direction,
+    depth,
+  );
   return true;
 }

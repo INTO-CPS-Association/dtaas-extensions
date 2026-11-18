@@ -15,13 +15,7 @@
 import type { VisualisationAsset } from '@into-cps-association/dtaas-sdk';
 import { displayOf, objectOf, topicOf, type Binding } from '../binding.js';
 import type { Manifest } from '../schema.js';
-import {
-  ANCHOR_KIND,
-  BIM_DOMAIN,
-  CHANNEL,
-  COLOR_SCHEME,
-  SUBSTRATE_ADAPTER,
-} from './ids.js';
+import { ANCHOR_KIND, BIM_DOMAIN, CHANNEL, COLOR_SCHEME, SUBSTRATE_ADAPTER } from './ids.js';
 
 const SUBSTRATE_ID = 'building';
 const SCHEMA_VERSION = '1.0';
@@ -58,9 +52,7 @@ interface Anchored {
  * live topic (what it anchors) to reach the building substrate. A binding
  * missing either is reported with its reason.
  */
-function classify(
-  binding: Binding,
-): { anchor: Anchored } | { skipped: Skipped } {
+function classify(binding: Binding): { anchor: Anchored } | { skipped: Skipped } {
   const globalId = objectOf(binding);
   if (globalId === undefined) {
     return {
@@ -99,10 +91,7 @@ function partition(bindings: Binding[]): {
 }
 
 /** One mqtt transport naming every live topic once, or none when nothing is live. */
-function transportsFor(
-  topics: string[],
-  brokerUrl: string,
-): VisualisationAsset['transports'] {
+function transportsFor(topics: string[], brokerUrl: string): VisualisationAsset['transports'] {
   if (topics.length === 0) return [];
   return [{ adapter: 'mqtt', url: brokerUrl, topics, channel: CHANNEL }];
 }

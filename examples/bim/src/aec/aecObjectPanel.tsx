@@ -46,24 +46,12 @@ export function sizeText({ x, y, z }: Size): string {
 }
 
 /** A row of the table, left out when there is nothing to say. */
-function Row({
-  name,
-  value,
-}: {
-  readonly name: string;
-  readonly value: unknown;
-}) {
+function Row({ name, value }: { readonly name: string; readonly value: unknown }) {
   if (value === undefined || value === null || value === '') return null;
   return (
     <TableRow>
-      <TableCell
-        sx={{ width: 160, color: 'text.secondary', border: 0, py: 0.3 }}
-      >
-        {name}
-      </TableCell>
-      <TableCell sx={{ border: 0, py: 0.3, wordBreak: 'break-word' }}>
-        {String(value)}
-      </TableCell>
+      <TableCell sx={{ width: 160, color: 'text.secondary', border: 0, py: 0.3 }}>{name}</TableCell>
+      <TableCell sx={{ border: 0, py: 0.3, wordBreak: 'break-word' }}>{String(value)}</TableCell>
     </TableRow>
   );
 }
@@ -90,10 +78,7 @@ function FactsTable({ picked }: { readonly picked: PickedObject }) {
   );
 }
 
-function PropertySet(props: {
-  readonly name: string;
-  readonly values: Record<string, unknown>;
-}) {
+function PropertySet(props: { readonly name: string; readonly values: Record<string, unknown> }) {
   return (
     <Paper variant="outlined" sx={{ p: 1.5 }}>
       <Box sx={{ mb: 0.5 }}>
@@ -141,13 +126,7 @@ interface PropertiesDialogProps {
 function PropertiesDialog(props: PropertiesDialogProps) {
   const { facts } = props.picked;
   return (
-    <Dialog
-      open={props.open}
-      onClose={props.onClose}
-      fullWidth
-      maxWidth="md"
-      scroll="paper"
-    >
+    <Dialog open={props.open} onClose={props.onClose} fullWidth maxWidth="md" scroll="paper">
       <DialogTitle sx={{ pr: 6 }}>
         {facts?.name ?? facts?.ifcClass ?? 'Properties'}
         <CloseButton onClose={props.onClose} />
@@ -168,20 +147,12 @@ function PropertiesButton({ picked }: { readonly picked: PickedObject }) {
       <Button size="small" variant="outlined" onClick={() => setOpen(true)}>
         Properties
       </Button>
-      <PropertiesDialog
-        picked={picked}
-        open={open}
-        onClose={() => setOpen(false)}
-      />
+      <PropertiesDialog picked={picked} open={open} onClose={() => setOpen(false)} />
     </Box>
   );
 }
 
-export default function ObjectPanel({
-  picked,
-}: {
-  readonly picked: PickedObject | null;
-}) {
+export default function ObjectPanel({ picked }: { readonly picked: PickedObject | null }) {
   if (!picked) {
     return (
       <Typography variant="body2" color="text.secondary">

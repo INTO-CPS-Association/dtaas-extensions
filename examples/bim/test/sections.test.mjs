@@ -8,7 +8,11 @@ import assert from 'node:assert/strict';
 
 import { BoxGeometry, Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import {
-  CUT_M, CUT_STEP_M, SHORTCUTS, SceneView, createSection,
+  CUT_M,
+  CUT_STEP_M,
+  SHORTCUTS,
+  SceneView,
+  createSection,
 } from '../dist/esm/viewer/index.js';
 
 const key = (letter) => SHORTCUTS.find((shortcut) => shortcut.key === letter);
@@ -101,14 +105,20 @@ describe('moving a cut', () => {
     press('k', scene);
     scene.reset();
     assert.deepEqual(scene.cutPlanes(), []);
-    assert.deepEqual([scene.state.vertical, scene.state.heightShift, scene.state.depthShift], [null, 0, 0]);
+    assert.deepEqual(
+      [scene.state.vertical, scene.state.heightShift, scene.state.depthShift],
+      [null, 0, 0],
+    );
   });
 });
 
 describe('what a cut hides', () => {
   test('an object whose centre is beyond a cut is not shown, and comes back without the cut', () => {
     const group = new Group();
-    for (const [id, x] of [['near', 2], ['far', 8]]) {
+    for (const [id, x] of [
+      ['near', 2],
+      ['far', 8],
+    ]) {
       const mesh = new Mesh(new BoxGeometry(1, 3, 1), new MeshStandardMaterial());
       mesh.position.set(x, 1.5, 0);
       mesh.userData.globalId = id;

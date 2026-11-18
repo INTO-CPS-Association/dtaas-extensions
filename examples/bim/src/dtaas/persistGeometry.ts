@@ -17,19 +17,18 @@ const glbPathOf = (model: BimModel): string => model.ifcPath.replace(/\.ifc$/i, 
  * one made in it, and an administrator may have placed one since the page
  * listed the folder.
  */
-const persistGeometry = (host: HostServices) => async (
-  model: BimModel,
-  glb: Uint8Array,
-): Promise<void> => {
-  try {
-    await host.contents.put(glbPathOf(model), glb, {
-      mimeType: 'model/gltf-binary',
-      overwrite: false,
-    });
-  } catch (error) {
-    host.logger.warn('bim: could not store converted geometry', model.name, error);
-    throw error;
-  }
-};
+const persistGeometry =
+  (host: HostServices) =>
+  async (model: BimModel, glb: Uint8Array): Promise<void> => {
+    try {
+      await host.contents.put(glbPathOf(model), glb, {
+        mimeType: 'model/gltf-binary',
+        overwrite: false,
+      });
+    } catch (error) {
+      host.logger.warn('bim: could not store converted geometry', model.name, error);
+      throw error;
+    }
+  };
 
 export default persistGeometry;

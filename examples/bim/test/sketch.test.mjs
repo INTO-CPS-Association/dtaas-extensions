@@ -11,13 +11,23 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  ARROW_HEAD_PX, SHORTCUTS, SKETCH_COLOUR, SKETCH_FONT, SceneView, arrowHead, createSketch, drawStroke,
+  ARROW_HEAD_PX,
+  SHORTCUTS,
+  SKETCH_COLOUR,
+  SKETCH_FONT,
+  SceneView,
+  arrowHead,
+  createSketch,
+  drawStroke,
 } from '../dist/esm/viewer/index.js';
 import { Group } from 'three';
 
 function recordingPen() {
   const calls = [];
-  const record = (name) => (...args) => calls.push([name, ...args.map((n) => Math.round(n * 100) / 100)]);
+  const record =
+    (name) =>
+    (...args) =>
+      calls.push([name, ...args.map((n) => Math.round(n * 100) / 100)]);
   return {
     calls,
     beginPath: record('begin'),
@@ -44,19 +54,44 @@ describe('arrowHead', () => {
 describe('drawStroke', () => {
   test('a pen line follows every point', () => {
     const pen = recordingPen();
-    drawStroke(pen, { tool: 'pen', points: [{ x: 0, y: 0 }, { x: 5, y: 5 }, { x: 9, y: 2 }] });
-    assert.deepEqual(pen.calls, [['begin'], ['move', 0, 0], ['line', 5, 5], ['line', 9, 2], ['stroke']]);
+    drawStroke(pen, {
+      tool: 'pen',
+      points: [
+        { x: 0, y: 0 },
+        { x: 5, y: 5 },
+        { x: 9, y: 2 },
+      ],
+    });
+    assert.deepEqual(pen.calls, [
+      ['begin'],
+      ['move', 0, 0],
+      ['line', 5, 5],
+      ['line', 9, 2],
+      ['stroke'],
+    ]);
   });
 
   test('a box goes from the first point to the last', () => {
     const pen = recordingPen();
-    drawStroke(pen, { tool: 'box', points: [{ x: 10, y: 20 }, { x: 40, y: 60 }] });
+    drawStroke(pen, {
+      tool: 'box',
+      points: [
+        { x: 10, y: 20 },
+        { x: 40, y: 60 },
+      ],
+    });
     assert.deepEqual(pen.calls, [['begin'], ['rect', 10, 20, 30, 40]]);
   });
 
   test('an arrow draws its shaft and both sides of its head', () => {
     const pen = recordingPen();
-    drawStroke(pen, { tool: 'arrow', points: [{ x: 0, y: 0 }, { x: 100, y: 0 }] });
+    drawStroke(pen, {
+      tool: 'arrow',
+      points: [
+        { x: 0, y: 0 },
+        { x: 100, y: 0 },
+      ],
+    });
     assert.equal(pen.calls.filter(([name]) => name === 'line').length, 3);
     assert.deepEqual(pen.calls[2], ['line', 100, 0]);
   });
@@ -106,7 +141,13 @@ describe('createSketch', () => {
     canvas.dispatchEvent(pointer('pointermove', 5, 5));
     canvas.dispatchEvent(pointer('pointermove', 9, 9));
     canvas.dispatchEvent(pointer('pointerup', 9, 9));
-    assert.deepEqual(sketch.strokes.map((s) => [s.tool, s.points.length]), [['pen', 3], ['arrow', 2]]);
+    assert.deepEqual(
+      sketch.strokes.map((s) => [s.tool, s.points.length]),
+      [
+        ['pen', 3],
+        ['arrow', 2],
+      ],
+    );
     assert.deepEqual(sketch.strokes[1].points[1], { x: 9, y: 9 });
   });
 
@@ -128,7 +169,10 @@ describe('createSketch', () => {
     assert.ok(input);
     input.value = 'Check this valve';
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-    assert.deepEqual(sketch.strokes.map((s) => [s.tool, s.text]), [['text', 'Check this valve']]);
+    assert.deepEqual(
+      sketch.strokes.map((s) => [s.tool, s.text]),
+      [['text', 'Check this valve']],
+    );
     assert.equal(overlay.querySelector('input'), null);
     canvas.dispatchEvent(pointer('pointerdown', 10, 10));
     input = overlay.querySelector('input');
@@ -142,8 +186,12 @@ describe('createSketch', () => {
     sketch.setTool('text');
     canvas.dispatchEvent(pointer('pointerdown', 40, 50));
     let reached = false;
-    overlay.addEventListener('keydown', () => { reached = true; });
-    overlay.querySelector('input').dispatchEvent(new KeyboardEvent('keydown', { key: 'x', bubbles: true }));
+    overlay.addEventListener('keydown', () => {
+      reached = true;
+    });
+    overlay
+      .querySelector('input')
+      .dispatchEvent(new KeyboardEvent('keydown', { key: 'x', bubbles: true }));
     assert.equal(reached, false);
   });
 
@@ -163,7 +211,13 @@ describe('the n key', () => {
       n.run({ view, refresh: () => undefined });
       seen.push([view.state.sketching, n.badge(view)]);
     }
-    assert.deepEqual(seen, [['pen', 'Pen'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], [null, undefined]]);
+    assert.deepEqual(seen, [
+      ['pen', 'Pen'],
+      ['arrow', 'Arrow'],
+      ['box', 'Box'],
+      ['text', 'Text'],
+      [null, undefined],
+    ]);
     n.run({ view, refresh: () => undefined });
     view.reset();
     assert.equal(view.state.sketching, null);

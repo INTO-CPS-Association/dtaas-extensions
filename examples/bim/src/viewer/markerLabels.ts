@@ -26,10 +26,16 @@ const LABEL_BORDER = 'var(--bim-label-border,#5f6b76)';
 export const LABEL_ACCENT = 'var(--bim-label-accent,#1565c0)';
 
 const BASE_STYLE = [
-  'position:absolute', 'left:0', 'top:0', 'pointer-events:none', 'white-space:nowrap',
+  'position:absolute',
+  'left:0',
+  'top:0',
+  'pointer-events:none',
+  'white-space:nowrap',
   'font:12px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
-  'padding:1px 6px', 'border-radius:4px',
-  `background:${LABEL_BG}`, `color:${LABEL_FG}`,
+  'padding:1px 6px',
+  'border-radius:4px',
+  `background:${LABEL_BG}`,
+  `color:${LABEL_FG}`,
   `border:1px solid ${LABEL_BORDER}`,
 ].join(';');
 
@@ -86,6 +92,7 @@ export function styleLabel(label: HTMLElement, selected: boolean, live: boolean)
 export function placeLabel(label: HTMLElement, at: ScreenPoint, shown: boolean): void {
   const { style } = label;
   style.display = shown && at.visible ? 'block' : 'none';
-  style.transform = `translate(${Math.round(at.x)}px, ${Math.round(at.y)}px) `
-    + `translate(-50%, calc(-100% - ${LABEL_OFFSET_PX}px))`;
+  style.transform =
+    `translate(${Math.round(at.x)}px, ${Math.round(at.y)}px) ` +
+    `translate(-50%, calc(-100% - ${LABEL_OFFSET_PX}px))`;
 }

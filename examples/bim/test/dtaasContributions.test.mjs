@@ -31,27 +31,37 @@ globalThis.FileReader ??= class {
   }
 };
 
-const BASIN = new Uint8Array(readFileSync(new URL('./fixtures/basin_at_the_origin.ifc', import.meta.url)));
+const BASIN = new Uint8Array(
+  readFileSync(new URL('./fixtures/basin_at_the_origin.ifc', import.meta.url)),
+);
 
 test('the models directory is read from REACT_APP_EXT_BIM_MODELS_DIRECTORY', () => {
-  const result = readExtensionConfig('bim', configSchema, { REACT_APP_EXT_BIM_MODELS_DIRECTORY: 'projects' });
+  const result = readExtensionConfig('bim', configSchema, {
+    REACT_APP_EXT_BIM_MODELS_DIRECTORY: 'projects',
+  });
   assert.deepEqual(result.success && result.data, { modelsDirectory: 'projects' });
 });
 
 test('the configuration is optional, and an empty directory is refused', () => {
   assert.deepEqual(readExtensionConfig('bim', configSchema, {}).data, {});
-  const empty = readExtensionConfig('bim', configSchema, { REACT_APP_EXT_BIM_MODELS_DIRECTORY: '' });
+  const empty = readExtensionConfig('bim', configSchema, {
+    REACT_APP_EXT_BIM_MODELS_DIRECTORY: '',
+  });
   assert.equal(empty.success, false);
 });
 
 test('the staleness limit is read from REACT_APP_EXT_BIM_STALE_AFTER_S as a number', () => {
-  const result = readExtensionConfig('bim', configSchema, { REACT_APP_EXT_BIM_STALE_AFTER_S: '90' });
+  const result = readExtensionConfig('bim', configSchema, {
+    REACT_APP_EXT_BIM_STALE_AFTER_S: '90',
+  });
   assert.deepEqual(result.success && result.data, { staleAfterS: 90 });
 });
 
 test('a staleness limit of zero, below zero or not a number is refused', () => {
   for (const value of ['0', '-5', 'soon']) {
-    const result = readExtensionConfig('bim', configSchema, { REACT_APP_EXT_BIM_STALE_AFTER_S: value });
+    const result = readExtensionConfig('bim', configSchema, {
+      REACT_APP_EXT_BIM_STALE_AFTER_S: value,
+    });
     assert.equal(result.success, false, value);
   }
 });

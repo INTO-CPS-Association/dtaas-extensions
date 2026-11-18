@@ -12,14 +12,16 @@ function factOf(adapter: SubstrateAdapter, ref: string, fact: Fact): string | un
 }
 
 /** Groups in a `Map` first, so a room named `__proto__` becomes an ordinary key. */
-const groupBy = (fact: Fact): ScopeRule['group'] => (elementIds, { adapter }) => {
-  const groups = new Map<string, string[]>();
-  elementIds.forEach((id) => {
-    const key = factOf(adapter, id, fact);
-    if (key !== undefined) groups.set(key, [...(groups.get(key) ?? []), id]);
-  });
-  return Object.fromEntries(groups);
-};
+const groupBy =
+  (fact: Fact): ScopeRule['group'] =>
+  (elementIds, { adapter }) => {
+    const groups = new Map<string, string[]>();
+    elementIds.forEach((id) => {
+      const key = factOf(adapter, id, fact);
+      if (key !== undefined) groups.set(key, [...(groups.get(key) ?? []), id]);
+    });
+    return Object.fromEntries(groups);
+  };
 
 /** The two building scopes no generic substrate can know: per room and per storey. */
 const scopes: ScopeRule[] = [

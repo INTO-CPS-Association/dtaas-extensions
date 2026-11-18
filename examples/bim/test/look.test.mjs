@@ -11,10 +11,22 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  BoxGeometry, DirectionalLight, Group, Mesh, MeshStandardMaterial, Scene, Vector3,
+  BoxGeometry,
+  DirectionalLight,
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  Scene,
+  Vector3,
 } from 'three';
 import {
-  GROUND_DROP_M, SHADOW_MAP_PX, SHORTCUTS, SceneView, castShadows, createSection, CUT_M,
+  GROUND_DROP_M,
+  SHADOW_MAP_PX,
+  SHORTCUTS,
+  SceneView,
+  castShadows,
+  createSection,
+  CUT_M,
   prepareRenderer,
 } from '../dist/esm/viewer/index.js';
 
@@ -96,7 +108,9 @@ describe('createSection', () => {
 
 describe('prepareRenderer', () => {
   test('draws the shadow map once and then only when the canvas asks', () => {
-    const renderer = { shadowMap: { enabled: false, type: 0, autoUpdate: true, needsUpdate: false } };
+    const renderer = {
+      shadowMap: { enabled: false, type: 0, autoUpdate: true, needsUpdate: false },
+    };
     prepareRenderer(renderer);
     assert.equal(renderer.shadowMap.enabled, true);
     assert.equal(renderer.shadowMap.autoUpdate, false);

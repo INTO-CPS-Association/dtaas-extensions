@@ -10,13 +10,22 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import {
-  checkBindings, formatReport, hashVerdict, objectsOfGlb, objectsOfIfc, sha256Of,
+  checkBindings,
+  formatReport,
+  hashVerdict,
+  objectsOfGlb,
+  objectsOfIfc,
+  sha256Of,
 } from '../scripts/check-reexport.mjs';
 
-const WALL = new Uint8Array(readFileSync(new URL('./fixtures/wall_kernel_keeps_units.ifc', import.meta.url)));
+const WALL = new Uint8Array(
+  readFileSync(new URL('./fixtures/wall_kernel_keeps_units.ifc', import.meta.url)),
+);
 
 const binding = (selector, label) => ({
-  selector, label, source: { live: { transport: 'mqtt', topic: `t/${label}` } },
+  selector,
+  label,
+  source: { live: { transport: 'mqtt', topic: `t/${label}` } },
 });
 
 /** A binary glTF holding only its JSON chunk, which is all the script reads. */
@@ -37,13 +46,15 @@ function glb(gltf) {
 }
 
 test('a GLB yields every node with a mesh, with its GlobalId and its name', () => {
-  const objects = objectsOfGlb(glb({
-    nodes: [
-      { name: 'ifc' },
-      { name: 'Wall', mesh: 0, extras: { globalId: '2O2Fr$t4X7Zf8NOew3FLOH' } },
-      { mesh: 1 },
-    ],
-  }));
+  const objects = objectsOfGlb(
+    glb({
+      nodes: [
+        { name: 'ifc' },
+        { name: 'Wall', mesh: 0, extras: { globalId: '2O2Fr$t4X7Zf8NOew3FLOH' } },
+        { mesh: 1 },
+      ],
+    }),
+  );
   assert.deepEqual(objects, [
     { globalId: '2O2Fr$t4X7Zf8NOew3FLOH', nodeName: 'Wall' },
     { globalId: undefined, nodeName: undefined },
@@ -58,11 +69,20 @@ test('bindings that the other export holds survive and the rest are lost with a 
   const objects = await objectsOfIfc(WALL);
   assert.ok(objects.length > 0);
   const kept = objects[0].globalId;
-  const report = checkBindings({
-    bindings: [binding({ globalId: kept }, 'kept'), binding({ globalId: 'gone00000000000000000a' }, 'gone')],
-  }, objects);
+  const report = checkBindings(
+    {
+      bindings: [
+        binding({ globalId: kept }, 'kept'),
+        binding({ globalId: 'gone00000000000000000a' }, 'gone'),
+      ],
+    },
+    objects,
+  );
   assert.equal(report.total, 2);
-  assert.deepEqual(report.survived.map((b) => b.label), ['kept']);
+  assert.deepEqual(
+    report.survived.map((b) => b.label),
+    ['kept'],
+  );
   assert.equal(report.lost[0].label, 'gone');
   assert.match(report.lost[0].reason, /no object carries GlobalId gone/);
 });
@@ -82,8 +102,14 @@ test('the hash verdict says whether the model is the file the manifest names', (
 
 test('the report counts survivors and losses out of the total', () => {
   const text = formatReport({
-    manifest: 'a.manifest.json', model: 'b.ifc', objects: 3, schemaProblems: [], hash: 'different file',
-    total: 2, survived: [{ label: 'kept' }], lost: [{ label: 'gone', reason: 'no object.' }],
+    manifest: 'a.manifest.json',
+    model: 'b.ifc',
+    objects: 3,
+    schemaProblems: [],
+    hash: 'different file',
+    total: 2,
+    survived: [{ label: 'kept' }],
+    lost: [{ label: 'gone', reason: 'no object.' }],
   });
   assert.match(text, /Survive: 1 of 2/);
   assert.match(text, /Lost: 1 of 2\n {2}lost {2}gone: no object\./);

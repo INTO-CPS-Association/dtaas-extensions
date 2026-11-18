@@ -56,7 +56,9 @@ export function FloorPicker({ storeys, current, onChange }: Readonly<FloorPicker
       >
         <MenuItem value={ALL}>All Floors</MenuItem>
         {storeys.map((storey) => (
-          <MenuItem key={storey} value={storey}>{storey}</MenuItem>
+          <MenuItem key={storey} value={storey}>
+            {storey}
+          </MenuItem>
         ))}
       </TextField>
       <Tooltip title="The floor above">

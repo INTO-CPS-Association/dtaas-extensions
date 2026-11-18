@@ -10,10 +10,7 @@ import * as muiMaterial from '@mui/material';
 import * as zod from 'zod';
 import * as dtaasSdk from '@into-cps-association/dtaas-sdk';
 import * as dtaasSdkSchema from '@into-cps-association/dtaas-sdk/schema';
-import {
-  checkConformance,
-  fakeHostServices,
-} from '@into-cps-association/dtaas-sdk/testing';
+import { checkConformance, fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
 import {
   DEPLOYED_EXTENSIONS_GLOBAL,
   SHARED_MODULES_GLOBAL,
@@ -47,10 +44,7 @@ function evaluate(): Registered {
   // A classic script runs with `this` as the window. The Function constructor
   // runs the bundle the same way, with the shared modules as its one global.
   // eslint-disable-next-line no-new-func
-  new Function(SHARED_MODULES_GLOBAL, readFileSync(bundle, 'utf-8')).call(
-    window,
-    SHARED,
-  );
+  new Function(SHARED_MODULES_GLOBAL, readFileSync(bundle, 'utf-8')).call(window, SHARED);
   return window[DEPLOYED_EXTENSIONS_GLOBAL] as Registered;
 }
 
@@ -84,9 +78,7 @@ describe('the deployed bundle', () => {
     expect(Object.keys(registered)).toEqual(['bim']);
     const { extension } = registered.bim;
     expect(validateExtension(extension)).toEqual({ valid: true, errors: [] });
-    expect(extension.visualisation?.substrates?.map(({ id }) => id)).toEqual([
-      'aec',
-    ]);
+    expect(extension.visualisation?.substrates?.map(({ id }) => id)).toEqual(['aec']);
   });
 
   it('mounts its pages through the host it is given', async () => {

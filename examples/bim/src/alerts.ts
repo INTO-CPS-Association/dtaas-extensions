@@ -18,7 +18,11 @@
 
 import { displayOf, type Binding } from './binding.js';
 import {
-  ageText, isLive, DEFAULT_STALE_AFTER_S, type FeedState, type Reading,
+  ageText,
+  isLive,
+  DEFAULT_STALE_AFTER_S,
+  type FeedState,
+  type Reading,
 } from './readings.js';
 
 /**
@@ -109,9 +113,10 @@ export function alertsOf(
     alerts.push({
       level: 'warn',
       label: reading === undefined ? 'Never Reported' : 'Not Reporting',
-      detail: reading === undefined
-        ? 'No message has arrived on this topic since the page opened.'
-        : `The sensor has gone quiet: ${ageText(reading, feed, staleAfter, now)}.`,
+      detail:
+        reading === undefined
+          ? 'No message has arrived on this topic since the page opened.'
+          : `The sensor has gone quiet: ${ageText(reading, feed, staleAfter, now)}.`,
     });
   }
 
@@ -120,26 +125,30 @@ export function alertsOf(
   // Only a current value is worth checking against the bounds. An old reading
   // that was out of range is already covered by the alert above, and saying
   // both makes the stale one look like a live excursion.
-  if (reading !== undefined && ramp !== undefined
-      && isLive(reading, feed, staleAfter, now)) {
+  if (reading !== undefined && ramp !== undefined && isLive(reading, feed, staleAfter, now)) {
     const [low, high] = ramp;
     if (reading.value < low || reading.value > high) {
       alerts.push({
         level: 'warn',
         label: reading.value > high ? 'Above Range' : 'Below Range',
-        detail: `${reading.value} is outside ${low} to ${high} ${declared ?? ''}`.trim()
-          + ', the range this sensor declares in the model.',
+        detail:
+          `${reading.value} is outside ${low} to ${high} ${declared ?? ''}`.trim() +
+          ', the range this sensor declares in the model.',
       });
     }
   }
 
-  if (reading?.unit !== undefined && declared !== undefined
-      && displayUnit(reading.unit) !== displayUnit(declared)) {
+  if (
+    reading?.unit !== undefined &&
+    declared !== undefined &&
+    displayUnit(reading.unit) !== displayUnit(declared)
+  ) {
     alerts.push({
       level: 'warn',
       label: 'Unit Differs',
-      detail: `The payload says ${reading.unit} and the manifest says ${declared}, `
-        + 'so one of the two is wrong about what this number measures.',
+      detail:
+        `The payload says ${reading.unit} and the manifest says ${declared}, ` +
+        'so one of the two is wrong about what this number measures.',
     });
   }
 
@@ -150,8 +159,9 @@ export function alertsOf(
     alerts.push({
       level: 'note',
       label: titleOf(how),
-      detail: `The payload declares this value as ${how}, `
-        + 'not as a measured value read off the instrument.',
+      detail:
+        `The payload declares this value as ${how}, ` +
+        'not as a measured value read off the instrument.',
     });
   }
 
@@ -172,8 +182,11 @@ export function alertCounts(
   for (const binding of bindings) {
     const globalId = objectOfBinding(binding);
     const alerts = alertsOf(
-      binding, globalId === undefined ? undefined : readings.get(globalId),
-      feed, staleAfter, now,
+      binding,
+      globalId === undefined ? undefined : readings.get(globalId),
+      feed,
+      staleAfter,
+      now,
     );
     if (alerts.some((alert) => alert.level === 'warn')) warn += 1;
     else if (alerts.length > 0) note += 1;

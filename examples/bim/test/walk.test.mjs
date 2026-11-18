@@ -7,8 +7,17 @@ import assert from 'node:assert/strict';
 
 import { BoxGeometry, Group, Mesh, MeshStandardMaterial, PerspectiveCamera, Vector3 } from 'three';
 import {
-  CUT_M, EYE_HEIGHT_M, LOOK_AHEAD_M, NEAR_PLANE, SHORTCUTS, SceneView, TURN_SPEED_DEG_S, WALK_SPEED_M_S,
-  startWalking, stepWalk, walkKeyOf,
+  CUT_M,
+  EYE_HEIGHT_M,
+  LOOK_AHEAD_M,
+  NEAR_PLANE,
+  SHORTCUTS,
+  SceneView,
+  TURN_SPEED_DEG_S,
+  WALK_SPEED_M_S,
+  startWalking,
+  stepWalk,
+  walkKeyOf,
 } from '../dist/esm/viewer/index.js';
 
 const NONE = { forward: false, back: false, left: false, right: false };
@@ -78,10 +87,13 @@ describe('stepWalk', () => {
 
 describe('the walking keys', () => {
   test('are the four arrows and nothing else', () => {
-    assert.deepEqual(
-      ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w'].map(walkKeyOf),
-      ['forward', 'back', 'left', 'right', null],
-    );
+    assert.deepEqual(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w'].map(walkKeyOf), [
+      'forward',
+      'back',
+      'left',
+      'right',
+      null,
+    ]);
   });
 
   test('u walks and reset stops it, and the floor is where a person stands', () => {
@@ -120,7 +132,10 @@ describe('floorLevel', () => {
     const view = new SceneView(group, {
       storeys: [{ name: 'L0' }, { name: 'L1' }],
       objects: {
-        slab0: { storey: 'L0' }, wall0: { storey: 'L0' }, slab1: { storey: 'L1' }, wall1: { storey: 'L1' },
+        slab0: { storey: 'L0' },
+        wall0: { storey: 'L0' },
+        slab1: { storey: 'L1' },
+        wall1: { storey: 'L1' },
       },
     });
     assert.ok(Math.abs(view.floorLevel() - 0) < 1e-6);

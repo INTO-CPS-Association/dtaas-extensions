@@ -112,7 +112,12 @@ export interface Gizmo {
 export function createGizmo(): Gizmo {
   const scene = new Scene();
   const camera = new OrthographicCamera(
-    -HALF_EXTENT, HALF_EXTENT, HALF_EXTENT, -HALF_EXTENT, 0.1, 100,
+    -HALF_EXTENT,
+    HALF_EXTENT,
+    HALF_EXTENT,
+    -HALF_EXTENT,
+    0.1,
+    100,
   );
   const textures: Texture[] = [];
 

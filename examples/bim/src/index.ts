@@ -93,9 +93,4 @@ export {
 
 export { normaliseLibraryPath } from './libraryPath.js';
 
-export {
-  sha256Hex,
-  compareSource,
-  UNKNOWN_HASH,
-  type SourceCheck,
-} from './sourceHash.js';
+export { sha256Hex, compareSource, UNKNOWN_HASH, type SourceCheck } from './sourceHash.js';

@@ -32,9 +32,7 @@ const key = (k: string, target: HTMLElement = document.body) => {
 
 describe('the property tree of an aec model', () => {
   it('sits beside the converted model', () => {
-    expect(treeAddress('lib://common/models/room.glb')).toBe(
-      'lib://common/models/room.json',
-    );
+    expect(treeAddress('lib://common/models/room.glb')).toBe('lib://common/models/room.json');
   });
 
   it('offers only the floors that hold objects, lowest first', () => {
@@ -91,9 +89,7 @@ describe('the options of the aec substrate', () => {
     const context = contextWith();
     expect(handleKey(key('t'), context)).toBe(true);
     expect(context.state.transparent).toBe(true);
-    expect(handleKey(key('t', document.createElement('input')), context)).toBe(
-      false,
-    );
+    expect(handleKey(key('t', document.createElement('input')), context)).toBe(false);
     expect(handleKey(key('z'), context)).toBe(false);
   });
 
@@ -137,10 +133,7 @@ describe('the class legend of an aec model', () => {
   it('lights every object of the class picked in the legend', () => {
     const wall = mesh('IfcWall', 'aaaaaa');
     const base = wall.material;
-    const look = new Appearance(
-      new Map([['w', [wall as never]]]),
-      () => undefined,
-    );
+    const look = new Appearance(new Map([['w', [wall as never]]]), () => undefined);
     look.state.highlightedClass = 'IfcWall';
     look.refresh();
     expect(wall.material).not.toBe(base);

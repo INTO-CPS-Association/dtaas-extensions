@@ -92,7 +92,10 @@ export const SHORTCUTS: Shortcut[] = [
     key: 'm',
     label: 'Heatmap',
     icon: 'heatmap',
-    run: ({ view, bindings, refresh }) => { cycleHeat(view, bindings); refresh(); },
+    run: ({ view, bindings, refresh }) => {
+      cycleHeat(view, bindings);
+      refresh();
+    },
     on: (view) => view.state.heat !== 'off',
     badge: (view) => SCOPE_LABELS[view.state.heat],
   },
@@ -100,21 +103,30 @@ export const SHORTCUTS: Shortcut[] = [
     key: 't',
     label: 'Transparency',
     icon: 'transparency',
-    run: ({ view, refresh }) => { view.state.transparent = !view.state.transparent; refresh(); },
+    run: ({ view, refresh }) => {
+      view.state.transparent = !view.state.transparent;
+      refresh();
+    },
     on: (view) => view.state.transparent,
   },
   {
     key: 'b',
     label: 'Hide Slabs, Roofs And Ceilings',
     icon: 'slabs',
-    run: ({ view, refresh }) => { view.state.slabsHidden = !view.state.slabsHidden; refresh(); },
+    run: ({ view, refresh }) => {
+      view.state.slabsHidden = !view.state.slabsHidden;
+      refresh();
+    },
     on: (view) => view.state.slabsHidden,
   },
   {
     key: 'x',
     label: 'Cut The Floor At Chest Height',
     icon: 'section',
-    run: ({ view, refresh }) => { view.state.sectioned = !view.state.sectioned; refresh(); },
+    run: ({ view, refresh }) => {
+      view.state.sectioned = !view.state.sectioned;
+      refresh();
+    },
     on: (view) => view.state.sectioned,
   },
   {
@@ -128,32 +140,45 @@ export const SHORTCUTS: Shortcut[] = [
       refresh();
     },
     on: (view) => view.state.vertical !== null,
-    badge: (view) => (view.state.vertical === null ? undefined : `Along ${view.state.vertical.toUpperCase()}`),
+    badge: (view) =>
+      view.state.vertical === null ? undefined : `Along ${view.state.vertical.toUpperCase()}`,
   },
   {
     key: 'j',
     label: 'Move The Cut Back',
     icon: 'cutBack',
-    run: ({ view, refresh }) => { view.shiftCut(-1); refresh(); },
+    run: ({ view, refresh }) => {
+      view.shiftCut(-1);
+      refresh();
+    },
   },
   {
     key: 'k',
     label: 'Move The Cut Forward',
     icon: 'cutForward',
-    run: ({ view, refresh }) => { view.shiftCut(1); refresh(); },
+    run: ({ view, refresh }) => {
+      view.shiftCut(1);
+      refresh();
+    },
   },
   {
     key: 'g',
     label: 'Grid',
     icon: 'grid',
-    run: ({ view, refresh }) => { view.state.grid = !view.state.grid; refresh(); },
+    run: ({ view, refresh }) => {
+      view.state.grid = !view.state.grid;
+      refresh();
+    },
     on: (view) => view.state.grid,
   },
   {
     key: 'i',
     label: 'Show The Selection Alone',
     icon: 'isolate',
-    run: ({ view, refresh }) => { view.toggleIsolation(); refresh(); },
+    run: ({ view, refresh }) => {
+      view.toggleIsolation();
+      refresh();
+    },
     on: (view) => view.state.isolated !== null,
   },
   {
@@ -166,31 +191,42 @@ export const SHORTCUTS: Shortcut[] = [
       refresh();
     },
     on: (view) => view.state.measuring !== null,
-    badge: (view) => (view.state.measuring === null ? undefined : MEASURE_LABELS[view.state.measuring]),
+    badge: (view) =>
+      view.state.measuring === null ? undefined : MEASURE_LABELS[view.state.measuring],
   },
   {
     key: 'o',
     label: 'Parallel View, For Plans And Elevations',
     icon: 'parallel',
-    run: ({ view, refresh }) => { view.state.parallel = !view.state.parallel; refresh(); },
+    run: ({ view, refresh }) => {
+      view.state.parallel = !view.state.parallel;
+      refresh();
+    },
     on: (view) => view.state.parallel,
   },
   {
     key: 'l',
     label: 'Shadows',
     icon: 'shadows',
-    run: ({ view, refresh }) => { view.state.shadows = !view.state.shadows; refresh(); },
+    run: ({ view, refresh }) => {
+      view.state.shadows = !view.state.shadows;
+      refresh();
+    },
     on: (view) => view.state.shadows,
     // The canvas draws no shadows while a cut is on, since the shadow map
     // would still hold the roof the cut took away. The button says so instead
     // of looking as if the shadows were there.
-    badge: (view) => (view.state.shadows && view.cutPlanes().length > 0 ? 'Paused By The Cut' : undefined),
+    badge: (view) =>
+      view.state.shadows && view.cutPlanes().length > 0 ? 'Paused By The Cut' : undefined,
   },
   {
     key: 'u',
     label: 'Walk Through, With The Arrow Keys',
     icon: 'walk',
-    run: ({ view, refresh }) => { view.state.walking = !view.state.walking; refresh(); },
+    run: ({ view, refresh }) => {
+      view.state.walking = !view.state.walking;
+      refresh();
+    },
     on: (view) => view.state.walking,
   },
   {
@@ -203,7 +239,8 @@ export const SHORTCUTS: Shortcut[] = [
       refresh();
     },
     on: (view) => view.state.sketching !== null,
-    badge: (view) => (view.state.sketching === null ? undefined : SKETCH_LABELS[view.state.sketching]),
+    badge: (view) =>
+      view.state.sketching === null ? undefined : SKETCH_LABELS[view.state.sketching],
   },
   {
     key: 'y',
@@ -253,7 +290,10 @@ export const SHORTCUTS: Shortcut[] = [
     key: 'w',
     label: 'Bring Back The Last Hidden',
     icon: 'restore',
-    run: ({ view, refresh }) => { view.restoreLastHidden(); refresh(); },
+    run: ({ view, refresh }) => {
+      view.restoreLastHidden();
+      refresh();
+    },
   },
   { key: '1', label: 'Look From Above', icon: 'top', run: ({ look }) => look('top') },
   { key: '2', label: 'Look From The Front', icon: 'front', run: ({ look }) => look('front') },
@@ -273,9 +313,18 @@ export const SHORTCUTS: Shortcut[] = [
     key: 'r',
     label: 'Reset Everything',
     icon: 'reset',
-    run: ({ view, refresh, look }) => { view.reset(); look('corner'); refresh(); },
+    run: ({ view, refresh, look }) => {
+      view.reset();
+      look('corner');
+      refresh();
+    },
   },
-  { key: 'a', label: 'Fullscreen', icon: 'fullscreen', run: ({ toggleFullscreen }) => toggleFullscreen() },
+  {
+    key: 'a',
+    label: 'Fullscreen',
+    icon: 'fullscreen',
+    run: ({ toggleFullscreen }) => toggleFullscreen(),
+  },
   { key: '?', label: 'Shortcuts', icon: 'help', run: ({ toggleHelp }) => toggleHelp() },
 ];
 

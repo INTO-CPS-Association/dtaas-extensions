@@ -9,8 +9,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { objectOf, topicOf, displayOf, idOf, rampColour, RAMP_STOPS }
-  from '../dist/esm/index.js';
+import { objectOf, topicOf, displayOf, idOf, rampColour, RAMP_STOPS } from '../dist/esm/index.js';
 
 /** A binding as `ifc_explorer.manifest` writes it. */
 const FULL = {

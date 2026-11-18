@@ -89,9 +89,7 @@ export function decodeStepString(raw: string): string {
       for (let k = 0; k + width <= hex.length; k += width) {
         units.push(parseInt(hex.slice(k, k + width), 16));
       }
-      out += width === 4
-        ? String.fromCharCode(...units)
-        : String.fromCodePoint(...units);
+      out += width === 4 ? String.fromCharCode(...units) : String.fromCodePoint(...units);
       i = end + 4;
     } else if (raw.startsWith('\\X\\', i)) {
       out += String.fromCharCode(parseInt(raw.slice(i + 3, i + 5), 16));

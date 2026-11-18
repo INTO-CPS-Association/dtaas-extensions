@@ -22,15 +22,17 @@ const GOOD = {
     source_sha256: '60b1b94ee88a2b087080200c3c347edaf2347e768c1accb4b3608c6a129fbb09',
     converter: 'ifc_explorer.to_manifest 0.1.0',
   },
-  bindings: [{
-    selector: { globalId: '0_sgz7bzz4Jh2ckU1ehFe$' },
-    label: 'HX-1 temperature TS-01',
-    source: {
-      live: { transport: 'mqtt', topic: 'swim/DemoBuilding/B1/temperature/TS-01' },
-      history: { bucket: 'swim', measurement: 'temperature' },
+  bindings: [
+    {
+      selector: { globalId: '0_sgz7bzz4Jh2ckU1ehFe$' },
+      label: 'HX-1 temperature TS-01',
+      source: {
+        live: { transport: 'mqtt', topic: 'swim/DemoBuilding/B1/temperature/TS-01' },
+        history: { bucket: 'swim', measurement: 'temperature' },
+      },
+      display: { unit: '°C', ramp: [4, 16] },
     },
-    display: { unit: '°C', ramp: [4, 16] },
-  }],
+  ],
 };
 
 /** The good manifest with one thing changed, so a test says what it changed. */
@@ -79,9 +81,11 @@ test('refuses a selector that names nothing', () => {
 test('refuses a selector that names two things', () => {
   // Two would leave the resolver choosing, and a manifest should not depend on
   // which it chose.
-  const result = readManifest(withBinding({
-    selector: { globalId: '0_sgz7bzz4Jh2ckU1ehFe$', expressId: 42 },
-  }));
+  const result = readManifest(
+    withBinding({
+      selector: { globalId: '0_sgz7bzz4Jh2ckU1ehFe$', expressId: 42 },
+    }),
+  );
 
   assert.equal(result.ok, false);
 });
@@ -101,26 +105,32 @@ test('refuses a GlobalId of the wrong length', () => {
 test('refuses a wildcard topic', () => {
   // A binding names one sensor. A wildcard would bind a marker to whatever
   // else happened to match.
-  const result = readManifest(withBinding({
-    source: { live: { transport: 'mqtt', topic: 'swim/DemoBuilding/#' } },
-  }));
+  const result = readManifest(
+    withBinding({
+      source: { live: { transport: 'mqtt', topic: 'swim/DemoBuilding/#' } },
+    }),
+  );
 
   assert.equal(result.ok, false);
   assert.match(result.problems[0].message, /wildcard/);
 });
 
 test('refuses a single-level wildcard topic', () => {
-  const result = readManifest(withBinding({
-    source: { live: { transport: 'mqtt', topic: 'swim/+/temperature' } },
-  }));
+  const result = readManifest(
+    withBinding({
+      source: { live: { transport: 'mqtt', topic: 'swim/+/temperature' } },
+    }),
+  );
   assert.equal(result.ok, false);
   assert.match(result.problems[0].message, /wildcard/);
 });
 
 test('refuses a topic with a leading slash', () => {
-  const result = readManifest(withBinding({
-    source: { live: { transport: 'mqtt', topic: '/swim/x' } },
-  }));
+  const result = readManifest(
+    withBinding({
+      source: { live: { transport: 'mqtt', topic: '/swim/x' } },
+    }),
+  );
 
   assert.equal(result.ok, false);
 });
@@ -128,9 +138,11 @@ test('refuses a topic with a leading slash', () => {
 test('accepts a binding with history and no live source', () => {
   // Charting is not reimplemented in the 3D view, so a binding may exist for
   // the panel behind a click and never carry a current value.
-  const result = readManifest(withBinding({
-    source: { history: { bucket: 'swim', measurement: 'temperature' } },
-  }));
+  const result = readManifest(
+    withBinding({
+      source: { history: { bucket: 'swim', measurement: 'temperature' } },
+    }),
+  );
 
   assert.equal(result.ok, true);
 });
@@ -145,12 +157,16 @@ test('requires the source hash', () => {
 
 test('accepts unknown as a hash, since a generator may not have read the file', () => {
   assert.equal(
-    readManifest({ ...GOOD, model: { ...GOOD.model, source_sha256: 'unknown' } }).ok, true);
+    readManifest({ ...GOOD, model: { ...GOOD.model, source_sha256: 'unknown' } }).ok,
+    true,
+  );
 });
 
 test('refuses a hash that is not a SHA-256', () => {
   assert.equal(
-    readManifest({ ...GOOD, model: { ...GOOD.model, source_sha256: 'not-a-hash' } }).ok, false);
+    readManifest({ ...GOOD, model: { ...GOOD.model, source_sha256: 'not-a-hash' } }).ok,
+    false,
+  );
 });
 
 test('carries the proposed flag through, so the viewer can say so', () => {

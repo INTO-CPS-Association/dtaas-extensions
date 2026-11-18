@@ -11,12 +11,7 @@ import { NO_READING_COLOUR } from './aecMarkers.js';
 import type { AecScene } from './aecScene.js';
 import { handleKey, type OptionContext } from './aecShortcuts.js';
 import { storeysOf } from './aecTree.js';
-import {
-  changes,
-  mountOverlay,
-  type OverlayModel,
-  type ThemeRoot,
-} from './aecOverlay.js';
+import { changes, mountOverlay, type OverlayModel, type ThemeRoot } from './aecOverlay.js';
 
 export interface Controls {
   /** Give a marker the colour an encoding computed, as the heatmap allows. */
@@ -181,11 +176,7 @@ function missingReporter(model: ReturnType<typeof modelOf>) {
 }
 
 /** Put the controls around the canvas and connect them to the scene. */
-export function addControls(
-  view: AecScene,
-  rows: PaneRows,
-  Theme?: ThemeRoot,
-): Controls {
+export function addControls(view: AecScene, rows: PaneRows, Theme?: ThemeRoot): Controls {
   const colours = new MarkerColours();
   const model = modelOf(view, colours);
   const unmount = mountOverlay(rows.above, rows.below, model, Theme);

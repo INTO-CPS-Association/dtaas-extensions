@@ -10,7 +10,11 @@ import { Box, Card, CardActionArea, Chip, Stack, Tooltip, Typography } from '@mu
 import { alertCounts, alertsOf, valueText } from '../alerts.js';
 import { idOf, objectOf, type Binding } from '../binding.js';
 import {
-  ageText, isLive, DEFAULT_STALE_AFTER_S, type FeedState, type Reading,
+  ageText,
+  isLive,
+  DEFAULT_STALE_AFTER_S,
+  type FeedState,
+  type Reading,
 } from '../readings.js';
 
 export interface SensorCardsProps {
@@ -29,7 +33,12 @@ export interface SensorCardsProps {
 }
 
 export function SensorCards({
-  bindings, readings, feed, selected, onSelect, staleAfter = DEFAULT_STALE_AFTER_S,
+  bindings,
+  readings,
+  feed,
+  selected,
+  onSelect,
+  staleAfter = DEFAULT_STALE_AFTER_S,
 }: Readonly<SensorCardsProps>) {
   // Most architectural models declare no sensors, so this is the ordinary case
   // and not a failure. An explanation of it on every such model is a paragraph
@@ -52,11 +61,7 @@ export function SensorCards({
             />
           )}
           {counts.note > 0 && (
-            <Chip
-              size="small"
-              variant="outlined"
-              label={`${counts.note} not measured directly`}
-            />
+            <Chip size="small" variant="outlined" label={`${counts.note} not measured directly`} />
           )}
         </Stack>
       )}
@@ -82,9 +87,7 @@ export function SensorCards({
             >
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
                 <Typography variant="subtitle2">{idOf(binding)}</Typography>
-                <Typography variant="subtitle2">
-                  {valueText(binding, reading)}
-                </Typography>
+                <Typography variant="subtitle2">{valueText(binding, reading)}</Typography>
               </Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
                 {binding.label}

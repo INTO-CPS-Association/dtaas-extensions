@@ -33,9 +33,9 @@ export async function readJson<T>(response: Response, url: string): Promise<T> {
   const type = response.headers.get('content-type') ?? '';
   if (!type.includes('json')) {
     throw new Error(
-      `The workspace returned a web page instead of data at ${url}. That `
-      + 'address carries the name of the signed-in user, and a workspace '
-      + 'served under a different name is what this looks like.',
+      `The workspace returned a web page instead of data at ${url}. That ` +
+        'address carries the name of the signed-in user, and a workspace ' +
+        'served under a different name is what this looks like.',
     );
   }
   return response.json() as Promise<T>;

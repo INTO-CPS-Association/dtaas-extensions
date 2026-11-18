@@ -75,9 +75,8 @@ export function ageText(
   if (age === null) return 'no message yet';
 
   const seconds = Math.max(0, Math.round(age));
-  const when = seconds < MINUTES_ABOVE_S
-    ? `${seconds} s ago`
-    : `${Math.round(seconds / 60)} min ago`;
+  const when =
+    seconds < MINUTES_ABOVE_S ? `${seconds} s ago` : `${Math.round(seconds / 60)} min ago`;
   return isLive(reading, feed, staleAfter, now)
     ? `updated ${when}`
     : `last message ${when}, not live`;

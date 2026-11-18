@@ -38,9 +38,8 @@ export async function exportGlb(model: Object3D): Promise<Uint8Array> {
     new GLTFExporter().parse(
       model,
       (result) => resolve(new Uint8Array(result as ArrayBuffer)),
-      (error) => reject(
-        error instanceof Error ? error : new Error('the geometry could not be exported'),
-      ),
+      (error) =>
+        reject(error instanceof Error ? error : new Error('the geometry could not be exported')),
       { binary: true, onlyVisible: false },
     );
   });

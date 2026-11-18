@@ -67,7 +67,6 @@ const MANIFEST = '.manifest.json';
  */
 export const MODELS_DIRECTORY = 'common/models';
 
-
 function stemOf(name: string, suffix: string): string {
   return name.slice(0, name.length - suffix.length);
 }
@@ -161,10 +160,7 @@ export function fileUrl(libraryUrl: string, path: string): string {
  *
  * Never rejects: a model whose name cannot be read is shown by its file name.
  */
-export async function readIfcName(
-  libraryUrl: string,
-  ifcPath: string,
-): Promise<string | null> {
+export async function readIfcName(libraryUrl: string, ifcPath: string): Promise<string | null> {
   try {
     const response = await fetch(fileUrl(libraryUrl, ifcPath), {
       credentials: 'include',
@@ -216,9 +212,7 @@ async function readHead(response: Response, limit: number): Promise<string> {
  * thing that tells them apart. So a shared name is dropped for every file that
  * gives it, and each keeps its file name.
  */
-export function uniqueNames(
-  names: ReadonlyMap<string, string | null>,
-): Map<string, string> {
+export function uniqueNames(names: ReadonlyMap<string, string | null>): Map<string, string> {
   const counts = new Map<string, number>();
   names.forEach((name) => {
     if (name) counts.set(name, (counts.get(name) ?? 0) + 1);

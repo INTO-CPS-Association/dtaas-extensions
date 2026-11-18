@@ -8,8 +8,20 @@
 
 import { useState } from 'react';
 import {
-  Box, Button, Chip, Dialog, DialogContent, DialogTitle, IconButton, Paper, Stack,
-  Table, TableBody, TableCell, TableRow, Typography,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -94,9 +106,7 @@ function Row({ name, value }: Readonly<{ name: string; value: unknown }>) {
       <TableCell sx={{ width: { xs: 96, sm: 160 }, color: 'text.secondary', border: 0, py: 0.3 }}>
         {name}
       </TableCell>
-      <TableCell sx={{ border: 0, py: 0.3, wordBreak: 'break-word' }}>
-        {text}
-      </TableCell>
+      <TableCell sx={{ border: 0, py: 0.3, wordBreak: 'break-word' }}>{text}</TableCell>
       <TableCell sx={{ border: 0, py: 0, px: 0, width: 44 }}>
         <IconButton
           size="small"
@@ -114,7 +124,11 @@ function Row({ name, value }: Readonly<{ name: string; value: unknown }>) {
 }
 
 export function ObjectPanel({
-  globalId, facts, binding, properties, size,
+  globalId,
+  facts,
+  binding,
+  properties,
+  size,
 }: Readonly<ObjectPanelProps>) {
   const [open, setOpen] = useState(false);
   const sets = Object.entries(properties ?? {});

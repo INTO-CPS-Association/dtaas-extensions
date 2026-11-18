@@ -20,7 +20,7 @@ export const FLIGHT_MS = 600;
 export function ease(t: number): number {
   if (t <= 0) return 0;
   if (t >= 1) return 1;
-  return t < 0.5 ? 4 * t * t * t : 1 - ((-2 * t + 2) ** 3) / 2;
+  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
 }
 
 /** The part of the orbit controls a flight moves, so a test can pass a plain object. */
@@ -41,8 +41,10 @@ export interface Flight {
 
 /** Whether the person asked their system to reduce motion. */
 export function prefersReducedMotion(): boolean {
-  return typeof globalThis.matchMedia === 'function'
-    && globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return (
+    typeof globalThis.matchMedia === 'function' &&
+    globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 }
 
 export function createFlight(
@@ -86,10 +88,7 @@ export function createFlight(
     step(now) {
       if (!active) return false;
       const t = ease((now - start) / durationMs);
-      put(
-        from.position.clone().lerp(to.position, t),
-        from.target.clone().lerp(to.target, t),
-      );
+      put(from.position.clone().lerp(to.position, t), from.target.clone().lerp(to.target, t));
       if (t >= 1) active = false;
       return active;
     },

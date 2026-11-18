@@ -17,8 +17,14 @@ export interface Seed {
 
 const DIAGONAL = Math.SQRT2;
 const STEPS: ReadonlyArray<readonly [number, number, number]> = [
-  [1, 0, 1], [-1, 0, 1], [0, 1, 1], [0, -1, 1],
-  [1, 1, DIAGONAL], [1, -1, DIAGONAL], [-1, 1, DIAGONAL], [-1, -1, DIAGONAL],
+  [1, 0, 1],
+  [-1, 0, 1],
+  [0, 1, 1],
+  [0, -1, 1],
+  [1, 1, DIAGONAL],
+  [1, -1, DIAGONAL],
+  [-1, 1, DIAGONAL],
+  [-1, -1, DIAGONAL],
 ];
 
 /** A binary heap of cells ordered by distance, smallest first. */

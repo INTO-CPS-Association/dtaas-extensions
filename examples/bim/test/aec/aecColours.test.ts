@@ -33,9 +33,7 @@ describe('the marker colours of the aec substrate', () => {
     colours.cycle();
     expect(colours.badge()).toBe('heat 18 to 30');
     expect(colours.colourOf('a')).toBe('#f00');
-    expect(colours.shown()).toEqual([
-      { key: 'heat 18 to 30', scheme: 'heat', domain: [18, 30] },
-    ]);
+    expect(colours.shown()).toEqual([{ key: 'heat 18 to 30', scheme: 'heat', domain: [18, 30] }]);
     expect(colours.countOf(colours.quantities[0])).toBe(2);
     colours.cycle();
     expect(colours.colourOf('b')).toBeUndefined();

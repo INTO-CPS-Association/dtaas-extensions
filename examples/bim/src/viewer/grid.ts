@@ -55,7 +55,10 @@ export function createGrid(scene: Scene, model: Object3D): Grid {
 
   const minor = new GridHelper(span, span / GRID_CELL_M, MINOR_COLOUR, MINOR_COLOUR);
   const major = new GridHelper(
-    span, span / (GRID_CELL_M * GRID_MAJOR_EVERY), MAJOR_COLOUR, MAJOR_COLOUR,
+    span,
+    span / (GRID_CELL_M * GRID_MAJOR_EVERY),
+    MAJOR_COLOUR,
+    MAJOR_COLOUR,
   );
   const lines = [minor, major];
   for (const helper of lines) {

@@ -4,18 +4,14 @@ import createAecSubstrate from 'src/aec/aecSubstrate';
 
 describe('the aec substrate', () => {
   it('reads a bare IFC name as the GLB beside it in the models folder', () => {
-    expect(modelAddress('room.ifc', 'common/models')).toBe(
-      'lib://common/models/room.glb',
-    );
+    expect(modelAddress('room.ifc', 'common/models')).toBe('lib://common/models/room.glb');
   });
 
   it('uses a lib:// or web address as it is', () => {
     expect(modelAddress('lib://digital_twins/x/room.glb', 'm')).toBe(
       'lib://digital_twins/x/room.glb',
     );
-    expect(modelAddress('https://example.org/room.glb', 'm')).toBe(
-      'https://example.org/room.glb',
-    );
+    expect(modelAddress('https://example.org/room.glb', 'm')).toBe('https://example.org/room.glb');
   });
 
   it('refuses a model name that could leave the models folder', () => {
@@ -37,9 +33,9 @@ describe('the aec substrate', () => {
 
   it('refuses to mount without a model, and resolves nothing before one', async () => {
     const adapter = createAecSubstrate(fakeHostServices());
-    await expect(
-      adapter.mount(document.createElement('div'), { adapter: 'aec' }),
-    ).rejects.toThrow('needs a model');
+    await expect(adapter.mount(document.createElement('div'), { adapter: 'aec' })).rejects.toThrow(
+      'needs a model',
+    );
     const anchor = { signalPath: 'a/b', kind: 'ifc-guid', ref: 'x' };
     expect(adapter.resolve(anchor)).toBeNull();
     expect(adapter.pick(0, 0)).toBeNull();

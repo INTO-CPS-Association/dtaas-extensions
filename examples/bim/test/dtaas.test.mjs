@@ -34,11 +34,16 @@ test('the extension passes the conformance harness and logs that it is ready', a
   const host = fakeHostServices({ extensionId: 'bim' });
   const report = await checkConformance(extension, { host, timeoutMs: 10_000 });
   assert.deepEqual(report, { passed: true, errors: [] });
-  assert.ok(host.recorded.logs.some(({ level, args }) => level === 'info' && args[0] === 'bim ready'));
+  assert.ok(
+    host.recorded.logs.some(({ level, args }) => level === 'info' && args[0] === 'bim ready'),
+  );
 });
 
 test('an empty models directory in the configuration fails setup', async () => {
-  const host = fakeHostServices({ extensionId: 'bim', env: { REACT_APP_EXT_BIM_MODELS_DIRECTORY: '' } });
+  const host = fakeHostServices({
+    extensionId: 'bim',
+    env: { REACT_APP_EXT_BIM_MODELS_DIRECTORY: '' },
+  });
   const report = await checkConformance(extension, { host });
   assert.equal(report.passed, false);
   assert.match(report.errors[0], /^setup\(\) failed: Invalid configuration for extension "bim"/);
@@ -129,7 +134,13 @@ test('a store the host refuses is logged and passed on to the page', async () =>
   const refused = new Error('read-only');
   const host = fakeHostServices({
     extensionId: 'bim',
-    overrides: { contents: { put: async () => { throw refused; } } },
+    overrides: {
+      contents: {
+        put: async () => {
+          throw refused;
+        },
+      },
+    },
   });
   await assert.rejects(persistGeometry(host)(HOUSE, new Uint8Array()), refused);
   assert.ok(host.recorded.logs.some(({ level }) => level === 'warn'));

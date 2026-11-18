@@ -8,7 +8,13 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { BoxGeometry, Mesh, MeshStandardMaterial, Vector3 } from 'three';
-import { buildField, sourceAt, planAngle, CELL_M, MIN_ROOM_CELLS } from '../dist/esm/viewer/index.js';
+import {
+  buildField,
+  sourceAt,
+  planAngle,
+  CELL_M,
+  MIN_ROOM_CELLS,
+} from '../dist/esm/viewer/index.js';
 import { walkOwners } from '../dist/esm/viewer/walk.js';
 
 /** A box of the given size, centred on the given point, of the given IFC class. */
@@ -162,7 +168,11 @@ describe('a plan at an angle to the world axes', () => {
   test('a door in a turned plan lets it through', () => {
     const [lx, lz] = turnedPoint(ANGLE, 5, 5);
     const [rx, rz] = turnedPoint(ANGLE, 15, 5);
-    const field = buildField(turned(twoRooms({ door: true }), ANGLE), [new Vector3(lx, 1.2, lz)], 0);
+    const field = buildField(
+      turned(twoRooms({ door: true }), ANGLE),
+      [new Vector3(lx, 1.2, lz)],
+      0,
+    );
 
     assert.equal(sourceAt(field, rx, rz), 0);
   });
@@ -171,9 +181,18 @@ describe('a plan at an angle to the world axes', () => {
     // The skew showed most near the walls, so the points are 0.5 m from them.
     const plan = turned(twoRooms(), ANGLE);
     const sensors = [turnedPoint(ANGLE, 5, 5), turnedPoint(ANGLE, 15, 5)];
-    const field = buildField(plan, sensors.map(([x, z]) => new Vector3(x, 1.2, z)), 0);
+    const field = buildField(
+      plan,
+      sensors.map(([x, z]) => new Vector3(x, 1.2, z)),
+      0,
+    );
 
-    for (const [x, z, owner] of [[9.5, 0.5, 0], [9.5, 9.5, 0], [10.5, 0.5, 1], [10.5, 9.5, 1]]) {
+    for (const [x, z, owner] of [
+      [9.5, 0.5, 0],
+      [9.5, 9.5, 0],
+      [10.5, 0.5, 1],
+      [10.5, 9.5, 1],
+    ]) {
       assert.equal(sourceAt(field, ...turnedPoint(ANGLE, x, z)), owner, `at ${x}, ${z}`);
     }
   });

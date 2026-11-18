@@ -15,18 +15,20 @@ export interface ModelRoute {
 }
 
 /** `/` stays readable in the query, and everything else is encoded. */
-const withDir = (path: string, directory: string) => (
-  `${path}?dir=${encodeURIComponent(directory).replace(/%2F/g, '/')}`
-);
+const withDir = (path: string, directory: string) =>
+  `${path}?dir=${encodeURIComponent(directory).replace(/%2F/g, '/')}`;
 
 /** The two navigation actions, kept apart so each hook stays short. */
 function useSelectors(directory: string | null) {
   const navigate = useNavigate();
-  const selectModel = useCallback((name: string) => {
-    if (directory !== null) {
-      navigate(withDir(`${BIM_ROOT}/models/${encodeURIComponent(name)}`, directory));
-    }
-  }, [directory, navigate]);
+  const selectModel = useCallback(
+    (name: string) => {
+      if (directory !== null) {
+        navigate(withDir(`${BIM_ROOT}/models/${encodeURIComponent(name)}`, directory));
+      }
+    },
+    [directory, navigate],
+  );
   const selectDirectory = useCallback(
     (path: string) => navigate(withDir(BIM_ROOT, path)),
     [navigate],

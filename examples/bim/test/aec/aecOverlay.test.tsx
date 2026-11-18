@@ -28,12 +28,8 @@ describe('the toolbar of the aec substrate', () => {
   it('has one button per option, in order, each printing its key', () => {
     render(<Toolbar context={contextWith()} />);
     const buttons = screen.getAllByRole('button');
-    expect(buttons.map((b) => b.getAttribute('aria-label'))).toEqual(
-      OPTIONS.map((o) => o.label),
-    );
-    expect(buttons.map((b) => b.textContent)).toEqual(
-      OPTIONS.map((o) => o.key),
-    );
+    expect(buttons.map((b) => b.getAttribute('aria-label'))).toEqual(OPTIONS.map((o) => o.label));
+    expect(buttons.map((b) => b.textContent)).toEqual(OPTIONS.map((o) => o.key));
   });
 
   it('draws a toggle that is on as selected and runs it on a click', () => {
@@ -50,9 +46,7 @@ describe('the toolbar of the aec substrate', () => {
     const context = contextWith();
     context.colours.record('a', { type: 'attention' } as Encoding, '#f00');
     render(<Toolbar context={context} />);
-    expect(screen.getByRole('button', { name: 'Heatmap' })).toHaveTextContent(
-      'mAll',
-    );
+    expect(screen.getByRole('button', { name: 'Heatmap' })).toHaveTextContent('mAll');
   });
 });
 
@@ -66,12 +60,8 @@ describe('the floor picker of the aec substrate', () => {
 
   it('steps through the floors with its arrows', () => {
     const onChange = jest.fn();
-    render(
-      <FloorPicker storeys={['L1', 'L2']} current="L1" onChange={onChange} />,
-    );
-    expect(
-      screen.getByRole('button', { name: 'The floor below' }),
-    ).toBeDisabled();
+    render(<FloorPicker storeys={['L1', 'L2']} current="L1" onChange={onChange} />);
+    expect(screen.getByRole('button', { name: 'The floor below' })).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: 'The floor above' }));
     expect(onChange).toHaveBeenCalledWith('L2');
   });
@@ -130,9 +120,7 @@ describe('the legends of the aec substrate', () => {
   it('lights a class from its row', () => {
     const onPick = jest.fn();
     const classes = [{ ifcClass: 'IfcWall', colour: '#aaa', count: 2 }];
-    render(
-      <ClassLegend classes={classes} highlighted={null} onPick={onPick} />,
-    );
+    render(<ClassLegend classes={classes} highlighted={null} onPick={onPick} />);
     fireEvent.click(screen.getByText('Wall'));
     expect(onPick).toHaveBeenCalledWith('IfcWall');
   });
@@ -140,18 +128,13 @@ describe('the legends of the aec substrate', () => {
   it('lists every key in the help', () => {
     render(<HelpPanel open onClose={jest.fn()} />);
     const help = screen.getByRole('dialog');
-    OPTIONS.forEach((o) =>
-      expect(within(help).getAllByText(o.label)[0]).toBeTruthy(),
-    );
+    OPTIONS.forEach((o) => expect(within(help).getAllByText(o.label)[0]).toBeTruthy());
   });
 });
 
 describe('the overlay of the aec substrate', () => {
   it('puts the toolbar above the canvas and the panels below it', async () => {
-    const [above, below] = [
-      document.createElement('div'),
-      document.createElement('div'),
-    ];
+    const [above, below] = [document.createElement('div'), document.createElement('div')];
     document.body.append(above, below);
     const counter = changes();
     const model = {
@@ -201,9 +184,7 @@ describe('the overlay of the aec substrate', () => {
       unmount = mountOverlay(above, below, model, Theme);
     });
     const themed = within(above).getByRole('region', { name: 'Host theme' });
-    expect(
-      within(themed).getByRole('button', { name: 'Heatmap' }),
-    ).toBeTruthy();
+    expect(within(themed).getByRole('button', { name: 'Heatmap' })).toBeTruthy();
     await act(async () => {
       unmount();
       await Promise.resolve();

@@ -23,9 +23,24 @@ const SUBSTATION = {
     geometry: 'substation.glb',
   },
   bindings: [
-    { selector: { globalId: '0_sgz7bzz4Jh2ckU1ehFe$' }, label: 'HX-1 supply', source: live('swim/hx1/supply'), display: celsius },
-    { selector: { globalId: '1yETHMphv6LwABqR4Pbs5g' }, label: 'HX-1 probe', source: live('swim/hx1/supply'), display: celsius },
-    { selector: { nodeName: 'Pump-2' }, label: 'Pump-2 flow', source: live('swim/p2/flow'), display: { unit: 'L/min', ramp: [0, 200] } },
+    {
+      selector: { globalId: '0_sgz7bzz4Jh2ckU1ehFe$' },
+      label: 'HX-1 supply',
+      source: live('swim/hx1/supply'),
+      display: celsius,
+    },
+    {
+      selector: { globalId: '1yETHMphv6LwABqR4Pbs5g' },
+      label: 'HX-1 probe',
+      source: live('swim/hx1/supply'),
+      display: celsius,
+    },
+    {
+      selector: { nodeName: 'Pump-2' },
+      label: 'Pump-2 flow',
+      source: live('swim/p2/flow'),
+      display: { unit: 'L/min', ramp: [0, 200] },
+    },
     {
       selector: { globalId: '2O2Fr$t4X7Zf8NOew3FLOH' },
       label: 'HX-1 return',
@@ -61,23 +76,35 @@ test('every binding with a GlobalId and a live topic becomes an ifc-guid anchor'
 test('one mqtt transport names each topic once, and one colour scale follows each ramp', () => {
   const { asset } = manifestToVisualisation(manifest(), OPTIONS);
   assert.deepEqual(asset.transports, [
-    { adapter: 'mqtt', url: 'wss://broker.example/ws', topics: ['swim/hx1/supply'], channel: 'measured' },
+    {
+      adapter: 'mqtt',
+      url: 'wss://broker.example/ws',
+      topics: ['swim/hx1/supply'],
+      channel: 'measured',
+    },
   ]);
-  assert.deepEqual(asset.encodings.map(({ target, encoding }) => [target, encoding.domain]), [
-    ['swim/hx1/supply', [4, 16]],
-  ]);
+  assert.deepEqual(
+    asset.encodings.map(({ target, encoding }) => [target, encoding.domain]),
+    [['swim/hx1/supply', [4, 16]]],
+  );
 });
 
 test('a binding that cannot be anchored is returned with its reason', () => {
   const { skipped } = manifestToVisualisation(manifest(), OPTIONS);
-  assert.deepEqual(skipped.map(({ reason }) => reason), [
-    'no GlobalId: ifc-guid anchors need one',
-    'no live topic: history-only bindings have nothing to anchor',
-  ]);
+  assert.deepEqual(
+    skipped.map(({ reason }) => reason),
+    [
+      'no GlobalId: ifc-guid anchors need one',
+      'no live topic: history-only bindings have nothing to anchor',
+    ],
+  );
 });
 
 test('a model with no converted geometry is drawn from its IFC file, with no transport', () => {
-  const raw = { model: { source: 'raw.ifc', source_sha256: 'unknown', converter: 'test' }, bindings: [] };
+  const raw = {
+    model: { source: 'raw.ifc', source_sha256: 'unknown', converter: 'test' },
+    bindings: [],
+  };
   const { asset } = manifestToVisualisation(raw, OPTIONS);
   assert.equal(asset.substrates.building.source, 'raw.ifc');
   assert.deepEqual(asset.transports, []);

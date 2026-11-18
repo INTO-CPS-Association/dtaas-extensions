@@ -63,9 +63,7 @@ describe('the markers of the aec substrate', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest
-      .spyOn(HTMLCanvasElement.prototype, 'getContext')
-      .mockReturnValue(context as never);
+    jest.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(context as never);
     mockCentre = { x: 0, y: 0, z: 0 };
   });
 

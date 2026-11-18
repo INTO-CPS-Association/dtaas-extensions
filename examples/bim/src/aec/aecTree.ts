@@ -46,9 +46,7 @@ export async function loadTree(url: string): Promise<PropertyTree> {
  */
 export function storeysOf(tree: PropertyTree): string[] {
   const used = new Set(
-    Object.values(tree.objects ?? {}).flatMap((facts) =>
-      facts.storey ? [facts.storey] : [],
-    ),
+    Object.values(tree.objects ?? {}).flatMap((facts) => (facts.storey ? [facts.storey] : [])),
   );
   const ordered = [...(tree.storeys ?? [])]
     .sort((a, b) => (a.elevation_m ?? 0) - (b.elevation_m ?? 0))

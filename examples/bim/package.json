@@ -51,15 +51,34 @@
       "default": "./dist/esm/dtaas/index.js"
     }
   },
+  "files": [
+    "dist",
+    "LICENSE.md",
+    "CHANGELOG.md",
+    "THIRD-PARTY-NOTICES.md"
+  ],
   "scripts": {
     "sdk": "node scripts/install-sdk.mjs",
     "wasm": "node scripts/inline-wasm.mjs",
     "build": "node scripts/clean.mjs && yarn wasm && tsc -p tsconfig.esm.json",
     "build:kit": "yarn wasm && vite build",
     "typecheck": "yarn wasm && tsc -p tsconfig.esm.json --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
     "test:node": "yarn build && node --test --experimental-test-module-mocks 'test/*.test.mjs'",
     "test:jest": "yarn wasm && jest",
-    "test": "yarn test:node && yarn test:jest"
+    "test": "yarn test:node && yarn test:jest",
+    "test:node:coverage": "yarn build && node --test --experimental-test-module-mocks --experimental-test-coverage --test-coverage-include='dist/esm/**/*.js' --test-coverage-exclude='dist/esm/generated/**' --test-coverage-lines=86 --test-coverage-branches=94 --test-coverage-functions=92 'test/*.test.mjs'",
+    "test:jest:coverage": "yarn wasm && jest --coverage",
+    "test:coverage": "yarn test:node:coverage && yarn test:jest:coverage",
+    "test:e2e": "yarn build && node test/e2e/smoke-package.mjs"
+  },
+  "// test:coverage": "The Node test runner measures dist/esm, which its tests import, and Jest measures src/aec, which its tests import. The thresholds sit at or just below what the code reaches now.",
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "printWidth": 100
   },
   "dependencies": {
     "web-ifc": "0.0.77"
@@ -100,6 +119,7 @@
   "devDependencies": {
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
+    "@eslint/js": "10.0.1",
     "@mui/icons-material": "9.4.0",
     "@mui/material": "9.4.0",
     "@testing-library/dom": "10.4.1",
@@ -110,9 +130,16 @@
     "@types/node": "26.6.3",
     "@types/react": "19.3.0",
     "@types/three": "0.186.0",
+    "@typescript-eslint/eslint-plugin": "8.64.0",
+    "@typescript-eslint/parser": "8.64.0",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "globals": "17.7.0",
     "jest": "30.5.2",
     "jest-environment-jsdom": "30.5.2",
     "jsdom": "30.0.1",
+    "prettier": "3.9.5",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-router-dom": "7.18.4",

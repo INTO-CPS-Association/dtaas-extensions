@@ -128,12 +128,14 @@ function turn(m: ArrayLike<number>, x: number, y: number, z: number): [number, n
  * the module anyway. That is the case the tests run in.
  */
 function browserCarriesTheParser(): boolean {
-  return typeof Blob === 'function'
-    && typeof URL !== 'undefined'
-    && typeof URL.createObjectURL === 'function'
+  return (
+    typeof Blob === 'function' &&
+    typeof URL !== 'undefined' &&
+    typeof URL.createObjectURL === 'function' &&
     // `process` is how a Node runtime announces itself, and it is read
     // through globalThis so this file needs no Node type definitions.
-    && (globalThis as { process?: unknown }).process === undefined;
+    (globalThis as { process?: unknown }).process === undefined
+  );
 }
 
 /**
@@ -186,9 +188,7 @@ function readPiece(api: IfcAPI, model: number, placed: PlacedGeometry): Piece | 
 
     // Alpha is a coverage fraction and not a colour, so it stays as it is.
     const { x, y, z, w } = placed.color;
-    const colour: [number, number, number, number] = [
-      toLinear(x), toLinear(y), toLinear(z), w,
-    ];
+    const colour: [number, number, number, number] = [toLinear(x), toLinear(y), toLinear(z), w];
     return { positions, normals, indices: Array.from(indices), colour };
   } finally {
     geometry.delete();
@@ -260,8 +260,7 @@ export async function convertIfc(
         globalId,
         // The mesh carries the express id, not the entity type, so the type
         // is asked for separately and turned into the name a person reads.
-        ifcClass: api.GetNameFromTypeCode(api.GetLineType(model, mesh.expressID))
-          || 'IfcProduct',
+        ifcClass: api.GetNameFromTypeCode(api.GetLineType(model, mesh.expressID)) || 'IfcProduct',
         name: line?.Name?.value,
         positions: new Float32Array(positions),
         normals: new Float32Array(normals),

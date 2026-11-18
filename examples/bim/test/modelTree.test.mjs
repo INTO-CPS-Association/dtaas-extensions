@@ -11,13 +11,23 @@ import React from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { BoxGeometry, Group, Mesh, MeshStandardMaterial } from 'three';
 import {
-  NO_FLOOR, SceneView, groupEntries, matches, readableClass,
+  NO_FLOOR,
+  SceneView,
+  groupEntries,
+  matches,
+  readableClass,
 } from '../dist/esm/viewer/index.js';
 import { MAX_ROWS, ModelTree } from '../dist/esm/react/ModelTree.js';
 
 afterEach(cleanup);
 
-const entry = (globalId, name, ifcClass, storey, values = []) => ({ globalId, name, ifcClass, storey, values });
+const entry = (globalId, name, ifcClass, storey, values = []) => ({
+  globalId,
+  name,
+  ifcClass,
+  storey,
+  values,
+});
 
 const ENTRIES = [
   entry('d1', 'Front Door', 'IfcDoor', 'L1', ['EI60']),
@@ -28,7 +38,9 @@ const ENTRIES = [
 
 describe('groupEntries on a large model', () => {
   test('groups forty thousand objects of one class in well under a second', () => {
-    const many = Array.from({ length: 40000 }, (_, i) => entry(`g${i}`, `Wall ${i}`, 'IfcWall', 'L1'));
+    const many = Array.from({ length: 40000 }, (_, i) =>
+      entry(`g${i}`, `Wall ${i}`, 'IfcWall', 'L1'),
+    );
     const started = performance.now();
     const groups = groupEntries(many, 'class', 'wall');
     const took = performance.now() - started;
@@ -61,26 +73,44 @@ describe('matches', () => {
 describe('groupEntries', () => {
   test('by floor follows the building, lowest first, objects without one last', () => {
     const groups = groupEntries(ENTRIES, 'storey', '', ['L1', 'L2']);
-    assert.deepEqual(groups.map((group) => group.title), ['L1', 'L2', NO_FLOOR]);
-    assert.deepEqual(groups[0].entries.map((e) => e.name), ['Front Door', 'Wall A']);
+    assert.deepEqual(
+      groups.map((group) => group.title),
+      ['L1', 'L2', NO_FLOOR],
+    );
+    assert.deepEqual(
+      groups[0].entries.map((e) => e.name),
+      ['Front Door', 'Wall A'],
+    );
   });
 
   test('by class is alphabetical and names the classes as a person reads them', () => {
     const groups = groupEntries(ENTRIES, 'class');
-    assert.deepEqual(groups.map((group) => group.title), ['Door', 'Site', 'Wall Standard Case']);
+    assert.deepEqual(
+      groups.map((group) => group.title),
+      ['Door', 'Site', 'Wall Standard Case'],
+    );
   });
 
   test('keeps only what the search finds, and drops a group left empty', () => {
     const groups = groupEntries(ENTRIES, 'storey', 'wall', ['L1', 'L2']);
-    assert.deepEqual(groups.map((group) => group.title), ['L1', 'L2']);
-    assert.deepEqual(groups[0].entries.map((e) => e.globalId), ['w1']);
+    assert.deepEqual(
+      groups.map((group) => group.title),
+      ['L1', 'L2'],
+    );
+    assert.deepEqual(
+      groups[0].entries.map((e) => e.globalId),
+      ['w1'],
+    );
   });
 });
 
 describe('SceneView.entries', () => {
   test('takes the name and class from the tree and the floor from the tree or the band', () => {
     const group = new Group();
-    for (const [id, y] of [['a', 0], ['b', 3.2]]) {
+    for (const [id, y] of [
+      ['a', 0],
+      ['b', 3.2],
+    ]) {
       const mesh = new Mesh(new BoxGeometry(1, 3, 1), new MeshStandardMaterial());
       mesh.position.set(0, y + 1.5, 0);
       mesh.userData.globalId = id;
@@ -92,13 +122,22 @@ describe('SceneView.entries', () => {
     const view = new SceneView(group, {
       storeys: [{ name: 'L1' }, { name: 'L2' }],
       objects: {
-        a: { name: 'Wall A', ifcClass: 'IfcWallStandardCase', storey: 'L1', properties: { Pset: { FireRating: 'EI60' } } },
+        a: {
+          name: 'Wall A',
+          ifcClass: 'IfcWallStandardCase',
+          storey: 'L1',
+          properties: { Pset: { FireRating: 'EI60' } },
+        },
         b: { storey: 'L2' },
       },
     });
     const byId = Object.fromEntries(view.entries().map((e) => [e.globalId, e]));
     assert.deepEqual(byId.a, {
-      globalId: 'a', name: 'Wall A', ifcClass: 'IfcWallStandardCase', storey: 'L1', values: ['EI60'],
+      globalId: 'a',
+      name: 'Wall A',
+      ifcClass: 'IfcWallStandardCase',
+      storey: 'L1',
+      values: ['EI60'],
     });
     assert.deepEqual([byId.b.name, byId.b.ifcClass, byId.b.storey], ['mesh b', 'IfcWall', 'L2']);
   });
@@ -107,9 +146,14 @@ describe('SceneView.entries', () => {
 describe('ModelTree', () => {
   test('lists the objects by floor, switches to class, and picks one on click', () => {
     const picked = [];
-    render(React.createElement(ModelTree, {
-      entries: ENTRIES, floors: ['L1', 'L2'], selected: null, onPick: (id) => picked.push(id),
-    }));
+    render(
+      React.createElement(ModelTree, {
+        entries: ENTRIES,
+        floors: ['L1', 'L2'],
+        selected: null,
+        onPick: (id) => picked.push(id),
+      }),
+    );
     assert.ok(screen.getByText('L1 (2)'));
     assert.ok(screen.getByText('4 objects'));
     fireEvent.click(screen.getByText('Wall B'));
@@ -119,9 +163,14 @@ describe('ModelTree', () => {
   });
 
   test('searches and says how many it found', () => {
-    render(React.createElement(ModelTree, {
-      entries: ENTRIES, floors: ['L1', 'L2'], selected: null, onPick: () => undefined,
-    }));
+    render(
+      React.createElement(ModelTree, {
+        entries: ENTRIES,
+        floors: ['L1', 'L2'],
+        selected: null,
+        onPick: () => undefined,
+      }),
+    );
     fireEvent.change(screen.getByLabelText('Find Objects'), { target: { value: 'ei60' } });
     assert.ok(screen.getByText('1 of 4 objects'));
     assert.ok(screen.getByText('Front Door'));
@@ -129,11 +178,21 @@ describe('ModelTree', () => {
   });
 
   test('draws at most the row limit and says so', () => {
-    const many = Array.from({ length: MAX_ROWS + 5 }, (_, i) => entry(`g${i}`, `Beam ${i}`, 'IfcBeam', 'L1'));
-    render(React.createElement(ModelTree, {
-      entries: many, floors: ['L1'], selected: null, onPick: () => undefined,
-    }));
+    const many = Array.from({ length: MAX_ROWS + 5 }, (_, i) =>
+      entry(`g${i}`, `Beam ${i}`, 'IfcBeam', 'L1'),
+    );
+    render(
+      React.createElement(ModelTree, {
+        entries: many,
+        floors: ['L1'],
+        selected: null,
+        onPick: () => undefined,
+      }),
+    );
     assert.ok(screen.getByText(`${MAX_ROWS + 5} objects, the first ${MAX_ROWS} shown`));
-    assert.equal(screen.getAllByRole('button').filter((b) => b.textContent.startsWith('Beam')).length, MAX_ROWS);
+    assert.equal(
+      screen.getAllByRole('button').filter((b) => b.textContent.startsWith('Beam')).length,
+      MAX_ROWS,
+    );
   });
 });

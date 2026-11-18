@@ -27,9 +27,7 @@ import {
   Vector3,
 } from 'three';
 
-import {
-  LABEL_ACCENT, LABEL_BG, LABEL_FG, placeLabel, toScreen,
-} from './markerLabels.js';
+import { LABEL_ACCENT, LABEL_BG, LABEL_FG, placeLabel, toScreen } from './markerLabels.js';
 
 export type MeasureMode = 'length' | 'area' | 'angle';
 
@@ -105,11 +103,22 @@ export interface Measure {
 function dotElement(overlay: HTMLElement): HTMLElement {
   const dot = overlay.ownerDocument.createElement('div');
   dot.dataset.bimMeasureEnd = '';
-  dot.setAttribute('style', [
-    'position:absolute', 'left:0', 'top:0', 'pointer-events:none', 'display:none',
-    `width:${END_DOT_PX}px`, `height:${END_DOT_PX}px`, 'border-radius:50%',
-    `background:${LABEL_ACCENT}`, `border:2px solid ${LABEL_BG}`, 'z-index:3',
-  ].join(';'));
+  dot.setAttribute(
+    'style',
+    [
+      'position:absolute',
+      'left:0',
+      'top:0',
+      'pointer-events:none',
+      'display:none',
+      `width:${END_DOT_PX}px`,
+      `height:${END_DOT_PX}px`,
+      'border-radius:50%',
+      `background:${LABEL_ACCENT}`,
+      `border:2px solid ${LABEL_BG}`,
+      'z-index:3',
+    ].join(';'),
+  );
   overlay.appendChild(dot);
   return dot;
 }
@@ -117,12 +126,24 @@ function dotElement(overlay: HTMLElement): HTMLElement {
 function labelElement(overlay: HTMLElement): HTMLElement {
   const label = overlay.ownerDocument.createElement('div');
   label.dataset.bimMeasure = '';
-  label.setAttribute('style', [
-    'position:absolute', 'left:0', 'top:0', 'pointer-events:none', 'display:none',
-    'padding:2px 6px', 'border-radius:4px', 'font:600 12px/1.4 system-ui,sans-serif',
-    `background:${LABEL_BG}`, `color:${LABEL_FG}`,
-    `border:2px solid ${LABEL_ACCENT}`, 'white-space:nowrap', 'z-index:3',
-  ].join(';'));
+  label.setAttribute(
+    'style',
+    [
+      'position:absolute',
+      'left:0',
+      'top:0',
+      'pointer-events:none',
+      'display:none',
+      'padding:2px 6px',
+      'border-radius:4px',
+      'font:600 12px/1.4 system-ui,sans-serif',
+      `background:${LABEL_BG}`,
+      `color:${LABEL_FG}`,
+      `border:2px solid ${LABEL_ACCENT}`,
+      'white-space:nowrap',
+      'z-index:3',
+    ].join(';'),
+  );
   overlay.appendChild(label);
   return label;
 }
@@ -177,7 +198,9 @@ export function createMeasure(scene: Scene, overlay: HTMLElement): Measure {
     closed = false;
     draw();
     label.style.display = 'none';
-    dots.forEach((dot) => { dot.style.display = 'none'; });
+    dots.forEach((dot) => {
+      dot.style.display = 'none';
+    });
   };
 
   return {
@@ -212,7 +235,8 @@ export function createMeasure(scene: Scene, overlay: HTMLElement): Measure {
         const point = points[index];
         const at = point && toScreen(point.clone().project(camera), width, height);
         dot.style.display = at?.visible ? 'block' : 'none';
-        if (at) dot.style.transform = `translate(${Math.round(at.x)}px, ${Math.round(at.y)}px) translate(-50%, -50%)`;
+        if (at)
+          dot.style.transform = `translate(${Math.round(at.x)}px, ${Math.round(at.y)}px) translate(-50%, -50%)`;
       });
       if (text === null) {
         label.style.display = 'none';

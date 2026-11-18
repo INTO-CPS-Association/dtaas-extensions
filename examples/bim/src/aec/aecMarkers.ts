@@ -101,8 +101,7 @@ export class Markers {
     const crowded = [...this.all.values()].some(
       (m) =>
         m.label.position.z < m.dot.position.z &&
-        Math.hypot(m.dot.position.x - at.x, m.dot.position.z - at.z) <
-          height * 4,
+        Math.hypot(m.dot.position.x - at.x, m.dot.position.z - at.z) < height * 4,
     );
     return crowded ? height : -height;
   }

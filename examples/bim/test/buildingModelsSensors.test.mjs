@@ -31,13 +31,15 @@ const SENSOR = 'r204TempSensor00000001';
 
 const manifest = (hash) => ({
   model: { source: 'room.ifc', source_sha256: hash, converter: 'test' },
-  bindings: [{
-    selector: { globalId: SENSOR },
-    id: 'T1',
-    label: 'Room 204 temperature',
-    source: { live: { transport: 'mqtt', topic: 'r204/temp' } },
-    display: { unit: '°C', ramp: [18, 26] },
-  }],
+  bindings: [
+    {
+      selector: { globalId: SENSOR },
+      id: 'T1',
+      label: 'Room 204 temperature',
+      source: { live: { transport: 'mqtt', topic: 'r204/temp' } },
+      display: { unit: '°C', ramp: [18, 26] },
+    },
+  ],
 });
 
 /** A folder holding room.ifc, its manifest and, when asked, stored geometry. */
@@ -52,22 +54,37 @@ function library({ hash, glb = false }) {
     const type = path.endsWith('.json') ? 'application/json' : 'text/plain';
     return new Response(files[path], { headers: { 'content-type': type } });
   };
-  const list = async () => Object.keys(files).map((path) => ({
-    name: path.slice(2), path, size: files[path].length,
-  }));
+  const list = async () =>
+    Object.keys(files).map((path) => ({
+      name: path.slice(2),
+      path,
+      size: files[path].length,
+    }));
   return { list, fetched };
 }
 
 function show(props) {
-  return render(React.createElement(BuildingModels, {
-    libraryUrl: LIBRARY, directory: 'm', selected: 'room', ...props,
-  }));
+  return render(
+    React.createElement(BuildingModels, {
+      libraryUrl: LIBRARY,
+      directory: 'm',
+      selected: 'room',
+      ...props,
+    }),
+  );
 }
 
 /** Let the listing, the manifest and any hash settle. */
-const settle = () => act(async () => { await new Promise((resolve) => { setTimeout(resolve, 30); }); });
+const settle = () =>
+  act(async () => {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 30);
+    });
+  });
 
-beforeEach(() => { canvas.props = null; });
+beforeEach(() => {
+  canvas.props = null;
+});
 afterEach(cleanup);
 
 test('a manifest that records its hash as unknown gets a quiet note and no alert', async () => {
@@ -125,14 +142,18 @@ async function viewerReady() {
   model.add(mesh);
   const view = new SceneView(model, { storeys: [], objects: {} });
   const calls = { framed: 0, shown: [] };
-  await act(async () => canvas.props.onReady({
-    view,
-    frame: () => {},
-    look: () => {},
-    drawField: () => {},
-    frameSelection: () => { calls.framed += 1; },
-    showReadings: (readings, feed, staleAfter) => calls.shown.push(staleAfter),
-  }));
+  await act(async () =>
+    canvas.props.onReady({
+      view,
+      frame: () => {},
+      look: () => {},
+      drawField: () => {},
+      frameSelection: () => {
+        calls.framed += 1;
+      },
+      showReadings: (readings, feed, staleAfter) => calls.shown.push(staleAfter),
+    }),
+  );
   return { view, calls };
 }
 

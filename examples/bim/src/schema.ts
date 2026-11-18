@@ -138,8 +138,7 @@ export interface ManifestProblem {
 }
 
 export type ManifestResult =
-  | { ok: true; manifest: Manifest }
-  | { ok: false; problems: ManifestProblem[] };
+  { ok: true; manifest: Manifest } | { ok: false; problems: ManifestProblem[] };
 
 /**
  * Validate a manifest, reporting every problem instead of the first.

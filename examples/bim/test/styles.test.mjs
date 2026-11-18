@@ -11,7 +11,11 @@ import assert from 'node:assert/strict';
 
 import { BoxGeometry, Group, Mesh, MeshStandardMaterial } from 'three';
 import {
-  BACKDROPS, CLASS_COLOURS, MONO_COLOUR, SHORTCUTS, SceneView,
+  BACKDROPS,
+  CLASS_COLOURS,
+  MONO_COLOUR,
+  SHORTCUTS,
+  SceneView,
 } from '../dist/esm/viewer/index.js';
 
 const key = (letter) => SHORTCUTS.find((shortcut) => shortcut.key === letter);
@@ -20,7 +24,11 @@ const press = (letter, view) => key(letter).run({ view, refresh: () => view.refr
 function building() {
   const group = new Group();
   const own = new MeshStandardMaterial({ color: 0x123456 });
-  for (const [id, ifcClass] of [['w1', 'IfcWall'], ['w2', 'IfcWall'], ['d1', 'IfcDoor']]) {
+  for (const [id, ifcClass] of [
+    ['w1', 'IfcWall'],
+    ['w2', 'IfcWall'],
+    ['d1', 'IfcDoor'],
+  ]) {
     const mesh = new Mesh(new BoxGeometry(1, 1, 1), own);
     mesh.userData.globalId = id;
     mesh.userData.ifcClass = ifcClass;
@@ -47,7 +55,10 @@ describe('the styles', () => {
     assert.deepEqual([colourOf(view, 'w1'), key('y').badge(view)], [MONO_COLOUR, 'Single Colour']);
     press('y', view);
     // Classes sorted: IfcDoor first, IfcWall second.
-    assert.deepEqual([colourOf(view, 'd1'), colourOf(view, 'w1')], [CLASS_COLOURS[0], CLASS_COLOURS[1]]);
+    assert.deepEqual(
+      [colourOf(view, 'd1'), colourOf(view, 'w1')],
+      [CLASS_COLOURS[0], CLASS_COLOURS[1]],
+    );
     assert.equal(colourOf(view, 'w1'), colourOf(view, 'w2'));
     assert.equal(key('y').badge(view), 'By Class');
     press('y', view);
@@ -61,7 +72,13 @@ describe('the styles', () => {
     const { view } = building();
     view.state.style = 'classes';
     const hex = (n) => `#${n.toString(16).padStart(6, '0')}`;
-    assert.deepEqual([...view.classColours()], [['IfcDoor', hex(CLASS_COLOURS[0])], ['IfcWall', hex(CLASS_COLOURS[1])]]);
+    assert.deepEqual(
+      [...view.classColours()],
+      [
+        ['IfcDoor', hex(CLASS_COLOURS[0])],
+        ['IfcWall', hex(CLASS_COLOURS[1])],
+      ],
+    );
   });
 
   test('the selection still wins over any style', () => {
@@ -92,7 +109,12 @@ describe('the backgrounds', () => {
       press('z', view);
       seen.push([view.state.backdrop, key('z').badge(view)]);
     }
-    assert.deepEqual(seen, [['dim', 'Dim'], ['slate', 'Slate'], ['ink', 'Ink'], ['light', 'Light']]);
+    assert.deepEqual(seen, [
+      ['dim', 'Dim'],
+      ['slate', 'Slate'],
+      ['ink', 'Ink'],
+      ['light', 'Light'],
+    ]);
     press('z', view);
     view.reset();
     assert.equal(view.state.backdrop, 'light');
@@ -103,7 +125,11 @@ describe('what the heatmap colours', () => {
   test('never the site, in any scope', () => {
     const group = new Group();
     const own = new MeshStandardMaterial({ color: 0x00aa00 });
-    for (const [id, ifcClass] of [['w1', 'IfcWall'], ['site', 'IfcSite'], ['tree', 'IfcGeographicElement']]) {
+    for (const [id, ifcClass] of [
+      ['w1', 'IfcWall'],
+      ['site', 'IfcSite'],
+      ['tree', 'IfcGeographicElement'],
+    ]) {
       const mesh = new Mesh(new BoxGeometry(1, 1, 1), own);
       mesh.userData.globalId = id;
       mesh.userData.ifcClass = ifcClass;
@@ -111,10 +137,14 @@ describe('what the heatmap colours', () => {
     }
     group.updateMatrixWorld(true);
     const view = new SceneView(group);
-    const bindings = [{
-      selector: { globalId: 'w1' }, label: 'w1',
-      source: { live: { transport: 'mqtt', topic: 't/w1' } }, display: { unit: '°C', ramp: [18, 26] },
-    }];
+    const bindings = [
+      {
+        selector: { globalId: 'w1' },
+        label: 'w1',
+        source: { live: { transport: 'mqtt', topic: 't/w1' } },
+        display: { unit: '°C', ramp: [18, 26] },
+      },
+    ];
     view.state.heat = 'building';
     view.applyReadings(bindings, new Map([['w1', { value: 25, receivedAt: Date.now() }]]), 'live');
     view.refresh();
@@ -131,10 +161,14 @@ describe('what the heatmap colours', () => {
     group.add(mesh);
     group.updateMatrixWorld(true);
     const view = new SceneView(group);
-    const bindings = [{
-      selector: { globalId: 'w1' }, label: 'w1',
-      source: { live: { transport: 'mqtt', topic: 't/w1' } }, display: { unit: '°C', ramp: [18, 26] },
-    }];
+    const bindings = [
+      {
+        selector: { globalId: 'w1' },
+        label: 'w1',
+        source: { live: { transport: 'mqtt', topic: 't/w1' } },
+        display: { unit: '°C', ramp: [18, 26] },
+      },
+    ];
     view.state.heat = 'building';
     view.applyReadings(bindings, new Map([['w1', { value: 25, receivedAt: Date.now() }]]), 'live');
     view.refresh();

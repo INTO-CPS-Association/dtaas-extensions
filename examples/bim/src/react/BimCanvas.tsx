@@ -38,12 +38,39 @@ import type { Binding } from '../binding.js';
 import { exportGlb } from './exportGlb.js';
 import { objectsOf } from './scene.js';
 import {
-  FAR_PLANE, NEAR_PLANE, SceneView, addOutlines, castShadows, createFieldSheet, createFinish,
-  createFlight, createGizmo, createGlow, createGrid, createMarkers, createMeasure, createSection,
-  createViewCube, frame, frameFrom, movedBeyond, setParallel, PARALLEL_FOV, PERSPECTIVE_FOV, BACKDROPS, startWalking, stepWalk, walkKeyOf,
-  createSketch, MARKER_LAYER,
-  frameObject, lightFromRoom,
-  prepareRenderer, type LookFrom, type MarkerSet, type PropertyTree,
+  FAR_PLANE,
+  NEAR_PLANE,
+  SceneView,
+  addOutlines,
+  castShadows,
+  createFieldSheet,
+  createFinish,
+  createFlight,
+  createGizmo,
+  createGlow,
+  createGrid,
+  createMarkers,
+  createMeasure,
+  createSection,
+  createViewCube,
+  frame,
+  frameFrom,
+  movedBeyond,
+  setParallel,
+  PARALLEL_FOV,
+  PERSPECTIVE_FOV,
+  BACKDROPS,
+  startWalking,
+  stepWalk,
+  walkKeyOf,
+  createSketch,
+  MARKER_LAYER,
+  frameObject,
+  lightFromRoom,
+  prepareRenderer,
+  type LookFrom,
+  type MarkerSet,
+  type PropertyTree,
 } from '../viewer/index.js';
 
 // The same near-white the viewer this was taken from uses. A lighter one
@@ -92,7 +119,10 @@ function plural(word: string, count: number): string {
  * two are missing.
  */
 function addMarkers(
-  model: Object3D, bindings: Binding[], radius: number, overlay: HTMLElement,
+  model: Object3D,
+  bindings: Binding[],
+  radius: number,
+  overlay: HTMLElement,
   onPick: (globalId: string) => void,
 ) {
   const { resolved, unresolved } = resolveBindings(bindings, objectsOf(model));
@@ -182,7 +212,12 @@ export interface ViewerHandle {
 }
 
 /** Size every marker and move every label for the frame about to be drawn. */
-function placeAll(markers: MarkerSet, view: SceneView, camera: PerspectiveCamera, parent: HTMLElement) {
+function placeAll(
+  markers: MarkerSet,
+  view: SceneView,
+  camera: PerspectiveCamera,
+  parent: HTMLElement,
+) {
   // A sensor on a floor the floor filter hides, or on an object a cut took
   // away, is hidden with it, label and all.
   const shown = (globalId: string) => view.isShown(globalId);
@@ -194,20 +229,30 @@ function placeAll(markers: MarkerSet, view: SceneView, camera: PerspectiveCamera
  * labels, taken from the host's theme so a label reads in a light and in a
  * dark theme alike.
  */
-const labelColours = (theme: Theme) => ({
-  position: 'relative',
-  width: '100%',
-  height: '100%',
-  overflow: 'hidden',
-  '--bim-label-bg': theme.palette.background.paper,
-  '--bim-label-fg': theme.palette.text.primary,
-  '--bim-label-border': theme.palette.text.secondary,
-  '--bim-label-accent': theme.palette.primary.main,
-}) as const;
+const labelColours = (theme: Theme) =>
+  ({
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
+    '--bim-label-bg': theme.palette.background.paper,
+    '--bim-label-fg': theme.palette.text.primary,
+    '--bim-label-border': theme.palette.text.secondary,
+    '--bim-label-accent': theme.palette.primary.main,
+  }) as const;
 
 function BimCanvas({
-  url, convert = false, bindings = [], proposed = false, tree,
-  onReport, onReady, onHover, onSelect, onConverted, onSourceBytes,
+  url,
+  convert = false,
+  bindings = [],
+  proposed = false,
+  tree,
+  onReport,
+  onReady,
+  onHover,
+  onSelect,
+  onConverted,
+  onSourceBytes,
 }: Readonly<BimCanvasProps>) {
   const holder = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
@@ -274,7 +319,9 @@ function BimCanvas({
 
     // Until when the view draws every frame, because a person just did something.
     let awakeUntil = 0;
-    const wake = () => { awakeUntil = performance.now() + AWAKE_MS; };
+    const wake = () => {
+      awakeUntil = performance.now() + AWAKE_MS;
+    };
 
     const resize = () => {
       const { clientWidth, clientHeight } = parent;
@@ -287,7 +334,10 @@ function BimCanvas({
       camera.updateProjectionMatrix();
     };
     resize();
-    const observer = new ResizeObserver(() => { resize(); wake(); });
+    const observer = new ResizeObserver(() => {
+      resize();
+      wake();
+    });
     observer.observe(parent);
     // Anything a person does may change the picture, so the view draws every
     // frame for a moment after it. Listened for on the page and not only on
@@ -330,7 +380,10 @@ function BimCanvas({
     let lastRevision = '';
     /** Draw the sensor dots over the frame just drawn. */
     const drawMarkers = () => {
-      const { autoClear, background } = { autoClear: renderer.autoClear, background: scene.background };
+      const { autoClear, background } = {
+        autoClear: renderer.autoClear,
+        background: scene.background,
+      };
       renderer.autoClear = false;
       scene.background = null;
       camera.layers.set(MARKER_LAYER);
@@ -385,8 +438,12 @@ function BimCanvas({
       // Drawn when the camera moves, when a person did something lately, when
       // the view changed, when the first still frame after a move is due, and
       // once a second otherwise.
-      const draw = !still || now < awakeUntil || changed !== lastRevision
-        || (still && !lastFull) || now - lastDraw > IDLE_REDRAW_MS;
+      const draw =
+        !still ||
+        now < awakeUntil ||
+        changed !== lastRevision ||
+        (still && !lastFull) ||
+        now - lastDraw > IDLE_REDRAW_MS;
       if (draw) {
         if (still !== outlinesShown) {
           outlinesShown = still;
@@ -424,7 +481,11 @@ function BimCanvas({
       // picks its object and flies there, as a click on its card does.
       let pickSensor = (_globalId: string) => undefined as void;
       const { markers, placed, missing } = addMarkers(
-        model, bindings, radius, overlay, (globalId) => pickSensor(globalId),
+        model,
+        bindings,
+        radius,
+        overlay,
+        (globalId) => pickSensor(globalId),
       );
       cleanUp.push(() => markers.dispose());
 
@@ -433,9 +494,10 @@ function BimCanvas({
       // them.
       const view = new SceneView(model as never, tree);
       visibility = () => view.visibilityRevision;
-      revision = () => `${view.visibilityRevision}|${view.materialsRevision}|${cutPlanes().length}`
-        + `|${renderer.clippingPlanes.map((plane) => plane.constant).join(',')}`
-        + `|${view.state.backdrop}|${view.state.grid}|${measure.points.length}|${view.state.measuring}`;
+      revision = () =>
+        `${view.visibilityRevision}|${view.materialsRevision}|${cutPlanes().length}` +
+        `|${renderer.clippingPlanes.map((plane) => plane.constant).join(',')}` +
+        `|${view.state.backdrop}|${view.state.grid}|${measure.points.length}|${view.state.measuring}`;
       /** The lens the state asks for. Walking always looks through the ordinary one. */
       const lens = () => setParallel(camera, controls, view.state.parallel && !view.state.walking);
       /**
@@ -472,8 +534,11 @@ function BimCanvas({
       // else.
       addOutlines(view.meshes.values());
       const edges = [...view.meshes.values()].flatMap((mesh) =>
-        mesh.children.filter((child) => child.name === 'outline'));
-      showOutlines = (shown) => { for (const edge of edges) edge.visible = shown; };
+        mesh.children.filter((child) => child.name === 'outline'),
+      );
+      showOutlines = (shown) => {
+        for (const edge of edges) edge.visible = shown;
+      };
       cleanUp.push(castShadows(model, sun, scene));
       shadows = true;
       const grid = createGrid(scene, model);
@@ -500,8 +565,12 @@ function BimCanvas({
         if (!which || !view.state.walking) return;
         // An arrow in a search box moves the caret and not the person.
         const target = event.target as HTMLElement | null;
-        if (down && target && (target.isContentEditable
-          || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))) return;
+        if (
+          down &&
+          target &&
+          (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
+        )
+          return;
         held[which] = down;
         // The page would scroll on an arrow key otherwise.
         event.preventDefault();
@@ -565,12 +634,18 @@ function BimCanvas({
         view,
         frame: () => flyTo(() => frame(camera, controls, model)),
         look: (from) => flyTo(() => frame(camera, controls, model, from)),
-        drawField: () => { sheet.draw(view); wake(); },
+        drawField: () => {
+          sheet.draw(view);
+          wake();
+        },
         frameSelection: () => {
           const mesh = view.state.selected ? view.meshes.get(view.state.selected) : undefined;
           if (mesh) flyTo(() => frameObject(camera, controls, mesh, model));
         },
-        showReadings: (readings, feed, staleAfter) => { markers.showReadings(readings, feed, staleAfter); wake(); },
+        showReadings: (readings, feed, staleAfter) => {
+          markers.showReadings(readings, feed, staleAfter);
+          wake();
+        },
       });
 
       /** Point the ray through the pointer. */
@@ -585,7 +660,10 @@ function BimCanvas({
         aim(event);
         // Only what is visible: a floor filter that hides a wall must also
         // stop that wall being clicked through the floor above it.
-        const hits = ray.intersectObjects([...view.meshes.values()].filter((m) => m.visible), false);
+        const hits = ray.intersectObjects(
+          [...view.meshes.values()].filter((m) => m.visible),
+          false,
+        );
         // A cut hides what is beyond it without changing `visible`, so a hit
         // there is a click on nothing drawn.
         return hits.find((hit) => view.keeps(hit.point));
@@ -616,7 +694,12 @@ function BimCanvas({
         if (view.state.sketching) return;
         if (Math.hypot(event.clientX - pressedAt.x, event.clientY - pressedAt.y) > DRAG_PX) return;
         const box = parent.getBoundingClientRect();
-        const from = cube.pick(event.clientX - box.left, event.clientY - box.top, box.width, box.height);
+        const from = cube.pick(
+          event.clientX - box.left,
+          event.clientY - box.top,
+          box.width,
+          box.height,
+        );
         if (from) {
           flyTo(() => frameFrom(camera, controls, model, from));
           return;
@@ -654,11 +737,13 @@ function BimCanvas({
       setLoading(false);
       setProgress(null);
       const kind = proposed ? 'proposed sensor' : 'sensor';
-      const sensors = bindings.length === 0 ? undefined
-        : missing.length === 0
-          ? `${placed} ${plural(kind, placed)} placed on the model.`
-          : `${placed} of ${bindings.length} ${plural(kind, bindings.length)} placed. `
-            + `${missing.length} name an object this geometry does not have.`;
+      const sensors =
+        bindings.length === 0
+          ? undefined
+          : missing.length === 0
+            ? `${placed} ${plural(kind, placed)} placed on the model.`
+            : `${placed} of ${bindings.length} ${plural(kind, bindings.length)} placed. ` +
+              `${missing.length} name an object this geometry does not have.`;
       const both = [note, sensors].filter(Boolean).join(' ');
       if (both) onReport?.(both);
     };
@@ -694,8 +779,8 @@ function BimCanvas({
             if (running && done % 250 === 0) setProgress(`Converting, ${done} objects`);
           },
         });
-        const dropped = converted.failed === 0 ? ''
-          : ` ${converted.failed} could not be turned into geometry.`;
+        const dropped =
+          converted.failed === 0 ? '' : ` ${converted.failed} could not be turned into geometry.`;
         const model = meshesFrom(converted);
 
         // Store the geometry before the scene decorates the model. `show` adds
@@ -714,8 +799,7 @@ function BimCanvas({
           }
         }
 
-        show(model,
-          `Converted in the browser: ${converted.objects.length} objects.${dropped}`);
+        show(model, `Converted in the browser: ${converted.objects.length} objects.${dropped}`);
       })().catch((error: Error) => failed(`This model could not be converted. ${error.message}`));
     } else {
       new GLTFLoader().load(
@@ -749,29 +833,44 @@ function BimCanvas({
       renderer.forceContextLoss();
       parent.removeChild(renderer.domElement);
     };
-  }, [url, convert, bindings, proposed, tree, onReport, onReady, onHover, onSelect, onConverted,
-    onSourceBytes]);
+  }, [
+    url,
+    convert,
+    bindings,
+    proposed,
+    tree,
+    onReport,
+    onReady,
+    onHover,
+    onSelect,
+    onConverted,
+    onSourceBytes,
+  ]);
 
   return (
-    <Box sx={{
-      position: 'relative',
-      width: '100%',
-      height: '70vh',
-      minHeight: 360,
-      // The canvas must never decide the size of the page.
-      overflow: 'hidden',
-    }}
+    <Box
+      sx={{
+        position: 'relative',
+        width: '100%',
+        height: '70vh',
+        minHeight: 360,
+        // The canvas must never decide the size of the page.
+        overflow: 'hidden',
+      }}
     >
-      <Box
-        ref={holder}
-        sx={labelColours}
-        data-testid="bim-canvas"
-      />
+      <Box ref={holder} sx={labelColours} data-testid="bim-canvas" />
       {loading && !problem && (
-        <Box sx={{
-          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1,
-        }}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 1,
+          }}
         >
           <CircularProgress />
           {progress && <Typography variant="body2">{progress}</Typography>}

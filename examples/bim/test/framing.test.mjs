@@ -25,7 +25,13 @@ function building() {
 
 function viewer() {
   const camera = new PerspectiveCamera(45, 1.5, 0.1, 5000);
-  const controls = { target: new Vector3(), updates: 0, update() { this.updates += 1; } };
+  const controls = {
+    target: new Vector3(),
+    updates: 0,
+    update() {
+      this.updates += 1;
+    },
+  };
   return { camera, controls };
 }
 

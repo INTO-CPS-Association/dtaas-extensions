@@ -4,7 +4,15 @@
  * A help page maintained by hand is a help page that lies, because it is the last thing anyone updates.
  */
 
-import { Dialog, DialogContent, DialogTitle, Table, TableBody, TableCell, TableRow } from '@mui/material';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from '@mui/material';
 import { SHORTCUTS } from '../viewer/index.js';
 
 export interface HelpPanelProps {

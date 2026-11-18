@@ -10,7 +10,11 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  alertsOf, alertCounts, displayUnit, MEASURED_KIND, MEASURED_CHANNEL,
+  alertsOf,
+  alertCounts,
+  displayUnit,
+  MEASURED_KIND,
+  MEASURED_CHANNEL,
 } from '../dist/esm/index.js';
 
 const NOW = 1_800_000_000_000;
@@ -25,7 +29,10 @@ const binding = {
 
 /** A reading that arrived just now, so it is live unless a test ages it. */
 const reading = (value, extra = {}) => ({
-  value, receivedAt: NOW, unit: 'C', ...extra,
+  value,
+  receivedAt: NOW,
+  unit: 'C',
+  ...extra,
 });
 
 const labels = (alerts) => alerts.map((alert) => alert.label);
@@ -187,18 +194,18 @@ describe('alertCounts', () => {
   });
 
   test('every sensor healthy counts nothing', () => {
-    const readings = new Map([['ts01', reading(21)], ['ts02', reading(22)]]);
+    const readings = new Map([
+      ['ts01', reading(21)],
+      ['ts02', reading(22)],
+    ]);
 
-    assert.deepEqual(
-      alertCounts([binding, second], readings, objectOf, 'live', 30, NOW),
-      { warn: 0, note: 0 },
-    );
+    assert.deepEqual(alertCounts([binding, second], readings, objectOf, 'live', 30, NOW), {
+      warn: 0,
+      note: 0,
+    });
   });
 
   test('no bindings counts nothing instead of throwing', () => {
-    assert.deepEqual(
-      alertCounts([], new Map(), objectOf, 'live', 30, NOW),
-      { warn: 0, note: 0 },
-    );
+    assert.deepEqual(alertCounts([], new Map(), objectOf, 'live', 30, NOW), { warn: 0, note: 0 });
   });
 });

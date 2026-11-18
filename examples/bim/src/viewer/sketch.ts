@@ -108,7 +108,10 @@ export interface Sketch {
 export function createSketch(overlay: HTMLElement): Sketch {
   const canvas = overlay.ownerDocument.createElement('canvas');
   canvas.dataset.bimSketch = '';
-  canvas.setAttribute('style', 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4');
+  canvas.setAttribute(
+    'style',
+    'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4',
+  );
   overlay.appendChild(canvas);
   const pen = canvas.getContext('2d') as Pen | null;
   const strokes: Stroke[] = [];
@@ -144,8 +147,11 @@ export function createSketch(overlay: HTMLElement): Sketch {
   const write = (point: Point) => {
     const input = overlay.ownerDocument.createElement('input');
     input.setAttribute('aria-label', 'Note On The View');
-    input.setAttribute('style', `position:absolute;left:${point.x}px;top:${point.y - 20}px;z-index:5;`
-      + `font:${SKETCH_FONT};color:${SKETCH_COLOUR};border:1px solid ${SKETCH_COLOUR};padding:2px 4px`);
+    input.setAttribute(
+      'style',
+      `position:absolute;left:${point.x}px;top:${point.y - 20}px;z-index:5;` +
+        `font:${SKETCH_FONT};color:${SKETCH_COLOUR};border:1px solid ${SKETCH_COLOUR};padding:2px 4px`,
+    );
     overlay.appendChild(input);
     typing = input;
     let done = false;
@@ -190,7 +196,9 @@ export function createSketch(overlay: HTMLElement): Sketch {
     else current.points[1] = point;
     redraw();
   };
-  const up = () => { current = null; };
+  const up = () => {
+    current = null;
+  };
   canvas.addEventListener('pointerdown', down);
   canvas.addEventListener('pointermove', move);
   canvas.addEventListener('pointerup', up);

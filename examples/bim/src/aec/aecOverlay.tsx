@@ -6,12 +6,7 @@
  * its own root, in the theme the host gives, and unmounts it on dispose.
  */
 
-import {
-  Fragment,
-  useSyncExternalStore,
-  type ComponentType,
-  type ReactNode,
-} from 'react';
+import { Fragment, useSyncExternalStore, type ComponentType, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import Alert from '@mui/material/Alert';

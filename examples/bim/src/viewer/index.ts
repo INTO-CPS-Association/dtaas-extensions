@@ -5,60 +5,163 @@
  */
 
 export {
-  SceneView, CUT_STEP_M, BACKDROPS, type Backdrop, type ObjectFacts, type PropertyTree, type ViewState,
+  SceneView,
+  CUT_STEP_M,
+  BACKDROPS,
+  type Backdrop,
+  type ObjectFacts,
+  type PropertyTree,
+  type ViewState,
 } from './sceneView.js';
 export {
-  Palette, SHELL, SELECTED_COLOUR, HOVERED_COLOUR, MONO_COLOUR, CLASS_COLOURS, type ModelStyle,
+  Palette,
+  SHELL,
+  SELECTED_COLOUR,
+  HOVERED_COLOUR,
+  MONO_COLOUR,
+  CLASS_COLOURS,
+  type ModelStyle,
 } from './appearance.js';
+export { SHORTCUTS, handleKey, type Shortcut, type ShortcutContext } from './shortcuts.js';
 export {
-  SHORTCUTS,
-  handleKey,
-  type Shortcut,
-  type ShortcutContext,
-} from './shortcuts.js';
-export { createGizmo, cornerViewport, GIZMO_SIZE_PX, GIZMO_MARGIN_PX, type Gizmo } from './gizmo.js';
+  createGizmo,
+  cornerViewport,
+  GIZMO_SIZE_PX,
+  GIZMO_MARGIN_PX,
+  type Gizmo,
+} from './gizmo.js';
 export { addOutlines } from './outline.js';
 export {
-  createGrid, gridSpan, GRID_CELL_M, GRID_MAJOR_EVERY, GRID_MIN_SPAN_M, GRID_MARGIN, GRID_DROP_M,
+  createGrid,
+  gridSpan,
+  GRID_CELL_M,
+  GRID_MAJOR_EVERY,
+  GRID_MIN_SPAN_M,
+  GRID_MARGIN,
+  GRID_DROP_M,
   type Grid,
 } from './grid.js';
 export {
-  createFlight, ease, movedBeyond, prefersReducedMotion, FLIGHT_MS, type Flight, type Steered,
+  createFlight,
+  ease,
+  movedBeyond,
+  prefersReducedMotion,
+  FLIGHT_MS,
+  type Flight,
+  type Steered,
 } from './flight.js';
 export {
-  createViewCube, cubeViewport, directionAt, CUBE_SIZE_PX, CUBE_MARGIN_PX, CUBE_EDGE, CUBE_FACES,
+  createViewCube,
+  cubeViewport,
+  directionAt,
+  CUBE_SIZE_PX,
+  CUBE_MARGIN_PX,
+  CUBE_EDGE,
+  CUBE_FACES,
   type ViewCube,
 } from './viewCube.js';
 export {
-  createSketch, drawStroke, arrowHead, SKETCH_COLOUR, SKETCH_FONT, SKETCH_WIDTH_PX, ARROW_HEAD_PX,
-  type Sketch, type SketchTool, type Stroke, type Point, type Pen,
+  createSketch,
+  drawStroke,
+  arrowHead,
+  SKETCH_COLOUR,
+  SKETCH_FONT,
+  SKETCH_WIDTH_PX,
+  ARROW_HEAD_PX,
+  type Sketch,
+  type SketchTool,
+  type Stroke,
+  type Point,
+  type Pen,
 } from './sketch.js';
 export {
-  startWalking, stepWalk, walkKeyOf, EYE_HEIGHT_M, WALK_SPEED_M_S, TURN_SPEED_DEG_S, LOOK_AHEAD_M,
-  type WalkKeys, type WalkControls,
+  startWalking,
+  stepWalk,
+  walkKeyOf,
+  EYE_HEIGHT_M,
+  WALK_SPEED_M_S,
+  TURN_SPEED_DEG_S,
+  LOOK_AHEAD_M,
+  type WalkKeys,
+  type WalkControls,
 } from './walkMode.js';
+export { setParallel, backOff, PERSPECTIVE_FOV, PARALLEL_FOV, type Orbit } from './projection.js';
 export {
-  setParallel, backOff, PERSPECTIVE_FOV, PARALLEL_FOV, type Orbit,
-} from './projection.js';
-export {
-  groupEntries, matches, readableClass, NO_FLOOR, type TreeEntry, type TreeGroup, type GroupBy,
+  groupEntries,
+  matches,
+  readableClass,
+  NO_FLOOR,
+  type TreeEntry,
+  type TreeGroup,
+  type GroupBy,
 } from './modelTree.js';
 export {
-  createMeasure, distanceText, polygonArea, angleAt, measureText, END_DOT_PX, MAX_POINTS, CLOSE_M,
-  type Measure, type MeasureMode,
+  createMeasure,
+  distanceText,
+  polygonArea,
+  angleAt,
+  measureText,
+  END_DOT_PX,
+  MAX_POINTS,
+  CLOSE_M,
+  type Measure,
+  type MeasureMode,
 } from './measure.js';
 export {
-  prepareRenderer, lightFromRoom, castShadows, createSection, createFinish,
-  SHADOW_MAP_PX, ROOM_LIGHT, GROUND_SHADOW_OPACITY, GROUND_MARGIN, GROUND_DROP_M, type Clipped,
+  prepareRenderer,
+  lightFromRoom,
+  castShadows,
+  createSection,
+  createFinish,
+  SHADOW_MAP_PX,
+  ROOM_LIGHT,
+  GROUND_SHADOW_OPACITY,
+  GROUND_MARGIN,
+  GROUND_DROP_M,
+  type Clipped,
 } from './look.js';
 export { createGlow, GLOW_MARGIN_M, type Glow } from './glow.js';
-export { buildField, outsideOf, MIN_ROOM_CELLS, OUTSIDE, sourceAt, planAngle, toGrid, fromGrid, CELL_M, CUT_M, BLOCKS, OPENS, SEARCH_CELLS, type Field } from './field.js';
+export {
+  buildField,
+  outsideOf,
+  MIN_ROOM_CELLS,
+  OUTSIDE,
+  sourceAt,
+  planAngle,
+  toGrid,
+  fromGrid,
+  CELL_M,
+  CUT_M,
+  BLOCKS,
+  OPENS,
+  SEARCH_CELLS,
+  type Field,
+} from './field.js';
 export { createFieldSheet, type FieldSheet } from './fieldSheet.js';
 export {
-  frame, frameFrom, frameObject, LOOK_FROM, NEAR_PLANE, FAR_PLANE, MIN_FRAME_RADIUS_M, type Target, type LookFrom,
+  frame,
+  frameFrom,
+  frameObject,
+  LOOK_FROM,
+  NEAR_PLANE,
+  FAR_PLANE,
+  MIN_FRAME_RADIUS_M,
+  type Target,
+  type LookFrom,
 } from './framing.js';
 export {
-  createMarkers, markerScale, markerColour, labelText, worldPerPixel, pulseFactor, PULSE_MS, PULSE_GROWTH, MARKER_LAYER,
-  MARKER_MIN_PX, SELECTED_MARKER_MIN_PX, NO_READING_COLOUR, type MarkerSet,
+  createMarkers,
+  markerScale,
+  markerColour,
+  labelText,
+  worldPerPixel,
+  pulseFactor,
+  PULSE_MS,
+  PULSE_GROWTH,
+  MARKER_LAYER,
+  MARKER_MIN_PX,
+  SELECTED_MARKER_MIN_PX,
+  NO_READING_COLOUR,
+  type MarkerSet,
 } from './markers.js';
 export { toScreen, LABEL_OFFSET_PX, type ScreenPoint } from './markerLabels.js';

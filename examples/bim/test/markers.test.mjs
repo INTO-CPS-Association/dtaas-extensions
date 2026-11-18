@@ -13,8 +13,16 @@ import assert from 'node:assert/strict';
 import { BoxGeometry, Group, Mesh, PerspectiveCamera } from 'three';
 
 import {
-  createMarkers, labelText, markerColour, markerScale, toScreen, worldPerPixel,
-  MARKER_MIN_PX, NO_READING_COLOUR, SELECTED_MARKER_MIN_PX, SELECTED_COLOUR,
+  createMarkers,
+  labelText,
+  markerColour,
+  markerScale,
+  toScreen,
+  worldPerPixel,
+  MARKER_MIN_PX,
+  NO_READING_COLOUR,
+  SELECTED_MARKER_MIN_PX,
+  SELECTED_COLOUR,
 } from '../dist/esm/viewer/index.js';
 import { rampColour } from '../dist/esm/index.js';
 
@@ -87,8 +95,10 @@ test('every resolved binding gets a dot, a ring and a label', () => {
   assert.equal(markers.count, 2);
   assert.equal(dots(model).length, 2);
   assert.equal(model.children.length, 2 + 4);
-  assert.deepEqual([...overlay.children].map((label) => label.textContent),
-    ['S1  Waiting', 'S2  Waiting']);
+  assert.deepEqual(
+    [...overlay.children].map((label) => label.textContent),
+    ['S1  Waiting', 'S2  Waiting'],
+  );
 });
 
 test('the selected marker is larger, in the selection colour and its label is marked', () => {
@@ -96,7 +106,9 @@ test('the selected marker is larger, in the selection colour and its label is ma
   markers.place(camera, 1200, 800, 'b', () => true);
   const [plain, picked] = dots(model);
   assert.ok(picked.scale.x > plain.scale.x);
-  assert.ok(Math.abs(picked.scale.x / plain.scale.x - SELECTED_MARKER_MIN_PX / MARKER_MIN_PX) < 1e-6);
+  assert.ok(
+    Math.abs(picked.scale.x / plain.scale.x - SELECTED_MARKER_MIN_PX / MARKER_MIN_PX) < 1e-6,
+  );
   assert.equal(picked.material.color.getHex(), SELECTED_COLOUR);
   assert.equal(plain.material.color.getHex(), NO_READING_COLOUR);
   const [first, second] = overlay.children;
