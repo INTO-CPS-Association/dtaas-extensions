@@ -87,9 +87,14 @@ it('satisfies the DTaaS extension contract', async () => {
 
 [`examples/hello-kit`](examples/hello-kit) is a complete, tested example.
 
-[`examples/bim`](examples/bim/README.md) is a larger, standalone example: a
-full port of bim-kit 0.1.1 onto the SDK, with its own package, build, test
-suite and CI job.
+[`examples/soil-kit`](examples/soil-kit/README.md) is a kit made from that
+template: soil profiles drawn as a substrate of their own, with a page, an
+anchor kind, presets and the tables it adds to the services. The tooling at the
+root checks and tests it as it does `hello-kit`.
+
+[`examples/bim`](examples/bim/README.md) is a larger, standalone example: the
+source of bim-kit with the `aec` substrate that draws a building, with its own
+package, lockfile, test suites and CI job.
 
 ## 🔢 Versions
 
