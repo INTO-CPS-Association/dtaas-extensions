@@ -14,7 +14,7 @@ import {
   type Mesh,
   MeshStandardMaterial,
 } from 'three';
-import type { ObjectFacts } from './aecTree';
+import type { ObjectFacts } from './aecTree.js';
 
 export const SELECTED_COLOUR = 0xffff00;
 export const HOVERED_COLOUR = 0xa3f1ff;

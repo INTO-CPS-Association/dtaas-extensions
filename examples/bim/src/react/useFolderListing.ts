@@ -4,12 +4,12 @@
  * A person can browse to a second folder before the first folder's listing
  * has come back. When it arrives after that, it must not overwrite what the
  * second folder found, so this tracks which path it last asked for and
- * throws away an answer for any other.
+ * ignores an answer for any other.
  */
 
 import { useEffect, useState } from 'react';
-import type { LibraryEntry } from 'src/react/assets';
-import { messageOf } from 'src/react/libraryJson';
+import type { LibraryEntry } from './assets.js';
+import { messageOf } from './libraryJson.js';
 
 export interface FolderListing {
   entries: LibraryEntry[];
@@ -31,8 +31,7 @@ function fetchInto(
       if (current) setState({ entries, loading: false, error: null });
     })
     .catch((error: unknown) => {
-      if (current)
-        setState({ entries: [], loading: false, error: messageOf(error) });
+      if (current) setState({ entries: [], loading: false, error: messageOf(error) });
     });
   return () => {
     current = false;
@@ -47,14 +46,12 @@ export function useFolderListing(
   const [requestedPath, setRequestedPath] = useState(path);
   const [state, setState] = useState<FolderListing>(IDLE);
 
-  // A path change is reflected here, during render, instead of through an
-  // effect: it must take hold before the browser paints, or the folder just
-  // left is shown, for one frame, as if it still held the new folder's files.
+  // A path change is applied here, during render, and not through an effect:
+  // it must take hold before the browser paints, or the folder just left is
+  // shown, for one frame, as if it held the new folder's files.
   if (path !== requestedPath) {
     setRequestedPath(path);
-    setState(
-      path === null ? IDLE : { entries: [], loading: true, error: null },
-    );
+    setState(path === null ? IDLE : { entries: [], loading: true, error: null });
   }
 
   useEffect(() => {

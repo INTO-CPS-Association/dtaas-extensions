@@ -19,10 +19,10 @@ import type {
   SubstrateAdapter,
   SubstrateDescriptor,
 } from '@into-cps-association/dtaas-sdk';
-import type { Controls, PaneRows } from './aecControls';
-import type { Marker } from './aecMarkers';
-import type { AecScene } from './aecScene';
-import { modelAddress, sensorName } from './aecModel';
+import type { Controls, PaneRows } from './aecControls.js';
+import type { Marker } from './aecMarkers.js';
+import type { AecScene } from './aecScene.js';
+import { modelAddress, sensorName } from './aecModel.js';
 
 const ID = 'aec';
 const ANCHOR_KIND = 'ifc-guid';
@@ -73,8 +73,8 @@ async function drawModel(
   host: HostServices,
 ) {
   const [{ AecScene: Scene3D }, { addControls }] = await Promise.all([
-    import('./aecScene'),
-    import('./aecControls'),
+    import('./aecScene.js'),
+    import('./aecControls.js'),
   ]);
   const view = new Scene3D(rows.canvas);
   try {

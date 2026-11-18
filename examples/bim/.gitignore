@@ -1,4 +1,5 @@
 node_modules/
 dist/
 coverage/
-src/converter/generated/
+# Written by scripts/inline-wasm.mjs from the installed web-ifc.
+src/generated/

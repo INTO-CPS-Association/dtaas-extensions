@@ -18,9 +18,9 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { colourAt } from '@into-cps-association/dtaas-sdk';
-import type { ClassEntry } from './aecAppearance';
-import type { MarkerColours, Quantity } from './aecColours';
-import { OPTIONS } from './aecShortcuts';
+import type { ClassEntry } from './aecAppearance.js';
+import type { MarkerColours, Quantity } from './aecColours.js';
+import { OPTIONS } from './aecShortcuts.js';
 
 function Swatch({ colour }: { readonly colour: string }) {
   return (

@@ -14,8 +14,8 @@ import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip from '@mui/material/Tooltip';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import iconFor from './aecIcons';
-import { OPTIONS, type Option, type OptionContext } from './aecShortcuts';
+import iconFor from './aecIcons.js';
+import { OPTIONS, type Option, type OptionContext } from './aecShortcuts.js';
 
 interface OptionButtonProps {
   readonly option: Option;

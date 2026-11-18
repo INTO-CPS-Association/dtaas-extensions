@@ -1,9 +1,9 @@
 import type { Converter } from '@into-cps-association/dtaas-sdk';
-import { convertIfc } from 'src/converter';
-import exportGlb from 'src/react/exportGlb';
-import { meshesFrom } from 'src/react/ifcMeshes';
+import { convertIfc } from '../../converter.js';
+import { exportGlb } from '../../react/exportGlb.js';
+import { meshesFrom } from '../../react/ifcMeshes.js';
 
-/** IFC → GLB in the browser: the same path the Buildings page uses. */
+/** IFC to GLB in the browser, by the same path the Buildings page uses. */
 const ifcToGlb: Converter = async ({ bytes }) => {
   const converted = await convertIfc(bytes);
   return {

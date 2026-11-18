@@ -4,9 +4,9 @@
  * disagree. The keys, labels and icons are the Buildings page's.
  */
 
-import type { ViewState } from './aecAppearance';
-import type { ViewName } from './aecCamera';
-import type { MarkerColours } from './aecColours';
+import type { ViewState } from './aecAppearance.js';
+import type { ViewName } from './aecCamera.js';
+import type { MarkerColours } from './aecColours.js';
 
 /** What an option needs from the substrate to do its work. */
 export interface OptionContext {

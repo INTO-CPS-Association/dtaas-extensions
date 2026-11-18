@@ -3,8 +3,8 @@
  *
  * The folder can change while its listing is in flight, when a person picks
  * another one. The answer for the folder left behind must never replace the
- * new folder's models, so every request is tied to the folder it asked about
- * and an answer for any other is thrown away.
+ * new folder's models, so every answer is tied to the folder it was asked
+ * about and an answer for any other folder is not shown.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -15,8 +15,8 @@ import {
   uniqueNames,
   type BimModel,
   type LibraryEntry,
-} from 'src/react/assets';
-import { fetchJson, messageOf, type Problem } from 'src/react/libraryJson';
+} from './assets.js';
+import { fetchJson, messageOf, type Problem } from './libraryJson.js';
 
 export type ListFolder = (directory: string) => Promise<LibraryEntry[]>;
 
@@ -35,7 +35,9 @@ interface Listing {
   problem: Problem | null;
 }
 
-const UNLISTED: Omit<Listing, 'key'> = { models: null, problem: null };
+type Found = Omit<Listing, 'key'>;
+
+const UNLISTED: Found = { models: null, problem: null };
 
 /**
  * The folder's entries, from the host's `list` when it gives one.
@@ -57,17 +59,13 @@ async function listEntries(
   return listing.content ?? [];
 }
 
-/** The models named from the start of each IFC file, read in parallel. */
-async function titled(
-  libraryUrl: string,
-  entries: LibraryEntry[],
-): Promise<BimModel[]> {
-  const ifcs = entries.filter((entry) =>
-    entry.name.toLowerCase().endsWith('.ifc'),
-  );
-  const found = await Promise.all(
-    ifcs.map((entry) => readIfcName(libraryUrl, entry.path)),
-  );
+/**
+ * The models named from the start of each IFC file, read in parallel. A name
+ * that cannot be read leaves the file name in place, so this never fails.
+ */
+async function titled(libraryUrl: string, entries: LibraryEntry[]): Promise<BimModel[]> {
+  const ifcs = entries.filter((entry) => entry.name.toLowerCase().endsWith('.ifc'));
+  const found = await Promise.all(ifcs.map((entry) => readIfcName(libraryUrl, entry.path)));
   const names = new Map(ifcs.map((entry, i) => [entry.name, found[i]]));
   return pairModels(entries, uniqueNames(names));
 }
@@ -82,7 +80,7 @@ function startListing(
   libraryUrl: string,
   directory: string,
   list: ListFolder | undefined,
-  publish: (found: Omit<Listing, 'key'>) => void,
+  publish: (found: Found) => void,
 ): () => void {
   let current = true;
   const post = (models: BimModel[], problem: Problem | null = null) => {
@@ -93,12 +91,10 @@ function startListing(
       post(pairModels(entries));
       return titled(libraryUrl, entries).then((models) => post(models));
     })
-    .catch((error: unknown) =>
-      post([], {
-        summary: 'The shared library could not be listed.',
-        detail: messageOf(error),
-      }),
-    );
+    .catch((error: unknown) => post([], {
+      summary: 'The shared library could not be listed.',
+      detail: messageOf(error),
+    }));
   return () => {
     current = false;
   };
@@ -107,15 +103,11 @@ function startListing(
 /**
  * The models in `directory`.
  *
- * `list` is read when a listing starts and is not a dependency, so a
- * host that passes a new function on every render, as it re-renders on every
- * reading, does not relist the folder and re-read every IFC file each time.
+ * `list` is read when a listing starts and is not a dependency, so a host
+ * that passes a new function on every render, as it does on every reading,
+ * does not list the folder and read every IFC file again each time.
  */
-export function useModelList(
-  libraryUrl: string,
-  directory: string,
-  list?: ListFolder,
-): ModelList {
+export function useModelList(libraryUrl: string, directory: string, list?: ListFolder): ModelList {
   const [reloads, setReloads] = useState(0);
   const [listing, setListing] = useState<Listing>({ key: '', ...UNLISTED });
   const lister = useRef(list);
@@ -126,8 +118,7 @@ export function useModelList(
 
   useEffect(() => {
     if (!libraryUrl) return undefined;
-    const publish = (found: Omit<Listing, 'key'>) =>
-      setListing({ key, ...found });
+    const publish = (found: Found) => setListing({ key, ...found });
     return startListing(libraryUrl, directory, lister.current, publish);
   }, [libraryUrl, directory, key, reloads]);
 

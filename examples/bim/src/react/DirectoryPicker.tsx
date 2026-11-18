@@ -20,11 +20,11 @@ import {
   ListItemButton,
   ListItemText,
 } from '@mui/material';
-import type { LibraryEntry } from 'src/react/assets';
-import { useFolderListing } from 'src/react/useFolderListing';
+import type { LibraryEntry } from './assets.js';
+import { useFolderListing } from './useFolderListing.js';
 
 export interface DirectoryPickerProps {
-  /** Lists one folder of the library; only entries with `type: 'directory'` are offered. */
+  /** Lists one folder of the library. Only entries with `type: 'directory'` are offered. */
   list(path: string): Promise<LibraryEntry[]>;
   /** The folder in use. */
   value: string;
@@ -45,7 +45,7 @@ interface FolderListProps {
 
 function FolderList({ browsing, folders, onEnter }: Readonly<FolderListProps>) {
   return (
-    <List dense>
+    <List>
       {browsing !== '' && (
         <ListItemButton onClick={() => onEnter(parentOf(browsing))}>
           <ListItemText primary="Up" />
@@ -72,28 +72,25 @@ interface BrowseDialogProps {
 }
 
 function BrowseDialog(props: Readonly<BrowseDialogProps>) {
-  const { open, browsing, folders, loading, error, onClose, onEnter, onUse } =
-    props;
+  const { open, browsing, folders, loading, error, onClose, onEnter, onUse } = props;
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-      <DialogTitle>Choose a folder</DialogTitle>
+      <DialogTitle>Choose a Folder</DialogTitle>
       <DialogContent>
         <FolderList browsing={browsing} folders={folders} onEnter={onEnter} />
         {loading && <CircularProgress size={24} />}
-        {error && (
-          <Alert severity="error">{`Could not list ${browsing}: ${error}`}</Alert>
-        )}
+        {error && <Alert severity="error">{`Could not list ${browsing}: ${error}`}</Alert>}
       </DialogContent>
       <DialogActions>
         <Button disabled={browsing === '' || loading} onClick={onUse}>
-          Use this folder
+          Use This Folder
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-/** Which folder is open for browsing, starting fresh at `value` every time the dialog opens. */
+/** Which folder is open for browsing, starting again at `value` every time the dialog opens. */
 function useBrowsing(value: string) {
   const [open, setOpen] = useState(false);
   const [browsing, setBrowsing] = useState(value);
@@ -106,41 +103,24 @@ function useBrowsing(value: string) {
 }
 
 /** Everything the picker needs: what is on screen, and what each action does. */
-function useDirectoryPicker(props: Readonly<DirectoryPickerProps>) {
-  const { list, value, onChange } = props;
-  const { open, browsing, setBrowsing, openDialog, closeDialog } =
-    useBrowsing(value);
-  const { entries, loading, error } = useFolderListing(
-    list,
-    open ? browsing : null,
-  );
+function useDirectoryPicker({ list, value, onChange }: Readonly<DirectoryPickerProps>) {
+  const browse = useBrowsing(value);
+  const { entries, loading, error } = useFolderListing(list, browse.open ? browse.browsing : null);
   const folders = entries.filter((entry) => entry.type === 'directory');
   const use = () => {
-    onChange(browsing);
-    closeDialog();
+    onChange(browse.browsing);
+    browse.closeDialog();
   };
-  return {
-    open,
-    browsing,
-    folders,
-    loading,
-    error,
-    openDialog,
-    closeDialog,
-    setBrowsing,
-    use,
-  };
+  return { ...browse, folders, loading, error, use };
 }
 
 export function DirectoryPicker(props: Readonly<DirectoryPickerProps>) {
   const picker = useDirectoryPicker(props);
-
   return (
     <>
-      <Button
-        variant="outlined"
-        onClick={picker.openDialog}
-      >{`Folder: ${props.value}`}</Button>
+      <Button variant="outlined" onClick={picker.openDialog}>
+        {`Folder: ${props.value}`}
+      </Button>
       <BrowseDialog
         open={picker.open}
         browsing={picker.browsing}

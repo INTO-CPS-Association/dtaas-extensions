@@ -6,17 +6,17 @@
 
 import type { Encoding } from '@into-cps-association/dtaas-sdk';
 import type { MeshBasicMaterial } from 'three';
-import { MarkerColours } from './aecColours';
-import { NO_READING_COLOUR } from './aecMarkers';
-import type { AecScene } from './aecScene';
-import { handleKey, type OptionContext } from './aecShortcuts';
-import { storeysOf } from './aecTree';
+import { MarkerColours } from './aecColours.js';
+import { NO_READING_COLOUR } from './aecMarkers.js';
+import type { AecScene } from './aecScene.js';
+import { handleKey, type OptionContext } from './aecShortcuts.js';
+import { storeysOf } from './aecTree.js';
 import {
   changes,
   mountOverlay,
   type OverlayModel,
   type ThemeRoot,
-} from './aecOverlay';
+} from './aecOverlay.js';
 
 export interface Controls {
   /** Give a marker the colour an encoding computed, as the heatmap allows. */

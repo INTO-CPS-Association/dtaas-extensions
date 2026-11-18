@@ -1,20 +1,15 @@
 {
-  "preset": "ts-jest",
   "testEnvironment": "jsdom",
   "transform": {
     "^.+\\.[tj]sx?$": [
       "ts-jest",
       {
-        "allowJs": true,
         "tsconfig": {
           "jsx": "react-jsx",
-          "noUnusedLocals": false,
-          "types": ["jest", "node"],
+          "allowJs": true,
           "esModuleInterop": true,
-          "paths": {
-            "src/*": ["./src/*"],
-            "tests/*": ["./tests/*"]
-          }
+          "isolatedModules": true,
+          "rootDir": "."
         }
       }
     ]
@@ -22,27 +17,11 @@
   "transformIgnorePatterns": [
     "/node_modules/(?!(@into-cps-association/dtaas-sdk|three)/)"
   ],
-  "collectCoverage": true,
-  "coverageReporters": ["text", "cobertura", "clover", "lcov", "json"],
-  "collectCoverageFrom": [
-    "src/**/*.{ts,tsx}",
-    "!src/**/*.types.ts",
-    "!src/**/index.ts",
-    "!src/converter/generated/**",
-    "!src/react/canvasRenderer.ts"
-  ],
-  "testTimeout": 15000,
-  "modulePathIgnorePatterns": ["dist"],
-  "testRegex": "/tests/.*\\.test\\.tsx?$",
-  "moduleDirectories": ["node_modules"],
-  "modulePaths": ["<rootDir>"],
   "moduleNameMapper": {
-    "^src/(.*)$": "<rootDir>/src/$1",
-    "^tests/(.*)$": "<rootDir>/tests/$1",
-    "\\.(css|less|scss)$": "<rootDir>/tests/__mocks__/styleMock.ts"
+    "^src/(.*?)(\\.js)?$": "<rootDir>/src/$1",
+    "^(\\.{1,2}/.*)\\.js$": "$1"
   },
-  "verbose": true,
-  "maxWorkers": 3,
-  "setupFiles": ["<rootDir>/tests/setupTests.ts"],
-  "setupFilesAfterEnv": ["<rootDir>/tests/jest.setup.ts"]
+  "setupFiles": ["<rootDir>/test/aec/setupTests.ts"],
+  "setupFilesAfterEnv": ["<rootDir>/test/aec/jest.setup.ts"],
+  "testRegex": "/test/(aec|kit)/.*\\.test\\.tsx?$"
 }

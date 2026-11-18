@@ -20,7 +20,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
-import type { ObjectFacts } from './aecTree';
+import type { ObjectFacts } from './aecTree.js';
 
 export interface Size {
   readonly x: number;

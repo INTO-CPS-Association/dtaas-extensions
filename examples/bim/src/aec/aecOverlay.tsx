@@ -17,11 +17,11 @@ import { createRoot } from 'react-dom/client';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import type { ClassEntry } from './aecAppearance';
-import ObjectPanel, { type PickedObject } from './aecObjectPanel';
-import { ClassLegend, HeatLegend, HelpPanel } from './aecLegend';
-import type { OptionContext } from './aecShortcuts';
-import { FloorPicker, Toolbar } from './aecToolbar';
+import type { ClassEntry } from './aecAppearance.js';
+import ObjectPanel, { type PickedObject } from './aecObjectPanel.js';
+import { ClassLegend, HeatLegend, HelpPanel } from './aecLegend.js';
+import type { OptionContext } from './aecShortcuts.js';
+import { FloorPicker, Toolbar } from './aecToolbar.js';
 
 /** What the overlay reads, and the change counter it redraws on. */
 export interface OverlayModel {
