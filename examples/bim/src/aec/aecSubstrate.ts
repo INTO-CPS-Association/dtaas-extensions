@@ -19,10 +19,10 @@ import type {
   SubstrateAdapter,
   SubstrateDescriptor,
 } from '@into-cps-association/dtaas-sdk';
-import type { Controls, PaneRows } from './aecControls';
-import type { Marker } from './aecMarkers';
-import type { AecScene } from './aecScene';
-import { modelAddress, sensorName } from './aecModel';
+import type { Controls, PaneRows } from './aecControls.js';
+import type { Marker } from './aecMarkers.js';
+import type { AecScene } from './aecScene.js';
+import { modelAddress, sensorName } from './aecModel.js';
 
 const ID = 'aec';
 const ANCHOR_KIND = 'ifc-guid';
@@ -30,9 +30,7 @@ const ANCHOR_KIND = 'ifc-guid';
 /** The pane: a row of controls, the canvas, and a row of panels. The
  * canvas gets a height, since a canvas has none of its own. */
 function paneRows(): PaneRows & { canvas: HTMLElement } {
-  const [frame, above, canvas, below] = [0, 1, 2, 3].map(() =>
-    document.createElement('div'),
-  );
+  const [frame, above, canvas, below] = [0, 1, 2, 3].map(() => document.createElement('div'));
   frame.tabIndex = 0; // so the keys reach the options
   frame.setAttribute('aria-label', 'Building model');
   Object.assign(canvas.style, {
@@ -67,14 +65,10 @@ function paint(
 }
 
 /** Load the scene code, draw the model and put the controls around it. */
-async function drawModel(
-  rows: ReturnType<typeof paneRows>,
-  url: string,
-  host: HostServices,
-) {
+async function drawModel(rows: ReturnType<typeof paneRows>, url: string, host: HostServices) {
   const [{ AecScene: Scene3D }, { addControls }] = await Promise.all([
-    import('./aecScene'),
-    import('./aecControls'),
+    import('./aecScene.js'),
+    import('./aecControls.js'),
   ]);
   const view = new Scene3D(rows.canvas);
   try {
@@ -111,11 +105,7 @@ function resolveAnchor({ view, controls }: Drawn, anchor: Anchor) {
   return ref(anchor.signalPath);
 }
 
-function applyEncoding(
-  { view, controls }: Drawn,
-  target: ElementRef,
-  resolved: ResolvedEncoding,
-) {
+function applyEncoding({ view, controls }: Drawn, target: ElementRef, resolved: ResolvedEncoding) {
   const marker = view?.markers.all.get(target.id);
   if (!marker || !view || !controls) return;
   paint(view, controls, [target.id, marker], resolved);
@@ -143,16 +133,11 @@ function disposePane({ view, controls }: Drawn, frame: HTMLElement) {
 /** Where the converted model of a descriptor is served from. */
 function modelUrl(host: HostServices, descriptor: SubstrateDescriptor) {
   if (!descriptor.source) throw new Error('An aec substrate needs a model');
-  const address = modelAddress(
-    descriptor.source,
-    host.library.conventions.modelsDirectory,
-  );
+  const address = modelAddress(descriptor.source, host.library.conventions.modelsDirectory);
   return host.library.resolve(address);
 }
 
-export default function createAecSubstrate(
-  host: HostServices,
-): SubstrateAdapter {
+export default function createAecSubstrate(host: HostServices): SubstrateAdapter {
   const rows = paneRows();
   const drawn: Drawn = { view: null, controls: null };
   return {

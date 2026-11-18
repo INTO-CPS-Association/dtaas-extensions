@@ -4,9 +4,9 @@
  * disagree. The keys, labels and icons are the Buildings page's.
  */
 
-import type { ViewState } from './aecAppearance';
-import type { ViewName } from './aecCamera';
-import type { MarkerColours } from './aecColours';
+import type { ViewState } from './aecAppearance.js';
+import type { ViewName } from './aecCamera.js';
+import type { MarkerColours } from './aecColours.js';
 
 /** What an option needs from the substrate to do its work. */
 export interface OptionContext {
@@ -48,12 +48,12 @@ const toggle = (
   on: (c) => c.state[field],
 });
 
-const view = (
-  key: string,
-  label: string,
-  icon: string,
-  from: ViewName,
-): Option => ({ key, label, icon, run: (c) => c.look(from) });
+const view = (key: string, label: string, icon: string, from: ViewName): Option => ({
+  key,
+  label,
+  icon,
+  run: (c) => c.look(from),
+});
 
 /** The heatmap of the Buildings page, here the colours the declaration gives
  * the markers: all of them, one colour rule at a time, or none. */

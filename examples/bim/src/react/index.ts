@@ -7,41 +7,32 @@
  * nothing else.
  */
 
-export {
-  BuildingModels,
-  type BuildingModelsProps,
-} from 'src/react/BuildingModels';
-export {
-  ClassLegend,
-  HeatLegend,
-  type HeatLegendProps,
-} from 'src/react/Legend';
-export { SensorCards, type SensorCardsProps } from 'src/react/SensorCards';
-export { FloorPicker, type FloorPickerProps } from 'src/react/FloorPicker';
-export { Toolbar, type ToolbarProps } from 'src/react/Toolbar';
-export { ObjectPanel, type ObjectPanelProps } from 'src/react/ObjectPanel';
-export { HelpPanel, type HelpPanelProps } from 'src/react/HelpPanel';
-export {
-  DirectoryPicker,
-  type DirectoryPickerProps,
-} from 'src/react/DirectoryPicker';
+export { BuildingModels, type BuildingModelsProps } from './BuildingModels.js';
+export { ClassLegend, HeatLegend, type HeatLegendProps } from './Legend.js';
+export { SensorCards, type SensorCardsProps } from './SensorCards.js';
+export { FloorPicker, type FloorPickerProps } from './FloorPicker.js';
+export { Toolbar, type ToolbarProps } from './Toolbar.js';
+export { ObjectPanel, type ObjectPanelProps } from './ObjectPanel.js';
+export { HelpPanel, type HelpPanelProps } from './HelpPanel.js';
+export { DirectoryPicker, type DirectoryPickerProps } from './DirectoryPicker.js';
 
 // `BimCanvas` is deliberately not re-exported here. `BuildingModels` reaches
 // it through a dynamic import so three.js lands in its own chunk, and a static
 // re-export from this file undoes that: the host's main bundle grew by 640 KB
 // and the separate chunk vanished. A consumer that genuinely wants the canvas
 // alone imports it from its own path.
-export type { BimCanvasProps } from 'src/react/BimCanvas';
+export type { BimCanvasProps } from './BimCanvas.js';
 export {
+  MODELS_DIRECTORY,
   contentsUrl,
   fileUrl,
   formatSize,
   pairModels,
-  readIfcName,
   readableName,
-  uniqueNames,
   type BimModel,
   type LibraryEntry,
-} from 'src/react/assets';
-export { objectsOf, type BimObject } from 'src/react/scene';
-export { default as exportGlb } from 'src/react/exportGlb';
+} from './assets.js';
+export { readIfcName, uniqueNames } from './buildingNames.js';
+export { objectsOf, type BimObject } from './scene.js';
+export { exportGlb } from './exportGlb.js';
+export { ModelTree, MAX_ROWS, type ModelTreeProps } from './ModelTree.js';

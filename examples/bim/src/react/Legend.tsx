@@ -1,26 +1,14 @@
 /**
- * The two legends: what the colours of the model mean, and what the heatmap
- * means.
+ * The two legends: what the colours of the model mean, and what the heatmap means.
  *
- * The class legend reads the colours the model arrived with instead of a
- * table written here, because an architect assigned them and a legend that
- * invented its own would describe a different building.
+ * The class legend reads the colours the model arrived with instead of a table written here, because an architect assigned them and a legend that invented its own would describe a different building.
  *
- * The heatmap legend states its range, and the range comes from the manifest
- * instead of from the readings. A scale that rescaled itself would make a
- * steady building look like a changing one.
+ * The heatmap legend states its range, and the range comes from the manifest instead of from the readings. A scale that rescaled itself would make a steady building look like a changing one, and a person reading two screenshots an hour apart would be comparing different things without being told.
  */
 
-import {
-  Box,
-  Chip,
-  ListItemButton,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { RAMP_STOPS, type Zones } from 'src/core';
-import type { SceneView } from 'src/viewer';
+import { Box, Chip, ListItemButton, Paper, Stack, Typography } from '@mui/material';
+import { RAMP_STOPS, type Zones } from '../index.js';
+import type { SceneView } from '../viewer/index.js';
 
 function Swatch({ colour }: Readonly<{ colour: string }>) {
   return (
@@ -30,78 +18,12 @@ function Swatch({ colour }: Readonly<{ colour: string }>) {
         height: 12,
         borderRadius: 0.5,
         bgcolor: colour,
-        border: '1px solid rgba(0,0,0,0.2)',
+        // The theme's divider, so the edge of a pale swatch shows in both themes.
+        border: 1,
+        borderColor: 'divider',
         flexShrink: 0,
       }}
     />
-  );
-}
-
-interface ClassRowProps {
-  ifcClass: string;
-  colour: string;
-  count: number;
-  selected: boolean;
-  onPick: (ifcClass: string) => void;
-}
-
-/**
- * One row of the class legend.
- *
- * A host theme may give every list button a 44 pixel minimum, which is right
- * for a navigation drawer a finger has to hit and wrong for a legend of
- * dozens of classes, where it pushed most of the list out of sight. Thirty
- * two pixels keeps each row above the 24 pixel target size WCAG 2.2 sets at
- * level AA.
- */
-function ClassRow(props: Readonly<ClassRowProps>) {
-  const { ifcClass, colour, count, selected, onPick } = props;
-  return (
-    <ListItemButton
-      dense
-      selected={selected}
-      onClick={() => onPick(ifcClass)}
-      sx={{ gap: 0.75, py: 0.2, minHeight: 32, borderRadius: 1 }}
-    >
-      <Swatch colour={colour} />
-      <Typography variant="body2">{ifcClass.replace(/^Ifc/, '')}</Typography>
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        sx={{ ml: 'auto', pl: 1.5, fontVariantNumeric: 'tabular-nums' }}
-      >
-        {count}
-      </Typography>
-    </ListItemButton>
-  );
-}
-
-interface ClassRowsProps {
-  colours: Map<string, string>;
-  counts: Map<string, number>;
-  highlighted: string | null;
-  onPick: (ifcClass: string) => void;
-}
-
-function ClassRows({
-  colours,
-  counts,
-  highlighted,
-  onPick,
-}: Readonly<ClassRowsProps>) {
-  return (
-    <Stack sx={{ mt: 0.5, gap: 0.25 }}>
-      {[...colours].map(([ifcClass, colour]) => (
-        <ClassRow
-          key={ifcClass}
-          ifcClass={ifcClass}
-          colour={colour}
-          count={counts.get(ifcClass) ?? 0}
-          selected={highlighted === ifcClass}
-          onPick={onPick}
-        />
-      ))}
-    </Stack>
   );
 }
 
@@ -112,31 +34,25 @@ export interface ClassLegendProps {
 }
 
 /**
- * Light every object of a class, or clear the pick if it is already lit.
- *
- * A plain function, not a hook or a component: `view` is a mutable handle by
- * design, the same one every shortcut in `viewer/shortcuts.ts` writes to.
- */
-function pickClass(view: SceneView, ifcClass: string): void {
-  view.state.highlightedClass =
-    view.state.highlightedClass === ifcClass ? null : ifcClass;
-  view.refreshMaterials();
-}
-
-/**
  * What the colours in this model mean, and where each class is.
  *
  * Picking a row lights every object of that class. A legend that only names
  * colours answers "what is this colour", and the question a person has in
  * front of a grey building is "where are the columns". The same row again
- * clears it.
+ * clears it, so nothing has to be found twice.
  */
 export function ClassLegend({ view, onChange }: Readonly<ClassLegendProps>) {
   const colours = view.classColours();
   if (colours.size === 0) return null;
 
+  // How many objects of each class, on the row instead of behind a hover. A
+  // count is what a person wants from a legend, and a tooltip shows it one row
+  // at a time in a box the browser styles.
+  const counts = view.classCounts();
+
   const pick = (ifcClass: string) => {
-    pickClass(view, ifcClass);
+    view.state.highlightedClass = view.state.highlightedClass === ifcClass ? null : ifcClass;
+    view.refreshMaterials();
     onChange();
   };
 
@@ -145,12 +61,32 @@ export function ClassLegend({ view, onChange }: Readonly<ClassLegendProps>) {
       <Typography variant="caption" color="text.secondary">
         In This Model
       </Typography>
-      <ClassRows
-        colours={colours}
-        counts={view.classCounts()}
-        highlighted={view.state.highlightedClass}
-        onPick={pick}
-      />
+      <Stack sx={{ mt: 0.5, gap: 0.25 }}>
+        {[...colours].map(([ifcClass, colour]) => (
+          <ListItemButton
+            key={ifcClass}
+            dense
+            selected={view.state.highlightedClass === ifcClass}
+            onClick={() => pick(ifcClass)}
+            // A host theme may give every list button a 44 pixel minimum, which
+            // is right for a navigation drawer a finger has to hit and wrong for
+            // a legend of dozens of classes, where it pushed most of the list
+            // out of sight. Thirty two pixels keeps each row above the 24 pixel
+            // target size WCAG 2.2 sets at level AA.
+            sx={{ gap: 0.75, py: 0.2, minHeight: 32, borderRadius: 1 }}
+          >
+            <Swatch colour={colour} />
+            <Typography variant="body2">{ifcClass.replace(/^Ifc/, '')}</Typography>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ ml: 'auto', pl: 1.5, fontVariantNumeric: 'tabular-nums' }}
+            >
+              {counts.get(ifcClass) ?? 0}
+            </Typography>
+          </ListItemButton>
+        ))}
+      </Stack>
     </Paper>
   );
 }
@@ -168,23 +104,23 @@ function hex(colour: number): string {
   return `#${colour.toString(16).padStart(6, '0')}`;
 }
 
-function NoHeat() {
+export function HeatLegend({ zones, unit, coloured }: Readonly<HeatLegendProps>) {
+  if (!zones) {
+    return (
+      <Paper variant="outlined" sx={{ p: 1 }}>
+        <Typography variant="caption" color="text.secondary">
+          Heatmap
+        </Typography>
+        <Typography variant="body2">No current reading to colour by.</Typography>
+      </Paper>
+    );
+  }
+
   return (
     <Paper variant="outlined" sx={{ p: 1 }}>
       <Typography variant="caption" color="text.secondary">
         Heatmap
       </Typography>
-      <Typography variant="body2">No current reading to colour by.</Typography>
-    </Paper>
-  );
-}
-
-function HeatRange({
-  zones,
-  unit,
-}: Readonly<{ zones: Zones; unit: string | undefined }>) {
-  return (
-    <>
       <Box
         sx={{
           mt: 0.5,
@@ -201,28 +137,7 @@ function HeatRange({
           {zones.high} {unit}
         </Typography>
       </Box>
-    </>
-  );
-}
-
-export function HeatLegend({
-  zones,
-  unit,
-  coloured,
-}: Readonly<HeatLegendProps>) {
-  if (!zones) return <NoHeat />;
-
-  return (
-    <Paper variant="outlined" sx={{ p: 1 }}>
-      <Typography variant="caption" color="text.secondary">
-        Heatmap
-      </Typography>
-      <HeatRange zones={zones} unit={unit} />
-      <Chip
-        size="small"
-        sx={{ mt: 0.5 }}
-        label={`${zones.counted} sensors, ${coloured} objects`}
-      />
+      <Chip size="small" sx={{ mt: 0.5 }} label={`${zones.counted} sensors, ${coloured} objects`} />
     </Paper>
   );
 }

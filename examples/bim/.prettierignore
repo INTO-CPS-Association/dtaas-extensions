@@ -1,4 +1,7 @@
 dist/
 coverage/
-src/converter/generated/
-tests/fixtures/*.ifc
+node_modules/
+# Written by scripts/inline-wasm.mjs.
+src/generated/
+test/fixtures/
+yarn.lock

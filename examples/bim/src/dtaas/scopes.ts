@@ -1,20 +1,17 @@
-import type {
-  ScopeRule,
-  SubstrateAdapter,
-} from '@into-cps-association/dtaas-sdk';
+import type { ScopeRule, SubstrateAdapter } from '@into-cps-association/dtaas-sdk';
+import { ANCHOR_KIND } from './ids.js';
 
 type Fact = 'room' | 'storey';
 
-/** Room or storey the aec substrate copied from the property tree. */
-const factOf = (adapter: SubstrateAdapter, ref: string, fact: Fact) => {
-  const element = adapter.resolve({ kind: 'ifc-guid', ref, signalPath: ref });
-  const data = (element?.handle as { userData?: Record<string, unknown> })
-    ?.userData;
+/** The room or storey the aec substrate copied onto an element from the property tree. */
+function factOf(adapter: SubstrateAdapter, ref: string, fact: Fact): string | undefined {
+  const element = adapter.resolve({ kind: ANCHOR_KIND, ref, signalPath: ref });
+  const data = (element?.handle as { userData?: Record<string, unknown> } | undefined)?.userData;
   const value = data?.[fact];
   return typeof value === 'string' && value !== '' ? value : undefined;
-};
+}
 
-/** A `Map` first, so names such as `__proto__` become ordinary keys. */
+/** Groups in a `Map` first, so a room named `__proto__` becomes an ordinary key. */
 const groupBy =
   (fact: Fact): ScopeRule['group'] =>
   (elementIds, { adapter }) => {
@@ -26,6 +23,7 @@ const groupBy =
     return Object.fromEntries(groups);
   };
 
+/** The two building scopes no generic substrate can know: per room and per storey. */
 const scopes: ScopeRule[] = [
   { id: 'bim.room', label: 'Per room', group: groupBy('room') },
   { id: 'bim.storey', label: 'Per storey', group: groupBy('storey') },

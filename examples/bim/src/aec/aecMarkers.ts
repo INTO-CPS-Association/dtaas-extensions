@@ -20,9 +20,18 @@ import {
 const MARKER_SHARE = 0.012;
 const LABEL_SHARE = 0.09;
 const LABEL_FONT_PX = 48;
-// Labels sit in the scene, whose background is light in both themes.
-const LABEL_BACKGROUND = 'rgba(255, 255, 255, 0.9)';
-const LABEL_TEXT = '#1b2430';
+
+/** The colours a label is written in: the surface and the text of the host's theme. */
+export interface LabelColours {
+  readonly background: string;
+  readonly text: string;
+}
+
+/** The light surface labels have until the overlay reads the host's theme. */
+export const DEFAULT_LABEL_COLOURS: LabelColours = {
+  background: 'rgba(255, 255, 255, 0.9)',
+  text: '#1b2430',
+};
 /** The marker colour before a value arrives, off every colour ramp. */
 export const NO_READING_COLOUR = '#9aa3ad';
 
@@ -34,7 +43,7 @@ export interface Marker {
 }
 
 /** Draw `text` on a canvas and size the sprite to `height` model units. */
-function writeLabel(sprite: Sprite, text: string, height: number) {
+function writeLabel(sprite: Sprite, text: string, height: number, colours: LabelColours) {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
   if (!context) return;
@@ -44,9 +53,9 @@ function writeLabel(sprite: Sprite, text: string, height: number) {
   canvas.width = Math.ceil(context.measureText(text).width + padding * 2);
   canvas.height = Math.ceil(LABEL_FONT_PX * 1.4);
   context.font = font; // resizing the canvas resets its state
-  context.fillStyle = LABEL_BACKGROUND;
+  context.fillStyle = colours.background;
   context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = LABEL_TEXT;
+  context.fillStyle = colours.text;
   context.textBaseline = 'middle';
   context.fillText(text, padding, canvas.height / 2);
   sprite.material.map?.dispose();
@@ -60,6 +69,11 @@ export class Markers {
   readonly all = new Map<string, Marker>();
 
   radius = 1;
+
+  private colours = DEFAULT_LABEL_COLOURS;
+
+  /** What each label says now, so a change of theme can write it again. */
+  private readonly texts = new Map<Marker, string>();
 
   constructor(
     private readonly scene: Scene,
@@ -82,11 +96,11 @@ export class Markers {
     dot.position.copy(at);
     const label = new Sprite(new SpriteMaterial({ depthTest: false }));
     label.renderOrder = 3;
-    writeLabel(label, name, this.labelHeight());
     label.position.copy(at).add(new Vector3(0, 0, this.labelOffset(at)));
     this.scene.add(dot, label);
     const marker = { name, globalId, dot, label };
     this.all.set(key, marker);
+    this.write(marker, name);
     this.changed();
     return marker;
   }
@@ -101,14 +115,28 @@ export class Markers {
     const crowded = [...this.all.values()].some(
       (m) =>
         m.label.position.z < m.dot.position.z &&
-        Math.hypot(m.dot.position.x - at.x, m.dot.position.z - at.z) <
-          height * 4,
+        Math.hypot(m.dot.position.x - at.x, m.dot.position.z - at.z) < height * 4,
     );
     return crowded ? height : -height;
   }
 
+  private write(marker: Marker, text: string) {
+    this.texts.set(marker, text);
+    writeLabel(marker.label, text, this.labelHeight(), this.colours);
+  }
+
   relabel(marker: Marker, text: string) {
-    writeLabel(marker.label, text, this.labelHeight());
+    this.write(marker, text);
+    this.changed();
+  }
+
+  /** Write every label again in the colours of the host's theme. */
+  setColours(colours: LabelColours) {
+    if (colours.background === this.colours.background && colours.text === this.colours.text) {
+      return;
+    }
+    this.colours = colours;
+    this.texts.forEach((text, marker) => this.write(marker, text));
     this.changed();
   }
 

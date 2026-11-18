@@ -11,13 +11,16 @@ import dtaasKitConfig from 'src/eslint';
 // inside the boundary that the kit ESLint config draws.
 const examples = path.join(__dirname, '../../examples');
 
+// The bim kit writes its web-ifc WebAssembly into src/generated/ when it
+// builds, which is no source of the kit.
 function sourcesOf(folder: string): string[] {
   return readdirSync(folder, { recursive: true, encoding: 'utf8' })
     .filter((file) => /\.tsx?$/.test(file))
+    .filter((file) => !file.startsWith(`generated${path.sep}`))
     .map((file) => path.join(folder, file));
 }
 
-const kitSources = ['hello-kit'].flatMap((kit) =>
+const kitSources = ['hello-kit', 'soil-kit', 'bim'].flatMap((kit) =>
   sourcesOf(path.join(examples, kit, 'src')),
 );
 
@@ -28,6 +31,9 @@ const lint = (file: string) =>
       [
         {
           files: ['**/*.ts', '**/*.tsx'],
+          // Only the boundary rules run here, so a directive that silences a
+          // rule of the kit's own lint config is not unused.
+          linterOptions: { reportUnusedDisableDirectives: 'off' },
           languageOptions: {
             parser: tsParser,
             parserOptions: { ecmaFeatures: { jsx: true } },

@@ -62,10 +62,8 @@ only.
    example `'extensions/wind/index.js'`. The client loads it when it starts,
    without a rebuild.
 
-The soil-kit, which lives in a repository of its own on the GitLab of Aarhus
-University and is not public yet, is a kit made this way. It has its own unit
-and integration tests, a test that builds and mounts the bundle and a lint
-test against the SDK's kit rules.
+The soil-kit, next to this folder in `examples/soil-kit`, is a kit made
+this way, with its own unit and integration tests.
 
 Inside this repository, `yarn build:kit hello-kit` builds the same bundle
 from the SDK's source and `tests/integration/kitBundle.test.ts` runs it with

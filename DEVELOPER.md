@@ -47,6 +47,8 @@ tests/
   e2e/                packed-tarball smoke test
   fixtures/           junction-7 visualisation.json, recorded stream, extension fixtures
 examples/hello-kit/   the template layout of a domain kit
+examples/soil-kit/    a kit made from the template, checked and tested by the root
+examples/bim/         bim-kit, a standalone package with its own lockfile and CI job
 ```
 
 ## Conventions
@@ -66,22 +68,26 @@ examples/hello-kit/   the template layout of a domain kit
 - `globalThis` instead of `window`; `node:` prefixes for Node built-ins.
 - Tests live in `tests/`, never next to the source, and match `*.test.ts(x)`.
 
-## examples/bim
+## Example Kits
 
-[`examples/bim`](examples/bim) is a standalone package (its own
-`package.json`, `yarn.lock`, tests and CI job), not part of this workspace.
-From the repository root:
+`examples/hello-kit` and `examples/soil-kit` are checked by the commands
+above: `yarn lint`, `yarn typecheck` and `yarn format:check` cover their files,
+`yarn test:coverage` runs their tests with the SDK's source, and
+`tests/integration/kitBundle.test.ts` builds each one with
+`yarn build:kit <kit folder>` and mounts the bundle on a fake host.
+
+`examples/bim` is a standalone package (its own `package.json`, `yarn.lock`,
+tests and CI job), not part of this workspace, because it brings three.js,
+web-ifc and a test suite of its own. From the repository root:
 
 ```bash
 yarn install                # once, at the root
 cd examples/bim
-yarn install
+yarn install --frozen-lockfile --ignore-scripts
 yarn sdk                    # builds, packs and installs this SDK as a tarball
-yarn test:all
+yarn typecheck
+yarn test                   # the Node test runner suite, then the Jest suite
 ```
-
-See [`examples/bim/README.md`](examples/bim/README.md) for its full scripts
-table, entry points and the `bim-example` CI job.
 
 ## Releasing
 

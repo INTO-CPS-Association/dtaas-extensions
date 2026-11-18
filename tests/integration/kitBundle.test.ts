@@ -68,6 +68,7 @@ function evaluate(
 
 describe.each([
   ['hello-kit', 'hello', { REACT_APP_EXT_HELLO_GREETING: 'Hej' }],
+  ['soil-kit', 'soil', { REACT_APP_EXT_SOIL_TWIN: 'soil_p03' }],
 ])('the deployed bundle of %s', (kit, id, env) => {
   let registered: Record<string, { extension: DtaasExtension }>;
   let bundle: string;

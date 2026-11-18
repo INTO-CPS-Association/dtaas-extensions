@@ -21,9 +21,7 @@ export type ColourMode = 'all' | 'off' | number;
 function quantityOf(encoding: Encoding): Quantity {
   const scheme = 'scheme' in encoding ? encoding.scheme : undefined;
   const domain = 'domain' in encoding ? encoding.domain : undefined;
-  const key = [scheme ?? encoding.type, domain?.join(' to ')]
-    .filter(Boolean)
-    .join(' ');
+  const key = [scheme ?? encoding.type, domain?.join(' to ')].filter(Boolean).join(' ');
   return { key, scheme, domain };
 }
 

@@ -16,11 +16,16 @@ export function messageOf(error: unknown): string {
 /**
  * Read a response as JSON, or say what actually came back.
  *
- * The library URL carries the signed-in user's name. When that part is wrong
- * or not known yet, the request still succeeds: it lands on the host
- * application, which answers with its own HTML page and HTTP 200, and
- * `response.json()` would blame JSON for an address that was never the
- * library. So the message names the address and that likely cause.
+ * The library URL a host supplies is built from parts, and one of those parts
+ * is usually the signed-in user. Whenever that part is wrong, missing, or not
+ * known yet, the request still succeeds: it stops matching the workspace and
+ * lands on the host application, which answers with its own HTML page and
+ * HTTP 200. `response.json()` then reports "Unexpected token '<'", which
+ * blames JSON for an address that was never the library.
+ *
+ * Both failures seen so far were this: first a name that had not arrived yet,
+ * then a deployment serving a workspace under a different name than the one
+ * signed in. So the message names the address and states that cause.
  */
 export async function readJson<T>(response: Response, url: string): Promise<T> {
   if (!response.ok) throw new Error(`${url} returned HTTP ${response.status}`);
@@ -37,10 +42,7 @@ export async function readJson<T>(response: Response, url: string): Promise<T> {
 }
 
 /** Fetch one JSON file of the library, sending the session's credentials. */
-export async function fetchJson<T>(
-  url: string,
-  init: RequestInit = {},
-): Promise<T> {
+export async function fetchJson<T>(url: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(url, { credentials: 'include', ...init });
   return readJson<T>(response, url);
 }

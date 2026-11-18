@@ -8,10 +8,25 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `examples/soil-kit`, a kit made from the `hello-kit` template: the
+  `soil-profile` substrate, the `soil-depth` anchor kind, the soil presets, a
+  page and the `soil_sensor` table it adds to the services. The root checks
+  and tests it as it does `hello-kit`. `kitBundle.test.ts` builds and mounts
+  its deployed bundle.
+- `@mui/icons-material` as a development dependency, for the icon of the
+  soil-kit's page.
 - API version `1.5.0`: the optional `unit` of `SignalSample` and `Sampled`, the
   unit a source gave with a value. A kit compares it with the unit it expects
   and no longer has to assume one from the name of the quantity. A host that
   does not know the unit leaves the field out.
+
+### Changed
+
+- `examples/bim` is the source of bim-kit 0.2.0 with the changes of its next
+  release, in place of the port of bim-kit 0.1.1. It contributes the `aec`
+  substrate, builds a deployed bundle with `kitBuildConfig` and keeps its own
+  lockfile and CI job. Its tests run with the Node test runner against the
+  built package and with Jest for the substrate and the bundle.
 
 ### Fixed
 
@@ -21,7 +36,7 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.1.1] - 2026-11-09
 
-### Added
+### Added in 0.1.1
 
 - `./schema` checks that every encoding reads a signal some transport provides.
   An encoding reads its `target` on `measured` or on the `channel` it names and
@@ -67,7 +82,7 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   builds an example kit inside this repository and
   `tests/integration/kitBundle.test.ts` mounts the bundle on a fake host.
 
-### Changed
+### Changed in 0.1.1
 
 - `./schema` makes the `url` of an `mqtt` transport optional. A host with a
   signals gateway serves the topics itself, so a `visualisation.json` can name
@@ -78,7 +93,7 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   contributes it, so a preset that names `aec` needs an extension that
   contributes the substrate.
 
-### Security
+### Security in 0.1.1
 
 - `./schema` refuses a transport `url` or a substrate `source` that carries a
   user name or password, such as `mqtt://user:secret@broker`, so a

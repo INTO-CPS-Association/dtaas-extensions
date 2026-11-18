@@ -1,8 +1,7 @@
 /**
  * The list of shortcuts, written from the same table that binds them.
  *
- * A help page maintained by hand is a help page that lies, because it is the
- * last thing anyone updates.
+ * A help page maintained by hand is a help page that lies, because it is the last thing anyone updates.
  */
 
 import {
@@ -14,7 +13,7 @@ import {
   TableCell,
   TableRow,
 } from '@mui/material';
-import { SHORTCUTS } from 'src/viewer';
+import { SHORTCUTS } from '../viewer/index.js';
 
 export interface HelpPanelProps {
   open: boolean;

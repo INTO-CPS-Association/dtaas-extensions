@@ -1,32 +1,10 @@
 /**
- * Choosing a model from a menu instead of from a list down the page.
- *
- * A library with a dozen IFC files pushed the viewer below the fold, so a
- * person scrolling a list of names had no way to tell there was a model drawn
- * underneath it. A menu keeps every file one click away and leaves the drawing
- * where the eye lands.
+ * The menu that chooses a building model, and the chip that says whether a
+ * model has converted geometry beside it.
  */
 
-import {
-  Chip,
-  CircularProgress,
-  FormControl,
-  ListItemText,
-  MenuItem,
-  Select,
-  Typography,
-  type SelectChangeEvent,
-} from '@mui/material';
-import { formatSize, type BimModel } from 'src/react/assets';
-
-const LABEL_ID = 'bim-model-label';
-
-const HEADING = {
-  variant: 'subtitle2',
-  component: 'h2',
-  id: LABEL_ID,
-  sx: { mb: 1 },
-} as const;
+import { Chip, FormControl, ListItemText, MenuItem, Select, Typography } from '@mui/material';
+import { formatSize, type BimModel } from './assets.js';
 
 /** Says whether a model already has geometry beside it, in one word. */
 export function StateChip({ model }: Readonly<{ model: BimModel }>) {
@@ -40,87 +18,59 @@ export function StateChip({ model }: Readonly<{ model: BimModel }>) {
   );
 }
 
-/** One entry of the menu: the size and the state sit here, where there is room. */
-function menuItem(model: BimModel) {
-  return (
-    <MenuItem key={model.ifcPath} value={model.ifcPath}>
-      <ListItemText
-        primary={model.title}
-        secondary={formatSize(model.sizeBytes)}
-        sx={{ mr: 2 }}
-      />
-      <StateChip model={model} />
-    </MenuItem>
-  );
-}
-
-export interface ModelPickerProps {
-  models: BimModel[];
-  chosen: BimModel | null;
-  onChoose: (model: BimModel) => void;
-}
-
 /**
- * The menu, as wide as the messages below it so a long name shows in full.
+ * Choose a model from a menu instead of from a list down the page.
  *
- * It is named by a heading before the control, not a floating label inside
- * it. `labelId` and not `aria-labelledby`: passed straight to Select, the
- * attribute lands on the outer box, and the element with the combobox role,
- * the one a screen reader announces, was left with no name.
+ * A library with a dozen IFC files pushed the viewer below the fold, so a
+ * person scrolling a list of names had no way to tell there was a model drawn
+ * underneath it. A menu keeps every file one click away and leaves the drawing
+ * where the eye lands.
  */
-export function ModelPicker(props: Readonly<ModelPickerProps>) {
-  const { models, chosen, onChoose } = props;
-  const byPath = (path: unknown) =>
-    models.find((model) => model.ifcPath === path);
-  const pick = (event: SelectChangeEvent) => {
-    const picked = byPath(event.target.value);
-    if (picked) onChoose(picked);
-  };
-  return (
-    <FormControl fullWidth size="small">
-      <Typography {...HEADING}>IFC Model</Typography>
-      <Select
-        labelId={LABEL_ID}
-        value={chosen?.ifcPath ?? ''}
-        onChange={pick}
-        renderValue={(value) => byPath(value)?.title ?? ''}
-      >
-        {models.map(menuItem)}
-      </Select>
-    </FormControl>
-  );
-}
-
-function ModelCount({ count }: Readonly<{ count: number }>) {
-  return (
-    <Typography
-      variant="caption"
-      color="text.secondary"
-      sx={{ display: 'block', mt: 1 }}
-    >
-      {count} IFC {count === 1 ? 'model' : 'models'} in the shared library.
-    </Typography>
-  );
-}
-
-/** The menu once the folder is listed, or what stands in for it until then. */
-export function ModelChooser({
+export default function ModelPicker({
   models,
   chosen,
   onChoose,
-}: Readonly<Omit<ModelPickerProps, 'models'> & { models: BimModel[] | null }>) {
-  if (models === null) return <CircularProgress size={24} />;
-  if (models.length === 0) {
-    return (
-      <Typography variant="body2">
-        No IFC file is in the shared library yet.
-      </Typography>
-    );
-  }
+}: Readonly<{
+  models: BimModel[];
+  chosen: BimModel | null;
+  onChoose: (model: BimModel) => void;
+}>) {
   return (
-    <>
-      <ModelPicker models={models} chosen={chosen} onChoose={onChoose} />
-      <ModelCount count={models.length} />
-    </>
+    // As wide as the messages below it, so the picker, the notices and the
+    // drawing share one column and a long model name shows in full.
+    <FormControl fullWidth size="small">
+      {/* A heading and not a floating label, so the section is named before
+          the control instead of inside it, the same way the chosen model is
+          named above its drawing. */}
+      <Typography variant="subtitle2" component="h2" id="bim-model-label" sx={{ mb: 1 }}>
+        IFC Model
+      </Typography>
+      <Select
+        // labelId and not aria-labelledby. Passed straight to Select, the
+        // attribute lands on the outer box, and the element with the combobox
+        // role, the one a screen reader announces, was left with no name.
+        // labelId is the prop MUI puts on that element.
+        labelId="bim-model-label"
+        value={chosen?.ifcPath ?? ''}
+        onChange={(event) => {
+          const picked = models.find((model) => model.ifcPath === event.target.value);
+          if (picked) onChoose(picked);
+        }}
+        // Only the name in the closed control. The size and the state belong in
+        // the menu, where there is room for them.
+        renderValue={(value) => models.find((model) => model.ifcPath === value)?.title ?? ''}
+      >
+        {models.map((model) => (
+          <MenuItem key={model.ifcPath} value={model.ifcPath}>
+            <ListItemText
+              primary={model.title}
+              secondary={formatSize(model.sizeBytes)}
+              sx={{ mr: 2 }}
+            />
+            <StateChip model={model} />
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 }

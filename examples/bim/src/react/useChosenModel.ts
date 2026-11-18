@@ -2,7 +2,7 @@
  * Which model is on screen: the host's `selected` when it gives one, the
  * person's last pick otherwise.
  *
- * The chosen model is held as the object it was when it was chosen, not
+ * The chosen model is held as the object it was when it was chosen, and not
  * looked up afresh from each listing. The canvas is keyed by that object's
  * paths, and a save that adds a GLB beside the model must not redraw the
  * model already on screen. What the page says about the model reads from
@@ -10,7 +10,7 @@
  */
 
 import { useCallback, useState } from 'react';
-import type { BimModel } from 'src/react/assets';
+import type { BimModel } from './assets.js';
 
 export interface ChosenModel {
   /** The model the canvas draws. */
@@ -34,9 +34,13 @@ export interface ChosenModelOptions {
   onSelect?: (name: string) => void;
 }
 
-/** The model the host's `selected` names, pinned once it has been found. */
-function useSelectedModel(options: ChosenModelOptions) {
-  const { models, directory, selected } = options;
+/**
+ * The model the host's `selected` names, pinned once it has been found.
+ *
+ * The pick is updated during render and not in an effect, so the model for
+ * the previous name is never painted under the new one.
+ */
+function useSelectedModel({ models, directory, selected }: ChosenModelOptions) {
   const [pick, setPick] = useState<Pick>({ directory, model: null });
   // A model from another folder is never shown, even under the same name.
   let chosen = pick.directory === directory ? pick.model : null;
@@ -63,7 +67,7 @@ export function useChosenModel(options: ChosenModelOptions): ChosenModel {
   const current = chosen
     ? (models?.find((model) => model.ifcPath === chosen.ifcPath) ?? chosen)
     : null;
-  // An empty `selected` is a host saying "nothing yet", not a name.
+  // An empty `selected` is a host saying "nothing yet", and not a name.
   const missing = Boolean(selected) && models !== null && chosen === null;
   return { chosen, current, missing, choose };
 }

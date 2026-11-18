@@ -1,23 +1,14 @@
 /**
  * What every object is painted with, decided in one place.
+
+ * Four things want to change how an object looks: the heatmap, the transparency toggle, the selection and the hover, over the model's own colour underneath all of them. When each wrote to `material` separately the last to run won, and the last to run was the heatmap, which reset every object on every reading. A transparency that lasted a second and a half is what this exists to prevent.
  *
- * Four things want to change how an object looks: the heatmap, the
- * transparency toggle, the selection and the hover, over the model's own
- * colour underneath all of them. When each wrote to `material` separately
- * the last to run won, and the last to run was the heatmap, which reset
- * every object on every reading. So nothing else assigns a material: this
- * decides, and `refresh` applies.
+ * So nothing else assigns a material. This decides, and `refresh` applies.
  */
 
-import {
-  Color,
-  DoubleSide,
-  Mesh,
-  MeshStandardMaterial,
-  type Material,
-} from 'three';
+import { Color, DoubleSide, Mesh, MeshStandardMaterial, type Material } from 'three';
 
-import { rampColour } from 'src/core/ramp';
+import { rampColour } from '../ramp.js';
 
 /** Yellow, at half opacity. Taken from the ProBIM Explorer, so a person moving between the two viewers reads the same signal. */
 export const SELECTED_COLOUR = 0xffff00;
@@ -25,11 +16,37 @@ export const SELECTED_COLOUR = 0xffff00;
 /** Pale blue, at half opacity. Also ProBIM's. */
 export const HOVERED_COLOUR = 0xa3f1ff;
 
-/** A whole class picked from the legend. Opaque, since the translucent hover colour lets an 85 mm sensor disappear into the wall behind it. */
+/**
+ * A whole class picked from the legend.
+ *
+ * Opaque, and saturated enough to read against a grey building, because this
+ * is not an overlay on an object already found: it is what makes a class
+ * findable at all. The translucent hover colour was tried here first and an
+ * 85 mm sensor disappeared into the wall behind it the moment it was picked.
+ *
+ * Violet because the other three meanings are taken: yellow is the selection,
+ * pale cyan the cursor, and the heatmap runs blue through white to orange.
+ */
 export const HIGHLIGHTED_COLOUR = 0x8b5cf6;
 
 /** How much of a wall is left when the model is made see-through. */
 const GHOST_OPACITY = 0.14;
+
+/** The one colour of the single colour style, a pale grey that lets the edges and the light do the work. */
+export const MONO_COLOUR = 0xd9dee2;
+
+/**
+ * The colours given to the classes in the colour by class style, in the
+ * order the classes are sorted. The Okabe and Ito set, chosen so the colours
+ * stay apart for people who see colour differently. A ninth class takes the
+ * first colour again.
+ */
+export const CLASS_COLOURS = [
+  0xe69f00, 0x56b4e9, 0x009e73, 0xf0e442, 0x0072b2, 0xd55e00, 0xcc79a7, 0x999999,
+];
+
+/** What the model is painted with, before any heatmap, highlight or ghost. */
+export type ModelStyle = 'shaded' | 'mono' | 'classes' | 'wireframe';
 
 /** The shell of a building: what makes it opaque from outside. Sensors and the equipment they sit on are never here, because they are what a person is trying to see. */
 export const SHELL = new Set([
@@ -58,8 +75,7 @@ function highlight(colour: number): MeshStandardMaterial {
 /**
  * Every material this decides between, made once.
  *
- * A material is a compiled shader program. Cloning one per object per frame
- * allocates thousands a second on a ten thousand object model.
+ * A material is a compiled shader program. Cloning one per object per frame allocates thousands a second on a ten thousand object model, which is the difference between a viewer and a slideshow.
  */
 export class Palette {
   readonly selected = highlight(SELECTED_COLOUR);
@@ -80,6 +96,47 @@ export class Palette {
   private readonly heat = new Map<number, MeshStandardMaterial>();
 
   private readonly ghosts = new Map<Material, MeshStandardMaterial>();
+
+  /** The single colour style, one material for every object. */
+  readonly mono = new MeshStandardMaterial({
+    color: MONO_COLOUR,
+    metalness: 0,
+    roughness: 1,
+    side: DoubleSide,
+  });
+
+  private readonly classes = new Map<number, MeshStandardMaterial>();
+
+  private readonly wires = new Map<Material, Material>();
+
+  /** The material of the class at `index` in the sorted list of classes. */
+  classAt(index: number): MeshStandardMaterial {
+    const colour =
+      CLASS_COLOURS[((index % CLASS_COLOURS.length) + CLASS_COLOURS.length) % CLASS_COLOURS.length];
+    let material = this.classes.get(colour);
+    if (!material) {
+      material = new MeshStandardMaterial({
+        color: colour,
+        metalness: 0,
+        roughness: 1,
+        side: DoubleSide,
+      });
+      this.classes.set(colour, material);
+    }
+    return material;
+  }
+
+  /** A wireframe copy of a material, made once and kept. */
+  wireOf(material: Material | Material[] | undefined): Material | Material[] | undefined {
+    if (!material || Array.isArray(material)) return material;
+    let wire = this.wires.get(material);
+    if (!wire) {
+      wire = material.clone();
+      (wire as MeshStandardMaterial).wireframe = true;
+      this.wires.set(material, wire);
+    }
+    return wire;
+  }
 
   remember(globalId: string, mesh: Mesh): void {
     this.base.set(globalId, mesh.material);
@@ -106,16 +163,14 @@ export class Palette {
   }
 
   /** A see-through copy of a material, made once and kept. */
-  ghostOf(
-    material: Material | Material[] | undefined,
-  ): Material | Material[] | undefined {
+  ghostOf(material: Material | Material[] | undefined): Material | Material[] | undefined {
     if (!material || Array.isArray(material)) return material;
     let ghost = this.ghosts.get(material);
     if (!ghost) {
       ghost = (material as MeshStandardMaterial).clone();
       ghost.transparent = true;
       ghost.opacity = GHOST_OPACITY;
-      // Without this a see-through wall still hides what is behind it, since
+      // Without this a see-through wall still hides what is behind it, because
       // it writes depth while drawing almost nothing.
       ghost.depthWrite = false;
       this.ghosts.set(material, ghost);
@@ -129,8 +184,13 @@ export class Palette {
     this.highlighted.dispose();
     for (const material of this.heat.values()) material.dispose();
     for (const material of this.ghosts.values()) material.dispose();
+    this.mono.dispose();
+    for (const material of this.classes.values()) material.dispose();
+    for (const material of this.wires.values()) material.dispose();
     this.heat.clear();
     this.ghosts.clear();
+    this.classes.clear();
+    this.wires.clear();
     this.base.clear();
   }
 }

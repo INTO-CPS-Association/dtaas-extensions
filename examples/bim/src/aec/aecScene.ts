@@ -20,10 +20,10 @@ import {
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { Appearance } from './aecAppearance';
-import { look, type ViewName } from './aecCamera';
-import { Markers } from './aecMarkers';
-import { loadTree, type PropertyTree, treeAddress } from './aecTree';
+import { Appearance } from './aecAppearance.js';
+import { look, type ViewName } from './aecCamera.js';
+import { Markers } from './aecMarkers.js';
+import { loadTree, type PropertyTree, treeAddress } from './aecTree.js';
 
 // The same background and lamps as the Buildings page, so a model looks the
 // same in both places.
@@ -158,9 +158,7 @@ export class AecScene {
   refresh() {
     this.appearance.refresh();
     const { storey } = this.appearance.state;
-    this.markers.showOnly(
-      (m) => !storey || this.factsOf(m.globalId)?.storey === storey,
-    );
+    this.markers.showOnly((m) => !storey || this.factsOf(m.globalId)?.storey === storey);
     this.invalidate();
   }
 
