@@ -219,7 +219,7 @@ this package follows [semantic versioning](https://semver.org/).
 
 ## [0.2.0]
 
-### Added
+### Added in 0.2.0
 
 - `./dtaas`, a new entry point exporting `extension`, the declaration the DTaaS
   client loads from its extension manifest. It is built with `defineExtension`
@@ -258,7 +258,7 @@ this package follows [semantic versioning](https://semver.org/).
   geometry an administrator placed beside the IFC file, which is better than one
   made in the browser, is never replaced.
 
-### Fixed
+### Fixed in 0.2.0
 
 - A sensor manifest is validated before use. A manifest that fails, including
   one with an MQTT wildcard topic, shows "The sensor manifest is not valid."
@@ -284,7 +284,7 @@ this package follows [semantic versioning](https://semver.org/).
   `alignItems` on a `Stack` were dropped without a word. Both now sit in `sx`,
   and the package is built and tested against MUI 9.
 
-### Changed
+### Changed in 0.2.0
 
 - `zod` is a required peer. `./react` now validates every manifest it loads,
   which needs `zod`, so a host of 0.1.1 that imported `./react` without `zod`
@@ -299,7 +299,7 @@ this package follows [semantic versioning](https://semver.org/).
 
 ## [0.1.1]
 
-### Added
+### Added in 0.1.1
 
 - `BuildingModels` takes `onPersistGeometry`, called with a model and the GLB
   when that model was converted in the browser because no geometry sat beside
@@ -329,7 +329,7 @@ this package follows [semantic versioning](https://semver.org/).
   meaning. The name is written into a file that lacks one with `ifc-set-name` in
   `ifc-converter`.
 
-### Changed
+### Changed in 0.1.1
 
 - `MODELS_DIRECTORY` is deprecated, and a host passes `directory` to
   `BuildingModels` instead. Where a deployment keeps its models is that
@@ -357,7 +357,7 @@ this package follows [semantic versioning](https://semver.org/).
   page does not show the title twice and the package stays a viewer instead of
   carrying deployment-specific text.
 
-### Fixed
+### Fixed in 0.1.1
 
 - The page no longer repaints the model without end once it is drawn. A host
   that passes no readings, as DTaaS does, got a new empty map on every render,
@@ -401,7 +401,7 @@ this package follows [semantic versioning](https://semver.org/).
 
 The first published version. What it does:
 
-### Added
+### Added in 0.1.0
 
 - A viewer for a GLB produced from an IFC model, with the building's own
   colours, object outlines and a coordinates gizmo.
@@ -448,9 +448,9 @@ entries below are kept for the record.
 
 ## Development History, Unpublished
 
-## [0.19.0]
+### Development 0.19.0
 
-### Added
+#### Added in Development 0.19.0
 
 - `alerts.ts`: what is wrong with a sensor, said in words. A sensor that has
   gone quiet, a value outside the range the model declares for it, a unit the
@@ -473,7 +473,7 @@ entries below are kept for the record.
 - `SceneView.attachGlow`, so the decision of when the halo is on sits beside the
   rest of the appearance rules while the scene stays owned by whatever draws.
 
-### Fixed
+#### Fixed in Development 0.19.0
 
 - The Per Sensor heatmap described only the first floor looked at. The field was
   keyed on the bindings alone, so changing storey never rebuilt it, and every
@@ -481,9 +481,9 @@ entries below are kept for the record.
   storey is now part of the key, and only the sensors standing on the floor
   being drawn feed it.
 
-## [0.18.0]
+### Development 0.18.0
 
-### Added
+#### Added in Development 0.18.0
 
 - A Per Sensor heat scope, drawn as a sheet over the floor. Each part of the
   floor takes the reading of the sensor whose walk reaches it, so a wall between
@@ -496,16 +496,16 @@ entries below are kept for the record.
   is separate from `view.refresh` because that repaints the model's own objects
   and the sheet is beside the model.
 
-### Changed
+#### Changed in Development 0.18.0
 
 - `zonesOf` and `availableScopes` take the zone from the caller instead of a
   place to look one up in. `readings.ts` no longer knows what a room or a storey
   is, which was IFC knowledge in a module about readings, and it is what lets a
   scope be a position on the plan.
 
-## [0.17.0]
+### Development 0.17.0
 
-### Added
+#### Added in Development 0.17.0
 
 - `viewer/field.ts`: which sensor reaches each point of a floor, as a grid that
   spreads by walking. Walls block, doors open again because a doorway is how air
@@ -519,9 +519,9 @@ entries below are kept for the record.
 - The idea of a grid over the plan comes from ProBIM's `ExportHeatmap`, which
   samples a floor into cells and scores each one.
 
-## [0.16.0]
+### Development 0.16.0
 
-### Changed
+#### Changed in Development 0.16.0
 
 - A heat scope is offered when the sensors divide into more than one group,
   instead of when the model declares the grouping. A model that declares ten
@@ -532,31 +532,31 @@ entries below are kept for the record.
   the model declares, and `SceneView.scopesFor` answers it for a set of
   bindings.
 
-### Added
+#### Added in Development 0.16.0
 
 - Each legend row carries the number of objects of its class. On the row instead
   of behind a hover, because a count is what a person wants from a legend.
 - `SceneView.classCounts`.
 
-## [0.15.0]
+### Development 0.15.0
 
-### Added
+#### Added in Development 0.15.0
 
 - Picking a class in the legend lights every object of that class. A legend that
   only names colours answers "what is this colour", and the question a person
   has in front of a grey building is "where are the columns". The selection
   still wins over it, so pointing at one object still says which one.
 
-## [0.14.0]
+### Development 0.14.0
 
-### Added
+#### Added in Development 0.14.0
 
 - A thin line along the edges of every object. Without it a building is a field
   of grey boxes that touch, and where one wall ends and the next begins is
   invisible. It does more for legibility than any change of colour, because the
   colours come from the model and most models paint a whole discipline the same.
 
-### Changed
+#### Changed in Development 0.14.0
 
 - The background and the field of view match the viewer this package was taken
   from, `#e9edef` and 45 degrees. A lighter background washes into the pale
@@ -564,9 +564,9 @@ entries below are kept for the record.
   walls of a room outwards.
 - The properties button reads Properties instead of counting them.
 
-## [0.13.0]
+### Development 0.13.0
 
-### Changed
+#### Changed in Development 0.13.0
 
 - The property sets move behind a button that says how many fields it holds, and
   open in a dialog. One interior wall of a real model carries around sixty
@@ -577,9 +577,9 @@ entries below are kept for the record.
   used to sit at the cold end of its own ramp, so a temperature marker read as
   four degrees while the card beside it said no message had ever arrived.
 
-## [0.12.0]
+### Development 0.12.0
 
-### Added
+#### Added in Development 0.12.0
 
 - The object panel shows the object's name, its predefined type, what it is
   hosted in, and its size in metres measured from the geometry. It also shows
@@ -591,7 +591,7 @@ entries below are kept for the record.
   paragraphs between a person and the model. What was closed is remembered by
   its text, so another model's note still appears.
 
-### Changed
+#### Changed in Development 0.12.0
 
 - The two lamps were at 2 each, which clipped every pale surface to white: a
   window frame, a plastered wall and a ceiling all came out the same flat white
@@ -599,15 +599,15 @@ entries below are kept for the record.
   this was taken from, 0.75 and 0.9, and the sun sits above and to one side so
   the faces of a box differ.
 
-### Removed
+#### Removed in Development 0.12.0
 
 - The paragraph explaining that a model binds no sensors. Most architectural
   models declare none, so it appeared almost always, and a person reads it once
   and then scrolls past it forever.
 
-## [0.11.2]
+### Development 0.11.2
 
-### Changed
+#### Changed in Development 0.11.2
 
 - When the library address answers with a web page, the message now states the
   likely cause instead of only the fact. Both times this happened the cause was
@@ -615,9 +615,9 @@ entries below are kept for the record.
   a different name than the one signed in. Naming that turns a long search into
   a line of configuration.
 
-## [0.11.1]
+### Development 0.11.1
 
-### Fixed
+#### Fixed in Development 0.11.1
 
 - A response that is not JSON now says so and names the address, instead of
   surfacing "Unexpected token '<'". A library URL is built by the host from
@@ -625,9 +625,9 @@ entries below are kept for the record.
   application itself, which answers with its own page and HTTP 200. Blaming JSON
   for that sends the reader to the wrong place.
 
-## [0.11.0]
+### Development 0.11.0
 
-### Added
+#### Added in Development 0.11.0
 
 - An axes indicator in the bottom left of the view. A building on a plain
   background gives a person nothing to tell which way is up until they recognise
@@ -635,9 +635,9 @@ entries below are kept for the record.
   instead of a bug. This repository had exactly that: a converter laid every
   model on its side and it went unnoticed for weeks.
 
-## [0.10.2]
+### Development 0.10.2
 
-### Fixed
+#### Fixed in Development 0.10.2
 
 - A manifest whose placements are proposed instead of surveyed now says so. A
   tool that guesses where a sensor sits marks its output, and drawing that guess
@@ -646,17 +646,17 @@ entries below are kept for the record.
 - Switching to a model with no manifest kept the previous model's sensors on
   screen.
 
-## [0.10.1]
+### Development 0.10.1
 
-### Fixed
+#### Fixed in Development 0.10.1
 
 - The floor picker drew its label on top of its value, so All Floors read as
   "AlbFloors". Showing the empty choice at all stops the label floating on its
   own, so the label has to be pinned.
 
-## [0.10.0]
+### Development 0.10.0
 
-### Added
+#### Added in Development 0.10.0
 
 - The three views the demo this came from had and this did not: a card per
   sensor, the heatmap legend, and the legend of what the model's own colours
@@ -669,15 +669,15 @@ entries below are kept for the record.
   message.
 - `SceneView.classColours`, which the class legend reads.
 
-### Fixed
+#### Fixed in Development 0.10.0
 
 - The floor picker rendered nothing while All Floors was chosen, because its
   value is the empty string. An empty control reads as broken instead of as a
   choice.
 
-## [0.9.0]
+### Development 0.9.0
 
-### Added
+#### Added in Development 0.9.0
 
 - The interface: a toolbar generated from the shortcut table, a floor picker, a
   panel saying what the selected object is, and the shortcut list. The table
@@ -692,9 +692,9 @@ entries below are kept for the record.
 - `@mui/icons-material` as an optional peer, so the toolbar uses the host's own
   icon set instead of introducing a second design language.
 
-## [0.8.0]
+### Development 0.8.0
 
-### Added
+#### Added in Development 0.8.0
 
 - The `./viewer` entry point: the three.js layer with no React, so a consumer
   that draws its own interface never pulls React and MUI in behind it.
@@ -708,16 +708,16 @@ entries below are kept for the record.
 - The reading helpers: how old a value is, whether it counts as current, and
   what the current ones average to per zone.
 
-## [0.5.0]
+### Development 0.5.0
 
-### Added
+#### Added in Development 0.5.0
 
 - `engines`, `sideEffects` and `publishConfig`, so a bundler can drop what a
   host does not use and `npm publish` reaches the right registry.
 
-## [0.4.0]
+### Development 0.4.0
 
-### Fixed
+#### Fixed in Development 0.4.0
 
 - `BimCanvas` is no longer re-exported from the React entry point. The static
   re-export undid the dynamic import inside `BuildingModels`, which put three.js
@@ -725,27 +725,27 @@ entries below are kept for the record.
   only when a model is opened. It is reachable at `./react/canvas` for a
   consumer that genuinely wants the canvas alone.
 
-## [0.3.0]
+### Development 0.3.0
 
-### Removed
+#### Removed in Development 0.3.0
 
 - The CommonJS build. `tsc` turns a dynamic `import()` into
   `Promise.resolve().then(require(...))`, which a bundler cannot split, so
   shipping CommonJS defeated the lazy loading the package exists to support. The
   package is ES modules only.
 
-## [0.2.0]
+### Development 0.2.0
 
-### Added
+#### Added in Development 0.2.0
 
 - The `./react` entry point: `BuildingModels`, a page that lists the models in a
   library and draws the one chosen, with markers resolved from a manifest.
   React, MUI and three.js are optional peer dependencies of this entry point and
   of nothing else.
 
-## [0.1.0]
+### Development 0.1.0
 
-### Added
+#### Added in Development 0.1.0
 
 - The binding accessors, the selector resolver and the colour ramp, with no
   dependencies at all.

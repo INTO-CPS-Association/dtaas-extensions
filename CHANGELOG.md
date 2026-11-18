@@ -36,7 +36,7 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.1.1] - 2026-11-09
 
-### Added
+### Added in 0.1.1
 
 - `./schema` checks that every encoding reads a signal some transport provides.
   An encoding reads its `target` on `measured` or on the `channel` it names and
@@ -82,7 +82,7 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   builds an example kit inside this repository and
   `tests/integration/kitBundle.test.ts` mounts the bundle on a fake host.
 
-### Changed
+### Changed in 0.1.1
 
 - `./schema` makes the `url` of an `mqtt` transport optional. A host with a
   signals gateway serves the topics itself, so a `visualisation.json` can name
@@ -93,7 +93,7 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   contributes it, so a preset that names `aec` needs an extension that
   contributes the substrate.
 
-### Security
+### Security in 0.1.1
 
 - `./schema` refuses a transport `url` or a substrate `source` that carries a
   user name or password, such as `mqtt://user:secret@broker`, so a
