@@ -20,14 +20,8 @@ import {
   ifcBuildingName,
   usableName,
 } from '../dist/esm/ifcName.js';
-import {
-  contentsUrl,
-  formatSize,
-  pairModels,
-  readableName,
-  readIfcName,
-  uniqueNames,
-} from '../dist/esm/react/assets.js';
+import { contentsUrl, formatSize, pairModels, readableName } from '../dist/esm/react/assets.js';
+import { readIfcName, uniqueNames } from '../dist/esm/react/buildingNames.js';
 
 /** Building_1911_AK_v2.ifc, as written. */
 const PAEDAGOGISK = `DATA;

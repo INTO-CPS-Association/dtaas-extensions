@@ -6,6 +6,9 @@
  * 45-degree lines and along rows, nowhere near halfway between them. Steps
  * along the diagonals as well, at their true length, keep the split within a
  * few percent of the straight line in open space and still go round walls.
+ *
+ * The same grid also tells the ground round the building from the rooms: the
+ * open cells a walk from the edge of the grid reaches.
  */
 
 /** Where a source starts: a cell and the distance already walked to reach it. */
@@ -114,4 +117,39 @@ export function walkOwners(blocked: Uint8Array, nx: number, nz: number, seeds: S
     }
   }
   return owner;
+}
+
+/**
+ * The open cells joined to the edge of the grid, stepping between open cells
+ * along the rows and columns: the ground round the building, which the walls
+ * close off from the rooms.
+ */
+export function outsideOf(blocked: Uint8Array, nx: number, nz: number): Uint8Array {
+  const outside = new Uint8Array(nx * nz);
+  const queue: number[] = [];
+  const visit = (ix: number, iz: number) => {
+    if (ix < 0 || iz < 0 || ix >= nx || iz >= nz) return;
+    const cell = iz * nx + ix;
+    if (blocked[cell] || outside[cell]) return;
+    outside[cell] = 1;
+    queue.push(cell);
+  };
+  for (let ix = 0; ix < nx; ix += 1) {
+    visit(ix, 0);
+    visit(ix, nz - 1);
+  }
+  for (let iz = 0; iz < nz; iz += 1) {
+    visit(0, iz);
+    visit(nx - 1, iz);
+  }
+  for (let head = 0; head < queue.length; head += 1) {
+    const cell = queue[head];
+    const ix = cell % nx;
+    const iz = Math.floor(cell / nx);
+    visit(ix + 1, iz);
+    visit(ix - 1, iz);
+    visit(ix, iz + 1);
+    visit(ix, iz - 1);
+  }
+  return outside;
 }

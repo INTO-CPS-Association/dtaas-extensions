@@ -8,14 +8,8 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  contentsUrl,
-  pairModels,
-  readIfcName,
-  uniqueNames,
-  type BimModel,
-  type LibraryEntry,
-} from './assets.js';
+import { contentsUrl, pairModels, type BimModel, type LibraryEntry } from './assets.js';
+import { readIfcName, uniqueNames } from './buildingNames.js';
 import { fetchJson, messageOf, type Problem } from './libraryJson.js';
 
 export type ListFolder = (directory: string) => Promise<LibraryEntry[]>;

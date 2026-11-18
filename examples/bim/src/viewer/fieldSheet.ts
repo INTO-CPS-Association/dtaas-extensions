@@ -22,7 +22,7 @@ import {
 } from 'three';
 
 import { rampColour } from '../ramp.js';
-import { fromGrid } from './field.js';
+import { fromGrid } from './planFrame.js';
 import type { SceneView } from './sceneView.js';
 
 /** How much of the floor the sheet hides. Enough to read, not enough to obscure. */

@@ -18,26 +18,20 @@ import {
   type PerspectiveCamera,
   type Raycaster,
 } from 'three';
-import { valueText } from '../alerts.js';
-import { displayOf, idOf, objectOf, type Binding } from '../binding.js';
-import { rampColour } from '../ramp.js';
+import { idOf, objectOf, type Binding } from '../binding.js';
 import { isLive, DEFAULT_STALE_AFTER_S, type FeedState, type Reading } from '../readings.js';
 import { SELECTED_COLOUR } from './appearance.js';
 import { createLabel, placeLabel, styleLabel, toScreen } from './markerLabels.js';
 import { prefersReducedMotion } from './flight.js';
-
-/** Pixels across a marker at its smallest. */
-export const MARKER_MIN_PX = 14;
-/** Pixels across the selected marker at its smallest, so the one a person picked stands out. */
-export const SELECTED_MARKER_MIN_PX = 24;
-/**
- * The colour of a sensor with no current reading. Off the ramp, so it cannot
- * be mistaken for a value and the same grey the card uses for a stale one.
- */
-export const NO_READING_COLOUR = 0x9aa3ad;
-
-/** How long the selected marker pulses after it is picked, in milliseconds. */
-export const PULSE_MS = 900;
+import {
+  labelText,
+  markerColour,
+  markerScale,
+  pulseFactor,
+  MARKER_MIN_PX,
+  NO_READING_COLOUR,
+  SELECTED_MARKER_MIN_PX,
+} from './markerStyle.js';
 
 /**
  * The layer the dots and rings are drawn on. The canvas draws this layer in
@@ -47,62 +41,12 @@ export const PULSE_MS = 900;
  */
 export const MARKER_LAYER = 1;
 
-/** How much larger the marker grows at the height of its pulse. */
-export const PULSE_GROWTH = 0.6;
-
-/**
- * The size of a pulsing marker against its resting size, `elapsedMs` after it
- * was picked: it grows once and settles back, so the eye goes to it.
- */
-export function pulseFactor(elapsedMs: number): number {
-  if (!(elapsedMs >= 0) || elapsedMs >= PULSE_MS) return 1;
-  return 1 + PULSE_GROWTH * Math.sin(Math.PI * (elapsedMs / PULSE_MS));
-}
 /** A dark ring around every dot, so a pale value still shows against a pale wall. */
 const RING_COLOUR = 0x1f2933;
 const RING_SCALE = 1.3;
 /** A marker is at least this share of the model, so it grows with a large building seen close. */
 const MARKER_SHARE_OF_MODEL = 0.006;
 const MIN_RADIUS_M = 0.05;
-
-/** The size of one screen pixel, in metres, at `distance` from the camera. */
-export function worldPerPixel(distance: number, fovDegrees: number, heightPx: number): number {
-  if (heightPx <= 0) return 0;
-  return (2 * distance * Math.tan((fovDegrees * Math.PI) / 360)) / heightPx;
-}
-
-/**
- * The scale a marker of `radius` metres needs to be at least `minPx` pixels
- * across. Never below 1, so a marker seen close keeps its own size.
- */
-export function markerScale(
-  radius: number,
-  distance: number,
-  fovDegrees: number,
-  heightPx: number,
-  minPx: number,
-): number {
-  const wanted = (minPx / 2) * worldPerPixel(distance, fovDegrees, heightPx);
-  return Math.max(1, wanted / radius);
-}
-
-/** A marker's colour: its value on the ramp while current, grey otherwise. */
-export function markerColour(
-  binding: Binding,
-  reading: Reading | undefined,
-  feed: FeedState,
-  staleAfter = DEFAULT_STALE_AFTER_S,
-  now = Date.now(),
-): number {
-  const ramp = displayOf(binding).ramp;
-  if (!ramp || !reading || !isLive(reading, feed, staleAfter, now)) return NO_READING_COLOUR;
-  return rampColour(reading.value, ramp[0], ramp[1]);
-}
-
-/** The text of a marker's label: its short tag and its value. */
-export function labelText(binding: Binding, reading: Reading | undefined): string {
-  return `${idOf(binding)}  ${valueText(binding, reading)}`;
-}
 
 interface Marker {
   binding: Binding;

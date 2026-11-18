@@ -95,18 +95,14 @@ export {
   type TreeGroup,
   type GroupBy,
 } from './modelTree.js';
+export { createMeasure, END_DOT_PX, MAX_POINTS, CLOSE_M, type Measure } from './measure.js';
 export {
-  createMeasure,
   distanceText,
   polygonArea,
   angleAt,
   measureText,
-  END_DOT_PX,
-  MAX_POINTS,
-  CLOSE_M,
-  type Measure,
   type MeasureMode,
-} from './measure.js';
+} from './measureMaths.js';
 export {
   prepareRenderer,
   lightFromRoom,
@@ -123,13 +119,10 @@ export {
 export { createGlow, GLOW_MARGIN_M, type Glow } from './glow.js';
 export {
   buildField,
-  outsideOf,
   MIN_ROOM_CELLS,
   OUTSIDE,
   sourceAt,
   planAngle,
-  toGrid,
-  fromGrid,
   CELL_M,
   CUT_M,
   BLOCKS,
@@ -137,6 +130,8 @@ export {
   SEARCH_CELLS,
   type Field,
 } from './field.js';
+export { toGrid, fromGrid } from './planFrame.js';
+export { outsideOf } from './walk.js';
 export { createFieldSheet, type FieldSheet } from './fieldSheet.js';
 export {
   frame,
@@ -149,8 +144,8 @@ export {
   type Target,
   type LookFrom,
 } from './framing.js';
+export { createMarkers, MARKER_LAYER, type MarkerSet } from './markers.js';
 export {
-  createMarkers,
   markerScale,
   markerColour,
   labelText,
@@ -158,10 +153,8 @@ export {
   pulseFactor,
   PULSE_MS,
   PULSE_GROWTH,
-  MARKER_LAYER,
   MARKER_MIN_PX,
   SELECTED_MARKER_MIN_PX,
   NO_READING_COLOUR,
-  type MarkerSet,
-} from './markers.js';
+} from './markerStyle.js';
 export { toScreen, LABEL_OFFSET_PX, type ScreenPoint } from './markerLabels.js';

@@ -28,7 +28,7 @@
 
 import { IfcAPI, type PlacedGeometry } from 'web-ifc';
 
-import { WEB_IFC_WASM_BASE64 } from './generated/wasm.js';
+import { browserCarriesTheParser, carriedWasmUrl } from './carriedParser.js';
 
 /** The identity and the triangles of one object. */
 export interface ConvertedObject {
@@ -115,44 +115,6 @@ function turn(m: ArrayLike<number>, x: number, y: number, z: number): [number, n
     m[1] * x + m[5] * y + m[9] * z,
     m[2] * x + m[6] * y + m[10] * z,
   ];
-}
-
-/**
- * Whether the parser carried in this package should be used.
- *
- * In a browser it must be: nothing else serves the file, and fetching it from
- * another origin is what an air-gapped install cannot do.
- *
- * Under Node it must not be. The loader web-ifc uses there opens what it is
- * given as a path on disk, so a blob URL fails, and the file is already beside
- * the module anyway. That is the case the tests run in.
- */
-function browserCarriesTheParser(): boolean {
-  return (
-    typeof Blob === 'function' &&
-    typeof URL !== 'undefined' &&
-    typeof URL.createObjectURL === 'function' &&
-    // `process` is how a Node runtime announces itself, and it is read
-    // through globalThis so this file needs no Node type definitions.
-    (globalThis as { process?: unknown }).process === undefined
-  );
-}
-
-/**
- * The parser carried in this package, as a URL a loader can fetch.
- *
- * Made once and kept, because a blob URL is a resource the page holds until it
- * is revoked and converting three models should not make three of them.
- */
-let carried: string | undefined;
-
-function carriedWasmUrl(): string {
-  if (carried) return carried;
-  const binary = atob(WEB_IFC_WASM_BASE64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
-  carried = URL.createObjectURL(new Blob([bytes], { type: 'application/wasm' }));
-  return carried;
 }
 
 interface Piece {

@@ -99,6 +99,75 @@ export function valueText(binding: Binding, reading: Reading | undefined): strin
   return unit ? `${value} ${unit}` : value;
 }
 
+/** The sensor has never reported, or has gone quiet. */
+function quietAlert(
+  reading: Reading | undefined,
+  feed: FeedState,
+  staleAfter: number,
+  now: number,
+): Alert | null {
+  if (isLive(reading, feed, staleAfter, now)) return null;
+  return {
+    level: 'warn',
+    label: reading === undefined ? 'Never Reported' : 'Not Reporting',
+    detail:
+      reading === undefined
+        ? 'No message has arrived on this topic since the page opened.'
+        : `The sensor has gone quiet: ${ageText(reading, feed, staleAfter, now)}.`,
+  };
+}
+
+/**
+ * The current value is outside the range the model declares. Only a current
+ * value is worth checking against the bounds. An old reading that was out of
+ * range is already covered by the quiet alert, and saying both makes the
+ * stale one look like a live excursion.
+ */
+function rangeAlert(binding: Binding, reading: Reading | undefined, live: boolean): Alert | null {
+  const { ramp, unit: declared } = displayOf(binding);
+  if (reading === undefined || ramp === undefined || !live) return null;
+  const [low, high] = ramp;
+  if (reading.value >= low && reading.value <= high) return null;
+  return {
+    level: 'warn',
+    label: reading.value > high ? 'Above Range' : 'Below Range',
+    detail:
+      `${reading.value} is outside ${low} to ${high} ${declared ?? ''}`.trim() +
+      ', the range this sensor declares in the model.',
+  };
+}
+
+/** The payload and the manifest disagree on the unit. */
+function unitAlert(binding: Binding, reading: Reading | undefined): Alert | null {
+  const declared = displayOf(binding).unit;
+  if (reading?.unit === undefined || declared === undefined) return null;
+  if (displayUnit(reading.unit) === displayUnit(declared)) return null;
+  return {
+    level: 'warn',
+    label: 'Unit Differs',
+    detail:
+      `The payload says ${reading.unit} and the manifest says ${declared}, ` +
+      'so one of the two is wrong about what this number measures.',
+  };
+}
+
+/**
+ * The payload says the value was not measured directly. The payload's own
+ * kind wins over the channel it came on, since it is the more specific of the
+ * two.
+ */
+function kindAlert(reading: Reading | undefined): Alert | null {
+  const how = reading?.kind ?? reading?.channel;
+  if (how === undefined || MEASURED_WORDS.has(how)) return null;
+  return {
+    level: 'note',
+    label: titleOf(how),
+    detail:
+      `The payload declares this value as ${how}, ` +
+      'not as a measured value read off the instrument.',
+  };
+}
+
 /** The alerts that apply to one sensor, most urgent first. */
 export function alertsOf(
   binding: Binding,
@@ -107,65 +176,13 @@ export function alertsOf(
   staleAfter = DEFAULT_STALE_AFTER_S,
   now = Date.now(),
 ): Alert[] {
-  const alerts: Alert[] = [];
-
-  if (!isLive(reading, feed, staleAfter, now)) {
-    alerts.push({
-      level: 'warn',
-      label: reading === undefined ? 'Never Reported' : 'Not Reporting',
-      detail:
-        reading === undefined
-          ? 'No message has arrived on this topic since the page opened.'
-          : `The sensor has gone quiet: ${ageText(reading, feed, staleAfter, now)}.`,
-    });
-  }
-
-  const { ramp, unit: declared } = displayOf(binding);
-
-  // Only a current value is worth checking against the bounds. An old reading
-  // that was out of range is already covered by the alert above, and saying
-  // both makes the stale one look like a live excursion.
-  if (reading !== undefined && ramp !== undefined && isLive(reading, feed, staleAfter, now)) {
-    const [low, high] = ramp;
-    if (reading.value < low || reading.value > high) {
-      alerts.push({
-        level: 'warn',
-        label: reading.value > high ? 'Above Range' : 'Below Range',
-        detail:
-          `${reading.value} is outside ${low} to ${high} ${declared ?? ''}`.trim() +
-          ', the range this sensor declares in the model.',
-      });
-    }
-  }
-
-  if (
-    reading?.unit !== undefined &&
-    declared !== undefined &&
-    displayUnit(reading.unit) !== displayUnit(declared)
-  ) {
-    alerts.push({
-      level: 'warn',
-      label: 'Unit Differs',
-      detail:
-        `The payload says ${reading.unit} and the manifest says ${declared}, ` +
-        'so one of the two is wrong about what this number measures.',
-    });
-  }
-
-  // The payload's own kind wins over the channel it came on, since it is the
-  // more specific of the two.
-  const how = reading?.kind ?? reading?.channel;
-  if (how !== undefined && !MEASURED_WORDS.has(how)) {
-    alerts.push({
-      level: 'note',
-      label: titleOf(how),
-      detail:
-        `The payload declares this value as ${how}, ` +
-        'not as a measured value read off the instrument.',
-    });
-  }
-
-  return alerts;
+  const live = isLive(reading, feed, staleAfter, now);
+  return [
+    quietAlert(reading, feed, staleAfter, now),
+    rangeAlert(binding, reading, live),
+    unitAlert(binding, reading),
+    kindAlert(reading),
+  ].filter((alert): alert is Alert => alert !== null);
 }
 
 /** How many sensors carry at least one alert of each level. */

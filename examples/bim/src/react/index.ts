@@ -28,12 +28,11 @@ export {
   fileUrl,
   formatSize,
   pairModels,
-  readIfcName,
   readableName,
-  uniqueNames,
   type BimModel,
   type LibraryEntry,
 } from './assets.js';
+export { readIfcName, uniqueNames } from './buildingNames.js';
 export { objectsOf, type BimObject } from './scene.js';
 export { exportGlb } from './exportGlb.js';
 export { ModelTree, MAX_ROWS, type ModelTreeProps } from './ModelTree.js';

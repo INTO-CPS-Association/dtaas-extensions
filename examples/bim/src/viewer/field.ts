@@ -31,7 +31,8 @@
 
 import { Box3, Vector3, type Mesh } from 'three';
 
-import { walkOwners, type Seed } from './walk.js';
+import { gridBox, planPoints, toGrid, wallAxis } from './planFrame.js';
+import { outsideOf, walkOwners, type Seed } from './walk.js';
 
 /** How wide a cell is, in metres. A doorway is about 0.9 m, so this fits three. */
 export const CELL_M = 0.25;
@@ -75,59 +76,6 @@ export interface Field {
   angle: number;
 }
 
-/** A world point in the grid's frame: turned by `-angle` about the vertical. */
-export function toGrid(angle: number, x: number, z: number): [number, number] {
-  const cos = Math.cos(angle);
-  const sin = Math.sin(angle);
-  return [x * cos + z * sin, -x * sin + z * cos];
-}
-
-/** A point of the grid's frame back in the world: the inverse of `toGrid`. */
-export function fromGrid(angle: number, u: number, v: number): [number, number] {
-  return toGrid(-angle, u, v);
-}
-
-/** The world positions of a mesh's vertices, flattened onto the plan as [x, z] pairs. */
-function planPoints(mesh: Mesh): number[] {
-  const position = mesh.geometry.getAttribute('position');
-  const point = new Vector3();
-  const out: number[] = [];
-  for (let i = 0; i < position.count; i += 1) {
-    point.fromBufferAttribute(position, i).applyMatrix4(mesh.matrixWorld);
-    out.push(point.x, point.z);
-  }
-  return out;
-}
-
-/**
- * The main axis of one wall on the plan and how elongated the wall is.
- *
- * The axis comes from the spread of the wall's vertices. The spread is the
- * difference between the long and the short side, so a square column, which
- * points nowhere, gets none.
- */
-function wallAxis(points: number[]): { theta: number; spread: number } | null {
-  const n = points.length / 2;
-  if (n < 2) return null;
-  let meanX = 0;
-  let meanZ = 0;
-  for (let i = 0; i < points.length; i += 2) {
-    meanX += points[i] / n;
-    meanZ += points[i + 1] / n;
-  }
-  let xx = 0;
-  let zz = 0;
-  let xz = 0;
-  for (let i = 0; i < points.length; i += 2) {
-    const dx = points[i] - meanX;
-    const dz = points[i + 1] - meanZ;
-    xx += dx * dx;
-    zz += dz * dz;
-    xz += dx * dz;
-  }
-  return { theta: 0.5 * Math.atan2(2 * xz, xx - zz), spread: Math.hypot(xx - zz, 2 * xz) / n };
-}
-
 /**
  * The direction the walls of a plan run in, in radians between -45 and 45 degrees.
  *
@@ -147,20 +95,6 @@ export function planAngle(meshes: Mesh[]): number {
   }
   if (sumCos === 0 && sumSin === 0) return 0;
   return Math.atan2(sumSin, sumCos) / 4;
-}
-
-/** A mesh's box in the grid's frame, from its vertices, with the world heights. */
-function gridBox(mesh: Mesh, angle: number, out: Box3): Box3 {
-  const world = new Box3().setFromObject(mesh);
-  const p = planPoints(mesh);
-  out.makeEmpty();
-  for (let i = 0; i < p.length; i += 2) {
-    const [u, v] = toGrid(angle, p[i], p[i + 1]);
-    out.expandByPoint(new Vector3(u, 0, v));
-  }
-  out.min.y = world.min.y;
-  out.max.y = world.max.y;
-  return out;
 }
 
 /**
@@ -269,41 +203,6 @@ export function buildField(
   if (!owner.some((index) => index >= 0)) return null;
 
   return { owner, nx, nz, cell, minX, minZ, floorY, angle };
-}
-
-/**
- * The open cells joined to the edge of the grid, stepping between open cells
- * along the rows and columns: the ground round the building, which the walls
- * close off from the rooms.
- */
-export function outsideOf(blocked: Uint8Array, nx: number, nz: number): Uint8Array {
-  const outside = new Uint8Array(nx * nz);
-  const queue: number[] = [];
-  const visit = (ix: number, iz: number) => {
-    if (ix < 0 || iz < 0 || ix >= nx || iz >= nz) return;
-    const cell = iz * nx + ix;
-    if (blocked[cell] || outside[cell]) return;
-    outside[cell] = 1;
-    queue.push(cell);
-  };
-  for (let ix = 0; ix < nx; ix += 1) {
-    visit(ix, 0);
-    visit(ix, nz - 1);
-  }
-  for (let iz = 0; iz < nz; iz += 1) {
-    visit(0, iz);
-    visit(nx - 1, iz);
-  }
-  for (let head = 0; head < queue.length; head += 1) {
-    const cell = queue[head];
-    const ix = cell % nx;
-    const iz = Math.floor(cell / nx);
-    visit(ix + 1, iz);
-    visit(ix - 1, iz);
-    visit(ix, iz + 1);
-    visit(ix, iz - 1);
-  }
-  return outside;
 }
 
 /**
