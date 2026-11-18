@@ -1,8 +1,19 @@
-node_modules/
-dist/
-coverage/
-# Written by scripts/inline-wasm.mjs from the installed web-ifc.
-src/generated/
 .env
 .env.*
 !.env.example
+.claude/
+node_modules/
+dist/
+build/
+coverage/
+backup/
+.vscode/
+.idea/
+*.log
+logs/
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+# Written by scripts/inline-wasm.mjs from the installed web-ifc.
+src/generated/
