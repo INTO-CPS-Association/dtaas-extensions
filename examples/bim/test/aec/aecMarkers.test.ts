@@ -105,6 +105,28 @@ describe('the markers of the aec substrate', () => {
     expect(changed).toHaveBeenCalledTimes(2);
   });
 
+  it('writes every label again, with its current text, in new theme colours', () => {
+    const fills: string[] = [];
+    context.fillRect.mockImplementation(() => fills.push(context.fillStyle));
+    const markers = new Markers(scene as never, changed);
+    const marker = markers.add('a/b', object, 'Seat 1');
+    markers.relabel(marker, 'Seat 1 21 °C');
+    expect(fills).toEqual(['rgba(255, 255, 255, 0.9)', 'rgba(255, 255, 255, 0.9)']);
+    markers.setColours({ background: '#121212', text: '#fff' });
+    expect(fills.at(-1)).toBe('#121212');
+    expect(context.fillStyle).toBe('#fff');
+    expect(context.fillText).toHaveBeenLastCalledWith('Seat 1 21 °C', 16, 34);
+    expect(changed).toHaveBeenCalledTimes(3);
+  });
+
+  it('leaves the labels alone when the theme colours stay the same', () => {
+    const markers = new Markers(scene as never, changed);
+    markers.add('a/b', object, 'Seat 1');
+    markers.setColours({ background: 'rgba(255, 255, 255, 0.9)', text: '#1b2430' });
+    expect(context.fillText).toHaveBeenCalledTimes(1);
+    expect(changed).toHaveBeenCalledTimes(1);
+  });
+
   it('shows only the markers a floor holds', () => {
     const markers = new Markers(scene as never, changed);
     const kept = markers.add('a/b', object, 'Seat 1');

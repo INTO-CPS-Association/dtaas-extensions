@@ -15,7 +15,7 @@
  * read from its glTF JSON, where a converter in this repository stores the
  * GlobalId in `extras`. The manifest is JSON, the format the page reads.
  *
- * Run `npm run build` first: this imports the built package from `dist/`.
+ * Run `yarn build` first: this imports the built package from `dist/`.
  */
 
 import { createHash } from 'node:crypto';

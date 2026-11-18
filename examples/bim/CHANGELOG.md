@@ -216,6 +216,13 @@ this package follows [semantic versioning](https://semver.org/).
 - Turning the view with the mouse while measuring added a point.
 - The measurement label kept light colours on a dark theme.
 - The drawing on the view was blurred on a high-density screen.
+- The labels the `aec` substrate draws in the scene kept a white surface and
+  dark text in the dark theme, and the edge of a swatch in the class legend was
+  a fixed dark line that vanished on a dark surface. Both take their colours
+  from the host's theme now.
+- `scripts/clean.mjs` and `scripts/inline-wasm.mjs` resolved their paths from
+  the current directory, so running them from the repository root removed or
+  wrote files there. They resolve from their own folder now.
 
 ## [0.2.0]
 

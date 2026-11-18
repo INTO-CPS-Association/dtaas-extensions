@@ -7,7 +7,7 @@
 import type { Encoding } from '@into-cps-association/dtaas-sdk';
 import type { MeshBasicMaterial } from 'three';
 import { MarkerColours } from './aecColours.js';
-import { NO_READING_COLOUR } from './aecMarkers.js';
+import { NO_READING_COLOUR, type LabelColours } from './aecMarkers.js';
 import type { AecScene } from './aecScene.js';
 import { handleKey, type OptionContext } from './aecShortcuts.js';
 import { storeysOf } from './aecTree.js';
@@ -155,6 +155,7 @@ function modelOf(view: AecScene, colours: MarkerColours) {
     storeys: storeysOf(view.tree),
     picked: () => pickedOf(view),
     classes: () => classes,
+    themeLabels: (labelColours: LabelColours) => view.markers.setColours(labelColours),
   };
 }
 

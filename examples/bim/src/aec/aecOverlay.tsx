@@ -6,16 +6,24 @@
  * its own root, in the theme the host gives, and unmounts it on dispose.
  */
 
-import { Fragment, useSyncExternalStore, type ComponentType, type ReactNode } from 'react';
+import {
+  Fragment,
+  useEffect,
+  useSyncExternalStore,
+  type ComponentType,
+  type ReactNode,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 import type { ClassEntry } from './aecAppearance.js';
 import ObjectPanel, { type PickedObject } from './aecObjectPanel.js';
 import { ClassLegend, HeatLegend, HelpPanel } from './aecLegend.js';
 import type { OptionContext } from './aecShortcuts.js';
+import type { LabelColours } from './aecMarkers.js';
 import { FloorPicker, Toolbar } from './aecToolbar.js';
 
 /** What the overlay reads, and the change counter it redraws on. */
@@ -28,6 +36,8 @@ export interface OverlayModel {
   showFloor(storey: string | null): void;
   pickClass(ifcClass: string): void;
   closeHelp(): void;
+  /** Write the labels in the scene in the colours of the host's theme. */
+  themeLabels(colours: LabelColours): void;
   subscribe(listener: () => void): () => void;
   revision(): number;
 }
@@ -111,6 +121,19 @@ function BottomRow({ model }: { readonly model: OverlayModel }) {
   );
 }
 
+/**
+ * Hands the theme's surface and text colours to the labels in the scene, which
+ * a canvas draws and so cannot style. It sits inside the host's theme, so a
+ * switch to the dark theme writes the labels again in its colours.
+ */
+function ThemedLabels({ model }: { readonly model: OverlayModel }) {
+  const { palette } = useTheme();
+  const background = palette.background.paper;
+  const text = palette.text.primary;
+  useEffect(() => model.themeLabels({ background, text }), [model, background, text]);
+  return null;
+}
+
 /** The host's theme, which wraps what the overlay draws. */
 export type ThemeRoot = ComponentType<{ readonly children: ReactNode }>;
 
@@ -123,6 +146,7 @@ function Overlay(props: {
   useSyncExternalStore(model.subscribe, model.revision);
   return (
     <Theme>
+      <ThemedLabels model={model} />
       <TopRow model={model} />
       {createPortal(<BottomRow model={model} />, props.below)}
       <HelpPanel open={model.ui.helpOpen} onClose={model.closeHelp} />

@@ -18,7 +18,9 @@ function Swatch({ colour }: Readonly<{ colour: string }>) {
         height: 12,
         borderRadius: 0.5,
         bgcolor: colour,
-        border: '1px solid rgba(0,0,0,0.2)',
+        // The theme's divider, so the edge of a pale swatch shows in both themes.
+        border: 1,
+        borderColor: 'divider',
         flexShrink: 0,
       }}
     />

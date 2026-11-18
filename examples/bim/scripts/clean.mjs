@@ -8,4 +8,6 @@
 
 import { rmSync } from 'node:fs';
 
-rmSync('dist', { recursive: true, force: true });
+// From this file and not from the current directory, so running the script
+// from the repository root never removes the root's dist/.
+rmSync(new URL('../dist/', import.meta.url), { recursive: true, force: true });

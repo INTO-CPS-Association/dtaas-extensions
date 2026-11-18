@@ -22,6 +22,7 @@ type Model = {
     toggleFullscreen(): void;
   };
   showFloor(storey: string | null): void;
+  themeLabels(colours: { background: string; text: string }): void;
   pickClass(ifcClass: string): void;
   closeHelp(): void;
   picked(): unknown;
@@ -33,6 +34,7 @@ function fakeScene() {
   const state = initialState();
   const view = {
     markers: {
+      setColours: jest.fn(),
       all: new Map([['a/b', { name: 'Seat 1', dot: { material: { color: { set } } } }]]),
     },
     appearance: {
@@ -76,6 +78,13 @@ describe('the controls of the aec substrate', () => {
     recolour(view as unknown as AecScene, new MarkerColours());
     expect(set).toHaveBeenCalledTimes(1);
     expect(view.invalidate).toHaveBeenCalled();
+  });
+
+  it('hands the theme colours of the overlay to the labels in the scene', () => {
+    const { view, model } = setUp();
+    const dark = { background: '#121212', text: '#ffffff' };
+    model.themeLabels(dark);
+    expect(view.markers.setColours).toHaveBeenCalledWith(dark);
   });
 
   it('draws once on start and runs an option from its key', () => {

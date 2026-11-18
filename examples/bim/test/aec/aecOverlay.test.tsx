@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import type { Encoding } from '@into-cps-association/dtaas-sdk';
 import { initialState } from 'src/aec/aecAppearance';
@@ -147,6 +148,7 @@ describe('the overlay of the aec substrate', () => {
       showFloor: jest.fn(),
       pickClass: jest.fn(),
       closeHelp: jest.fn(),
+      themeLabels: jest.fn(),
     };
     let unmount = () => undefined as void;
     act(() => {
@@ -175,6 +177,7 @@ describe('the overlay of the aec substrate', () => {
       showFloor: jest.fn(),
       pickClass: jest.fn(),
       closeHelp: jest.fn(),
+      themeLabels: jest.fn(),
     };
     const Theme = ({ children }: { readonly children: ReactNode }) => (
       <section aria-label="Host theme">{children}</section>
@@ -189,5 +192,56 @@ describe('the overlay of the aec substrate', () => {
       unmount();
       await Promise.resolve();
     });
+  });
+});
+
+describe('the labels of the aec substrate', () => {
+  const mountIn = async (mode: 'light' | 'dark') => {
+    const above = document.createElement('div');
+    const below = document.createElement('div');
+    document.body.append(above, below);
+    const theme = createTheme({ palette: { mode } });
+    const Theme = ({ children }: { readonly children: ReactNode }) => (
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+    );
+    const model = {
+      ...changes(),
+      context: contextWith(),
+      storeys: [],
+      ui: { helpOpen: false, missing: [] },
+      picked: () => null,
+      classes: () => [],
+      showFloor: jest.fn(),
+      pickClass: jest.fn(),
+      closeHelp: jest.fn(),
+      themeLabels: jest.fn(),
+    };
+    let unmount = () => undefined as void;
+    act(() => {
+      unmount = mountOverlay(above, below, model, Theme);
+    });
+    await act(async () => {
+      unmount();
+      await Promise.resolve();
+    });
+    return { theme, themeLabels: model.themeLabels };
+  };
+
+  it.each(['light', 'dark'] as const)(
+    'are written in the surface and text colours of the %s theme',
+    async (mode) => {
+      const { theme, themeLabels } = await mountIn(mode);
+      expect(themeLabels).toHaveBeenCalledWith({
+        background: theme.palette.background.paper,
+        text: theme.palette.text.primary,
+      });
+    },
+  );
+
+  it('take a dark surface with light text in the dark theme', async () => {
+    const { themeLabels } = await mountIn('dark');
+    const [{ background, text }] = themeLabels.mock.calls[0];
+    expect(background).toBe('#121212');
+    expect(text).toBe('#fff');
   });
 });
