@@ -1,5 +1,5 @@
 /**
- * What a person has switched on in the viewer, and what the property tree
+ * What a person has switched on in the viewer and what the property tree
  * says about each object. Plain data, so it is shared by the scene, the
  * shortcuts and any interface that draws them.
  */

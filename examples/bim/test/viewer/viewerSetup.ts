@@ -19,7 +19,7 @@ export function nextFrame(ms = 16): void {
   run?.(performance.now());
 }
 
-/** A stand-in clock and frame scheduler, and stand-ins for what jsdom lacks. */
+/** A stand-in clock and frame scheduler and stand-ins for what jsdom lacks. */
 export function installBrowser(): void {
   jest.useFakeTimers({ now: 1_000_000 });
   globalThis.requestAnimationFrame = (callback) => {

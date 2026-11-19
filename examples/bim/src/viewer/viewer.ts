@@ -3,7 +3,7 @@
  *
  * It owns the renderer, the scene, the camera, the controls and the frame
  * loop. `mount` puts the view in an element, `show` draws a model in it with
- * its sensors, and `unmount` gives everything back, the WebGL context too.
+ * its sensors and `unmount` gives everything back, the WebGL context too.
  * The Buildings page drives it from a thin React component and the `aec`
  * substrate from plain DOM, so the two draw a building with the same code.
  */

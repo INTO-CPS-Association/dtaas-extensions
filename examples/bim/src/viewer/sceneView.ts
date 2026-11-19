@@ -151,7 +151,7 @@ export class SceneView {
 
   /**
    * Lend this view a halo to put around the selected object. The halo lives
-   * in the scene, which belongs to whatever draws, and this decides when it is on.
+   * in the scene, which belongs to whatever draws and this decides when it is on.
    */
   attachGlow(glow: Glow | null): void {
     this.glow = glow;

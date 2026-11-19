@@ -94,7 +94,7 @@ export function startViewer(
   };
 }
 
-/** Draw a loaded model with the sensors the geometry can account for, and say so. */
+/** Draw a loaded model with the sensors the geometry can account for and say so. */
 function showLoaded(
   viewer: Viewer,
   { model, note }: Loaded,

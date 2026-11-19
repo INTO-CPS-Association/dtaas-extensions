@@ -1,7 +1,7 @@
 /**
  * What a shown model adds to the stage: the halo, the edges, the shadows, the
  * grid, the measurement, the drawing on the view, the heat sheet and the walk.
- * Each is beside the model and not part of it, and each is taken down with
+ * Each is beside the model and not part of it and each is taken down with
  * the model.
  */
 

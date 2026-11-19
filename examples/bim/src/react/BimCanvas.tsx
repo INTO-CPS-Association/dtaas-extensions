@@ -92,7 +92,7 @@ const labelColours = (theme: Theme) =>
     '--bim-label-accent': theme.palette.primary.main,
   }) as const;
 
-/** The spinner while the model loads, and what went wrong when it did not. */
+/** The spinner while the model loads and what went wrong when it did not. */
 function CanvasStatus({ loading, problem, progress }: Readonly<Status>) {
   if (problem) {
     return (
@@ -130,7 +130,7 @@ const FRAME = {
   overflow: 'hidden',
 } as const;
 
-/** Run a viewer in `holder` for as long as the props stay the same, and say how it went. */
+/** Run a viewer in `holder` for as long as the props stay the same and say how it went. */
 function useViewer(holder: RefObject<HTMLDivElement | null>, props: Readonly<BimCanvasProps>) {
   const [status, setFullStatus] = useState<Status>({
     loading: true,

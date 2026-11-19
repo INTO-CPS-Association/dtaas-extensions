@@ -4,7 +4,7 @@
  * A large model drawn every frame while nothing moves keeps a core busy for
  * nothing, so a frame is drawn only when the camera moves, when a person did
  * something lately, when the view changed, when the first still frame after a
- * move is due, and once a second otherwise. The occlusion pass is left out
+ * move is due and once a second otherwise. The occlusion pass is left out
  * while the camera moves and comes back when it rests.
  */
 
@@ -131,7 +131,7 @@ export class RenderLoop {
     renderer.shadowMap.needsUpdate = true;
   }
 
-  /** Note whether the camera moved, and say whether it has rested long enough. */
+  /** Note whether the camera moved and say whether it has rested long enough. */
   private settle(now: number): boolean {
     const { camera, controls, flight } = this.stage;
     camera.updateMatrixWorld();

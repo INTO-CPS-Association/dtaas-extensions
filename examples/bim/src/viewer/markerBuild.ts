@@ -1,6 +1,6 @@
 /**
  * Building one sensor marker: a dot over a dark ring at the centre of its
- * object, and a label over the canvas that a person can click or reach with
+ * object and a label over the canvas that a person can click or reach with
  * the keyboard to go to the sensor.
  */
 

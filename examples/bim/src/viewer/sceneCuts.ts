@@ -3,7 +3,7 @@
  * objects the floor, the lid and the hand hide.
  *
  * Owned by `SceneView`. `applyVisibility` is still the one place `visible` is
- * written, and it is called only from there.
+ * written and it is called only from there.
  */
 
 import { Box3, type Mesh, Plane, Vector3 } from 'three';

@@ -31,7 +31,7 @@ function typingIn(target: EventTarget | null): boolean {
   return Boolean(element && (element.isContentEditable || TYPING.includes(element.tagName)));
 }
 
-/** Hold and let go of the arrows, and forget them all when the window loses the keys. */
+/** Hold and let go of the arrows and forget them all when the window loses the keys. */
 function listenForArrows(view: SceneView, held: WalkKeys): () => void {
   const onArrow = (down: boolean) => (event: KeyboardEvent) => {
     const which = walkKeyOf(event.key);

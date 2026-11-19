@@ -1,5 +1,5 @@
 /**
- * What the pointer does on a shown model: the object under it is lit, and a
+ * What the pointer does on a shown model: the object under it is lit and a
  * click picks a face of the view cube, a sensor, a point to measure or an
  * object, in that order.
  */
@@ -119,7 +119,7 @@ function clicker(context: Context) {
   return { press, click };
 }
 
-/** Listen for the pointer on the stage, and give back the listeners on dispose. */
+/** Listen for the pointer on the stage and give back the listeners on dispose. */
 export function listenForPointer(context: Omit<Context, 'rays'>): Pointer {
   const rays = rayCaster(context.stage, context.view);
   const move = hoverer(context, rays);
