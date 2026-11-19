@@ -31,7 +31,7 @@ describe('the theme of the aec substrate', () => {
   it('keeps the light surface on a page that sets no background', () => {
     const pane = document.createElement('div');
     document.body.append(pane);
-    expect(themeColours(pane)['--bim-label-bg']).toBe('#ffffff');
+    expect(themeColours(pane)['--bim-label-bg']).toBeUndefined();
   });
 
   it('takes the primary and secondary colours MUI exposes as variables', () => {

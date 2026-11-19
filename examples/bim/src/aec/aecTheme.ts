@@ -10,9 +10,6 @@
  * its classes or styles or the system switches between light and dark.
  */
 
-/** The labels' own light colours, kept when the page says nothing. */
-const FALLBACK = { fg: '#1f2933', bg: '#ffffff' };
-
 const TRANSPARENT = new Set(['', 'transparent', 'rgba(0, 0, 0, 0)']);
 
 /** The first background colour behind `element`, or undefined when none is set. */
@@ -24,20 +21,23 @@ function backgroundBehind(element: Element | null): string | undefined {
   return undefined;
 }
 
-/** The theme's colours as the labels' custom properties. */
+/**
+ * The theme's colours as the labels' custom properties. A colour the page
+ * does not set is left out, so the label keeps its own light default.
+ */
 export function themeColours(pane: HTMLElement): Record<string, string> {
-  const fg = getComputedStyle(pane).color || FALLBACK.fg;
-  const bg = backgroundBehind(pane.parentElement) ?? FALLBACK.bg;
+  const fg = getComputedStyle(pane).color;
   const root = getComputedStyle(document.documentElement);
-  const accent = root.getPropertyValue('--mui-palette-primary-main').trim();
-  const secondary = root.getPropertyValue('--mui-palette-text-secondary').trim();
-  const colours: Record<string, string> = {
+  const found: Record<string, string | undefined> = {
     '--bim-label-fg': fg,
-    '--bim-label-bg': bg,
-    '--bim-label-border': secondary || fg,
+    '--bim-label-bg': backgroundBehind(pane.parentElement),
+    '--bim-label-border': root.getPropertyValue('--mui-palette-text-secondary').trim() || fg,
+    '--bim-label-accent': root.getPropertyValue('--mui-palette-primary-main').trim(),
   };
-  if (accent) colours['--bim-label-accent'] = accent;
-  return colours;
+  return Object.fromEntries(Object.entries(found).filter(([, value]) => value)) as Record<
+    string,
+    string
+  >;
 }
 
 /** Write the theme's colours on the pane. */

@@ -5,11 +5,16 @@
  * `textContent`, never as markup, so a name from a model cannot inject any.
  */
 
-/** The colours of the host's theme, which `aecTheme.ts` sets on the pane. */
-export const FG = 'var(--bim-label-fg,#1f2933)';
-export const BG = 'var(--bim-label-bg,#ffffff)';
-export const BORDER = 'var(--bim-label-border,#5f6b76)';
-export const ACCENT = 'var(--bim-label-accent,#1565c0)';
+import {
+  LABEL_ACCENT as ACCENT,
+  LABEL_BG as BG,
+  LABEL_BORDER as BORDER,
+  LABEL_FG as FG,
+} from '../viewer/markerLabels.js';
+
+// The controls take the colours of the labels, which `aecTheme.ts` sets on
+// the pane from the host's theme.
+export { ACCENT, BG, BORDER, FG };
 
 /** The look of every panel: a box in the host's surface colour. */
 export const PANEL = `border:1px solid ${BORDER};border-radius:4px;padding:8px;background:${BG};color:${FG}`;

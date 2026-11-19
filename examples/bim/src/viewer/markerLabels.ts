@@ -22,7 +22,7 @@ export const LABEL_OFFSET_PX = 14;
  */
 export const LABEL_BG = 'var(--bim-label-bg,#ffffff)';
 export const LABEL_FG = 'var(--bim-label-fg,#1f2933)';
-const LABEL_BORDER = 'var(--bim-label-border,#5f6b76)';
+export const LABEL_BORDER = 'var(--bim-label-border,#5f6b76)';
 export const LABEL_ACCENT = 'var(--bim-label-accent,#1565c0)';
 
 const BASE_STYLE = [
