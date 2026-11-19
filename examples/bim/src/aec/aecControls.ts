@@ -1,45 +1,55 @@
 /**
- * Wires the controls of the `aec` substrate to its scene: the options and
- * their keys, hover and click on objects, the marker colours, and the React
- * overlay that draws the toolbar, the floor picker, the facts and legends.
+ * The controls around the `aec` canvas: the toolbar and the floor picker
+ * above it, the panels below it, the list of keys and the keys themselves.
+ * All of it is plain DOM over the shared viewer, in the host's colours.
  */
 
-import type { Encoding } from '@into-cps-association/dtaas-sdk';
-import type { MeshBasicMaterial } from 'three';
-import { MarkerColours } from './aecColours.js';
-import { NO_READING_COLOUR, type LabelColours } from './aecMarkers.js';
-import type { AecScene } from './aecScene.js';
-import { handleKey, type OptionContext } from './aecShortcuts.js';
-import { storeysOf } from './aecTree.js';
-import { changes, mountOverlay, type OverlayModel, type ThemeRoot } from './aecOverlay.js';
-
-export interface Controls {
-  /** Give a marker the colour an encoding computed, as the heatmap allows. */
-  colour(key: string, encoding: Encoding, colour: string): void;
-  /** Name a sensor the model has no object for. */
-  reportMissing(name: string): void;
-  dispose(): void;
-}
+import {
+  handleKey,
+  type Shortcut,
+  type ShortcutContext,
+  type ViewerHandle,
+} from '../viewer/index.js';
+import type { MarkerColours } from './aecColours.js';
+import { createFloorPicker, type FloorPicker } from './aecFloors.js';
+import { createHelp, type Help } from './aecHelp.js';
+import { optionsOf } from './aecOptions.js';
+import {
+  classLegend,
+  heatLegend,
+  missingNotice,
+  objectPanel,
+  type ClassEntry,
+  type PickedObject,
+} from './aecPanels.js';
+import { createToolbar, type Toolbar } from './aecToolbar.js';
+import { el } from './dom.js';
 
 /** The rows of the pane: the controls, the canvas and the panels. */
 export interface PaneRows {
   readonly frame: HTMLElement;
   readonly above: HTMLElement;
+  readonly canvas: HTMLElement;
   readonly below: HTMLElement;
 }
 
-/** Give markers the colour the heatmap option says they show now. */
-export function recolour(
-  view: AecScene,
-  colours: MarkerColours,
-  keys: Iterable<string> = view.markers.all.keys(),
-) {
-  [...keys].forEach((key) => {
-    const marker = view.markers.all.get(key);
-    const material = marker?.dot.material as MeshBasicMaterial | undefined;
-    material?.color.set(colours.colourOf(key) ?? NO_READING_COLOUR);
-  });
-  view.invalidate();
+/** What the controls read of the pane they sit around. */
+export interface ControlsInput {
+  readonly rows: PaneRows;
+  readonly handle: ViewerHandle;
+  readonly colours: MarkerColours;
+  /** The sensor anchored on an object, if any. */
+  sensorOn(globalId: string): { name: string; signal: string } | undefined;
+  /** Paint every marker in the colour the heatmap option says it shows now. */
+  recolour(): void;
+}
+
+export interface Controls {
+  /** Draw the controls and the panels as the view has them now. */
+  redraw(): void;
+  /** Name a sensor the model has no object for, once. */
+  reportMissing(name: string): void;
+  dispose(): void;
 }
 
 function toggleFullscreen() {
@@ -48,149 +58,113 @@ function toggleFullscreen() {
   else document.documentElement.requestFullscreen?.().catch(done);
 }
 
-/** Back to the model as it opened, seen from above. */
-function resetAll(view: AecScene, colours: MarkerColours) {
-  view.appearance.reset();
-  colours.reset();
-  view.look('top');
+/** The classes of the model with their colours and counts, sorted by class. */
+function classesOf({ view }: ViewerHandle): ClassEntry[] {
+  const counts = view.classCounts();
+  return [...view.classColours()].map(([ifcClass, colour]) => ({
+    ifcClass,
+    colour,
+    count: counts.get(ifcClass) ?? 0,
+  }));
 }
 
-/** Redraw the model and the markers, then the overlay. */
-function refresher(view: AecScene, colours: MarkerColours, bump: () => void) {
-  return () => {
-    view.refresh();
-    recolour(view, colours);
-    bump();
+/** The picked object with its facts, its size and the sensor on it. */
+function pickedOf(input: ControlsInput): PickedObject | null {
+  const { view } = input.handle;
+  const globalId = view.state.selected;
+  if (!globalId) return null;
+  const facts = view.factsOf(globalId);
+  return { globalId, facts, size: view.sizeOf(globalId), sensor: input.sensorOn(globalId) };
+}
+
+/** The panels below the canvas, drawn again on every change. */
+function drawBelow(input: ControlsInput, missing: readonly string[], refresh: () => void) {
+  const { view } = input.handle;
+  const pickClass = (ifcClass: string) => {
+    view.state.highlightedClass = view.state.highlightedClass === ifcClass ? null : ifcClass;
+    refresh();
   };
+  const classes = classLegend(classesOf(input.handle), view.state.highlightedClass, pickClass);
+  const legends = el('div', LEGENDS, ...heatLegend(input.colours), classes);
+  const facts = el('div', { style: 'flex:1 1 320px;min-width:0' }, objectPanel(pickedOf(input)));
+  const panels = el('div', PANELS, facts, legends);
+  input.rows.below.replaceChildren(...[missingNotice(missing), panels].filter((n) => n !== null));
 }
 
-function contextOf(
-  view: AecScene,
-  colours: MarkerColours,
-  ui: OverlayModel['ui'],
-  bump: () => void,
-) {
-  const refresh = refresher(view, colours, bump);
-  const context: OptionContext = {
-    state: view.appearance.state,
-    hidden: view.appearance.hidden,
-    colours,
+const LEGENDS = { style: 'flex:1 1 260px;min-width:0;display:grid;gap:8px' };
+const PANELS = {
+  style: 'display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;align-items:flex-start',
+};
+
+/** Everything an option needs from the pane to do its work. */
+function contextOf(input: ControlsInput, refresh: () => void, toggleHelp: () => void) {
+  const { handle } = input;
+  const context: ShortcutContext = {
+    view: handle.view,
+    // The core colours the markers, so no binding of a manifest is in force.
+    bindings: [],
     refresh,
-    look: (from) => view.look(from),
-    reset: () => {
-      resetAll(view, colours);
-      refresh();
-    },
-    toggleHelp: () => {
-      ui.helpOpen = !ui.helpOpen;
-      bump();
-    },
+    frame: handle.frame,
+    frameSelection: () => handle.frameSelection?.(),
+    look: handle.look,
+    hovered: () => handle.view.state.hovered,
+    toggleHelp,
     toggleFullscreen,
   };
   return context;
 }
 
-/** Hover and click on the canvas only, so the panels pick nothing. */
-function onPointer(view: AecScene, refresh: () => void) {
-  const { state } = view.appearance;
-  const canvas = view.renderer.domElement;
-  canvas.addEventListener('pointermove', (event) => {
-    const globalId = view.objectAt(event.clientX, event.clientY);
-    if (globalId === state.hovered) return;
-    state.hovered = globalId;
+/** The toolbar and the floor picker above the canvas and the list of keys over it. */
+function placeAbove(rows: PaneRows, toolbar: Toolbar, floors: FloorPicker, help: Help): void {
+  const top = el('div', { style: 'display:flex;flex-wrap:wrap;align-items:center;column-gap:8px' });
+  top.append(toolbar.element, floors.element);
+  rows.above.append(top);
+  rows.canvas.append(help.element);
+}
+
+/** The options' keys work while the pane has the focus. Returns the function that stops them. */
+function bindKeys(frame: HTMLElement, context: ShortcutContext, options: readonly Shortcut[]) {
+  const onKey = (event: KeyboardEvent) => {
+    if (handleKey(event, context, options)) event.preventDefault();
+  };
+  frame.addEventListener('keydown', onKey);
+  return () => frame.removeEventListener('keydown', onKey);
+}
+
+/** Put the controls around the canvas and connect them to the view. */
+export function createControls(input: ControlsInput): Controls {
+  const { rows } = input;
+  const { view } = input.handle;
+  const options = optionsOf(input.colours);
+  const missing: string[] = [];
+  const refresh = () => {
     view.refresh();
-  });
-  canvas.addEventListener('click', (event) => {
-    state.selected = view.objectAt(event.clientX, event.clientY);
+    input.recolour();
+    redraw();
+  };
+  const help = createHelp(options, () => rows.frame.focus());
+  const context = contextOf(input, refresh, help.toggle);
+  const toolbar = createToolbar(options, () => context);
+  const floors = createFloorPicker(view.storeys, (storey) => {
+    view.state.storey = storey;
     refresh();
   });
-}
-
-/** The picked object with its facts, its size and the sensor on it. */
-function pickedOf(view: AecScene) {
-  const globalId = view.appearance.state.selected;
-  if (!globalId) return null;
-  const key = view.markerOn(globalId);
-  const marker = key ? view.markers.all.get(key) : undefined;
-  return {
-    globalId,
-    facts: view.factsOf(globalId),
-    size: view.sizeOf(globalId),
-    sensor: key && marker ? { name: marker.name, signal: key } : undefined,
+  const redraw = () => {
+    toolbar.sync();
+    floors.sync(view.state.storey);
+    drawBelow(input, missing, refresh);
   };
+  placeAbove(rows, toolbar, floors, help);
+  const unbind = bindKeys(rows.frame, context, options);
+  refresh();
+  return { redraw, reportMissing: reporter(missing, redraw), dispose: unbind };
 }
 
-/** What the overlay's own controls change: the floor, the class lit from
- * the legend, and the help dialog. */
-function overlayActions(context: OptionContext, ui: OverlayModel['ui']) {
-  const { state } = context;
-  return {
-    showFloor: (storey: string | null) => {
-      state.storey = storey;
-      context.refresh();
-    },
-    pickClass: (ifcClass: string) => {
-      const same = state.highlightedClass === ifcClass;
-      state.highlightedClass = same ? null : ifcClass;
-      context.refresh();
-    },
-    closeHelp: () => {
-      ui.helpOpen = false;
-      context.refresh();
-    },
-  };
-}
-
-function modelOf(view: AecScene, colours: MarkerColours) {
-  const counter = changes();
-  const ui = { helpOpen: false, missing: [] as string[] };
-  const context = contextOf(view, colours, ui, counter.bump);
-  // The model's own colours never change, so they are read once.
-  const classes = view.appearance.classes();
-  return {
-    ...counter,
-    ...overlayActions(context, ui),
-    ui,
-    context,
-    storeys: storeysOf(view.tree),
-    picked: () => pickedOf(view),
-    classes: () => classes,
-    themeLabels: (labelColours: LabelColours) => view.markers.setColours(labelColours),
-  };
-}
-
-/** The options' keys work while the pane has the focus. */
-function onKeys(frame: HTMLElement, context: OptionContext) {
-  frame.addEventListener('keydown', (e) => {
-    if (handleKey(e, context)) e.preventDefault();
-  });
-}
-
-/** Name a sensor the model has no object for, once. */
-function missingReporter(model: ReturnType<typeof modelOf>) {
+/** Name a sensor the model has no object for, once: the core may resolve the same anchor again. */
+function reporter(missing: string[], redraw: () => void) {
   return (name: string) => {
-    // The core may resolve the same anchor again, so a name is kept once.
-    if (model.ui.missing.includes(name)) return;
-    model.ui.missing.push(name);
-    model.bump();
-  };
-}
-
-/** Put the controls around the canvas and connect them to the scene. */
-export function addControls(view: AecScene, rows: PaneRows, Theme?: ThemeRoot): Controls {
-  const colours = new MarkerColours();
-  const model = modelOf(view, colours);
-  const unmount = mountOverlay(rows.above, rows.below, model, Theme);
-  onKeys(rows.frame, model.context);
-  onPointer(view, model.context.refresh);
-  model.context.refresh();
-  return {
-    colour: (key, encoding, colour) => {
-      // A new colour rule changes the legend and the heatmap's choices.
-      if (colours.record(key, encoding, colour)) model.bump();
-      recolour(view, colours, [key]);
-    },
-    reportMissing: missingReporter(model),
-    dispose: unmount,
+    if (missing.includes(name)) return;
+    missing.push(name);
+    redraw();
   };
 }

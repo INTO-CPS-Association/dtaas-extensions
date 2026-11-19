@@ -7,6 +7,7 @@ this package follows [semantic versioning](https://semver.org/).
 
 ### Added
 
+- `Viewer`, from `./viewer`: the renderer, the scene, the camera, the controls and the frame loop of the Buildings page as a class with no framework, with `mount`, `show`, `objectAt`, `frameObject` and `unmount`. `loadGlb`, `sizeText`, `MarkerHandle`, `ViewerHandle`, `ViewerEvents`, `ShowOptions` and `Placed` are exported with it. A marker set has `add`, for a sensor that arrives after the model, and `handleKey` takes the shortcut table in force.
 - The `aec` substrate, which the DTaaS extension contributes for `ifc-guid`
   anchors and loads lazily. The SDK 0.1.1 lists no building substrate of its
   own, so the presets of the kit named a substrate nobody contributed until the
@@ -128,6 +129,9 @@ this package follows [semantic versioning](https://semver.org/).
 
 ### Changed
 
+- The `aec` substrate draws with the `Viewer` of the Buildings page instead of a renderer of its own, so it has every option of that page, the cuts, the measure, the shadows, the walk, the view cube and the grid among them. Its controls are plain DOM in the colours of the host's theme and it starts no React root, so the deployed bundle carries no CommonJS copy of `react-dom/client` and loads the substrate in a browser. The bundle is about 6.1 MB instead of 6.7 MB.
+- `BimCanvas` is a thin React component around the `Viewer` and `ViewerHandle` is defined in `./viewer`. `BimCanvas` still exports the type.
+- `SceneView` keeps its members and delegates to `viewState.ts`, `sceneHeat.ts`, `sceneCuts.ts`, `scenePaint.ts` and `sceneFacts.ts`, so no file of the viewer is above 250 lines except the shortcut table.
 - The tests use the SDK of the repository they sit in, installed by `yarn sdk`,
   and the peer range of the SDK is `^0.1.1`.
 - The package is private and built with Yarn and TypeScript 6.0.3, as the rest

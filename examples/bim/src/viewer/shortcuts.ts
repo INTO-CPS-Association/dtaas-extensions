@@ -331,9 +331,13 @@ export const SHORTCUTS: Shortcut[] = [
 /**
  * Run whatever a key press means, or nothing.
  *
- * Ignored while a person is typing, because a viewer that swallows the letter `t` from a search box is a viewer nobody can search in.
+ * Ignored while a person is typing, because a viewer that swallows the letter `t` from a search box is a viewer nobody can search in. `table` is the shortcut table in force, which a host may change one entry of, as the `aec` substrate does for the heatmap.
  */
-export function handleKey(event: KeyboardEvent, context: ShortcutContext): boolean {
+export function handleKey(
+  event: KeyboardEvent,
+  context: ShortcutContext,
+  table: readonly Shortcut[] = SHORTCUTS,
+): boolean {
   if (event.metaKey || event.ctrlKey || event.altKey) return false;
   const target = event.target as HTMLElement | null;
   const tag = target?.tagName;
@@ -341,7 +345,7 @@ export function handleKey(event: KeyboardEvent, context: ShortcutContext): boole
     return false;
   }
 
-  const shortcut = SHORTCUTS.find((entry) => entry.key === event.key.toLowerCase());
+  const shortcut = table.find((entry) => entry.key === event.key.toLowerCase());
   if (!shortcut) return false;
   shortcut.run(context);
   return true;

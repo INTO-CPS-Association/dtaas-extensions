@@ -23,6 +23,7 @@ export {
   type ModelStyle,
 } from './appearance.js';
 export { SHORTCUTS, handleKey, type Shortcut, type ShortcutContext } from './shortcuts.js';
+export { sizeText } from './sceneFacts.js';
 export {
   createGizmo,
   cornerViewport,

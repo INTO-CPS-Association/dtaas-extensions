@@ -1,7 +1,10 @@
 /**
- * Where the `aec` substrate reads a building model from, and the name it
- * shows a sensor by. Kept apart from the scene so it is tested without WebGL.
+ * Where the `aec` substrate reads a building model and its property tree
+ * from and the name it shows a sensor by. Kept apart from the scene so it is
+ * tested without WebGL.
  */
+
+import type { PropertyTree } from '../viewer/viewState.js';
 
 /**
  * The library address of the converted model a visualisation names.
@@ -29,4 +32,22 @@ function modelName(source: string): string {
 /** The name a sensor is shown with: its label, or else its signal path. */
 export function sensorName(signalPath: string, label?: string): string {
   return label || signalPath;
+}
+
+/** The property tree's address, beside the converted model. */
+export function treeAddress(modelUrl: string): string {
+  return modelUrl.replace(/\.glb$/i, '.json');
+}
+
+/**
+ * The property tree at `url`, or an empty one when it is missing or
+ * unreadable. A model without a tree still draws, with fewer options.
+ */
+export async function loadTree(url: string): Promise<PropertyTree> {
+  try {
+    const response = await fetch(url, { credentials: 'include' });
+    return response.ok ? ((await response.json()) as PropertyTree) : {};
+  } catch {
+    return {};
+  }
 }

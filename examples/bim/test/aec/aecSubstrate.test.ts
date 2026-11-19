@@ -1,5 +1,5 @@
 import { fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
-import { modelAddress, sensorName } from 'src/aec/aecModel';
+import { loadTree, modelAddress, sensorName, treeAddress } from 'src/aec/aecModel';
 import createAecSubstrate from 'src/aec/aecSubstrate';
 
 describe('the aec substrate', () => {
@@ -39,5 +39,18 @@ describe('the aec substrate', () => {
     const anchor = { signalPath: 'a/b', kind: 'ifc-guid', ref: 'x' };
     expect(adapter.resolve(anchor)).toBeNull();
     expect(adapter.pick(0, 0)).toBeNull();
+  });
+});
+
+describe('the property tree of an aec model', () => {
+  it('sits beside the converted model', () => {
+    expect(treeAddress('lib://common/models/room.glb')).toBe('lib://common/models/room.json');
+  });
+
+  it('is empty when the file is missing or unreadable', async () => {
+    globalThis.fetch = jest.fn().mockResolvedValue({ ok: false });
+    await expect(loadTree('x.json')).resolves.toEqual({});
+    globalThis.fetch = jest.fn().mockRejectedValue(new Error('offline'));
+    await expect(loadTree('x.json')).resolves.toEqual({});
   });
 });

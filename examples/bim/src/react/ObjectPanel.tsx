@@ -27,7 +27,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DoneIcon from '@mui/icons-material/Done';
 import { displayOf, idOf, topicOf, type Binding } from '../binding.js';
-import type { ObjectFacts } from '../viewer/index.js';
+import { sizeText, type ObjectFacts } from '../viewer/index.js';
 
 export interface ObjectPanelProps {
   globalId: string | null;
@@ -53,21 +53,6 @@ export interface ObjectPanelProps {
   properties?: Record<string, Record<string, unknown>>;
   /** Its extent in metres along each world axis, measured from the geometry. */
   size?: { x: number; y: number; z: number };
-}
-
-/**
- * A size in metres, or in millimetres when metres would read as zero.
- *
- * A door handle 40 mm across is "0.0 m" at one decimal, which says nothing.
- * Switching unit under a threshold keeps every object legible without giving
- * a wall a precision the model does not have.
- */
-function metres(size: { x: number; y: number; z: number }): string {
-  const parts = [size.x, size.y, size.z];
-  if (Math.max(...parts) < 0.5) {
-    return `${parts.map((n) => Math.round(n * 1000)).join(' × ')} mm`;
-  }
-  return `${parts.map((n) => n.toFixed(2)).join(' × ')} m`;
 }
 
 /** A row of the table, skipped when there is nothing to say. */
@@ -159,7 +144,7 @@ export function ObjectPanel({
             <Row name="Hosted In" value={facts?.host} />
             {/* Width by height by depth of the axis aligned box around it, so a
                 person can check a wall against the one in front of them. */}
-            <Row name="Size" value={size ? metres(size) : undefined} />
+            <Row name="Size" value={size ? sizeText(size) : undefined} />
             <Row name="Global ID" value={globalId} />
             {binding && <Row name="Sensor" value={idOf(binding)} />}
             {binding && <Row name="Unit" value={displayOf(binding).unit} />}

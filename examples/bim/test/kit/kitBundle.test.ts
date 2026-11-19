@@ -66,11 +66,10 @@ describe('the deployed bundle', () => {
     expect(code).toContain(`${SHARED_MODULES_GLOBAL}.muiMaterial`);
   });
 
-  // The aec substrate draws its controls into a React root of its own with
-  // createRoot from react-dom/client. The host does not share that module, so
-  // the bundle carries a CommonJS copy whose require('react') a browser cannot
-  // run. This passes once react-dom/client is a shared module.
-  it.failing('carries no CommonJS require, which a browser lacks', () => {
+  // The aec substrate draws its controls as plain DOM and starts no React
+  // root, so the bundle carries no CommonJS copy of react-dom/client, whose
+  // require('react') a browser cannot run.
+  it('carries no CommonJS require, which a browser lacks', () => {
     expect(readFileSync(bundle, 'utf-8')).not.toContain('require(');
   });
 

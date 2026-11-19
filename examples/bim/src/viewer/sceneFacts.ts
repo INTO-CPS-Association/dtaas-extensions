@@ -13,7 +13,7 @@ import type { ObjectFacts, PropertyTree } from './viewState.js';
 
 /**
  * Find every object of a model by its GlobalId, remember its colour and its
- * base, and return the middle of the model, where a vertical cut starts.
+ * base and return the middle of the model, where a vertical cut starts.
  */
 export function measureModel(
   model: Object3D,
@@ -106,4 +106,19 @@ export function sizeOfMesh(
   if (box.isEmpty()) return undefined;
   const size = box.getSize(new Vector3());
   return { x: size.x, y: size.y, z: size.z };
+}
+
+/**
+ * A size in metres, or in millimetres when metres would read as zero.
+ *
+ * A door handle 40 mm across is "0.0 m" at one decimal, which says nothing.
+ * Switching unit under a threshold keeps every object legible without giving
+ * a wall a precision the model does not have.
+ */
+export function sizeText(size: { x: number; y: number; z: number }): string {
+  const parts = [size.x, size.y, size.z];
+  if (Math.max(...parts) < 0.5) {
+    return `${parts.map((n) => Math.round(n * 1000)).join(' × ')} mm`;
+  }
+  return `${parts.map((n) => n.toFixed(2)).join(' × ')} m`;
 }
