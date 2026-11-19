@@ -69,12 +69,12 @@
     "test:node": "yarn build && node --test --experimental-test-module-mocks 'test/*.test.mjs'",
     "test:jest": "yarn wasm && jest",
     "test": "yarn test:node && yarn test:jest",
-    "test:node:coverage": "yarn build && node --test --experimental-test-module-mocks --experimental-test-coverage --test-coverage-include='dist/esm/**/*.js' --test-coverage-exclude='dist/esm/generated/**' --test-coverage-lines=86 --test-coverage-branches=94 --test-coverage-functions=92 'test/*.test.mjs'",
+    "test:node:coverage": "yarn build && node --test --experimental-test-module-mocks --experimental-test-coverage --test-coverage-include='dist/esm/**/*.js' --test-coverage-exclude='dist/esm/generated/**' --test-coverage-exclude='dist/esm/viewer/{viewer,stage,renderLoop,pointer,walkKeys,scenery,loadGlb}.js' --test-coverage-lines=93 --test-coverage-branches=94 --test-coverage-functions=92 'test/*.test.mjs'",
     "test:jest:coverage": "yarn wasm && jest --coverage",
     "test:coverage": "yarn test:node:coverage && yarn test:jest:coverage",
     "test:e2e": "yarn build && node test/e2e/smoke-package.mjs"
   },
-  "// test:coverage": "The Node test runner measures dist/esm, which its tests import, and Jest measures src/aec, which its tests import. The thresholds sit at or just below what the code reaches now.",
+  "// test:coverage": "The Node test runner measures dist/esm, which its tests import, and Jest measures src/aec and the framework-free viewer class, which its tests import. The Node run leaves those viewer files out, since only the Jest suite drives them. The thresholds sit at or just below what the code reaches now.",
   "prettier": {
     "singleQuote": true,
     "trailingComma": "all",

@@ -28,7 +28,7 @@ is cut.
 | `.`              | The manifest, the binding, the resolver, the readings, the alerts, the colour ramp | nothing                                                                                     |
 | `./schema`       | Validating a manifest a person wrote                                               | `zod`                                                                                       |
 | `./converter`    | IFC to geometry, in the browser                                                    | the inlined `web-ifc` WebAssembly                                                           |
-| `./viewer`       | The three.js scene, the floor filter, the heatmap, the selection                   | `three`                                                                                     |
+| `./viewer`       | The `Viewer` class and its scene, floor filter, heatmap and selection              | `three`                                                                                     |
 | `./react`        | The whole page as components                                                       | `react`, `@mui/material` and `zod`, which validates a manifest before the page uses it      |
 | `./react/canvas` | The 3D canvas alone, which `./react` loads lazily                                  | `react` and `three`                                                                         |
 | `./dtaas`        | The extension the DTaaS client loads, with the `aec` substrate                     | `@into-cps-association/dtaas-sdk`, `react-router-dom` and `zod`, besides those of `./react` |
@@ -195,11 +195,7 @@ It declares:
   through `host.signals`. `REACT_APP_EXT_BIM_STALE_AFTER_S` sets how old a
   reading may be, in seconds, before the page stops counting it as current. Left
   out, it is 30 seconds.
-- The `aec` substrate, for `ifc-guid` anchors, loaded lazily when a
-  visualisation draws a building. The SDK lists no building substrate of its
-  own, so the kit that knows buildings contributes it. It draws the converted
-  model with three.js and puts its toolbar, legend, floor picker and object
-  panel around it in a React root of its own, in the host's theme.
+- The `aec` substrate, for `ifc-guid` anchors, loaded lazily when a visualisation draws a building. The SDK lists no building substrate of its own, so the kit that knows buildings contributes it. It draws the converted model with the same `Viewer` as the Buildings page, puts a marker on every anchored object and colours it from the visualisation's encodings. Its toolbar, floor picker, object panel, legends and list of keys are plain DOM in the colours of the host's theme and the substrate starts no React root of its own.
 - An `ifc-guid` anchor kind, the `bim.ifc-to-glb` converter, the
   `bim.thermal-comfort` and `bim.co2` presets, and the `bim.room` and
   `bim.storey` scopes, which a host's visualisation core can merge with those of
@@ -209,21 +205,9 @@ It declares:
 
 ### The Deployed Bundle
 
-A deployment can load the extension without rebuilding the client.
-`yarn build:kit` writes one script, `dist/deploy/bim/index.js`, with the Vite
-settings of the SDK's `./deploy` entry. `DTAAS_KIT_OUT` names another output
-folder. The bundle takes React, the router, MUI, zod and the SDK from the client
-and carries everything else, three.js and the inlined `web-ifc` WebAssembly
-among it, so it is about 6.7 MB. An operator copies it to
-`extensions/bim/index.js` next to the client's `env.js` and lists it in
-`REACT_APP_EXTENSIONS_DEPLOYED`.
+A deployment can load the extension without rebuilding the client. `yarn build:kit` writes one script, `dist/deploy/bim/index.js`, with the Vite settings of the SDK's `./deploy` entry. `DTAAS_KIT_OUT` names another output folder. The bundle takes React, the router, MUI, zod and the SDK from the client and carries everything else, three.js and the inlined `web-ifc` WebAssembly among it, so it is about 6.1 MB. An operator copies it to `extensions/bim/index.js` next to the client's `env.js` and lists it in `REACT_APP_EXTENSIONS_DEPLOYED`.
 
-The `aec` substrate calls `createRoot` of `react-dom/client`, which the client
-does not share yet. The bundle therefore carries a CommonJS copy of that module,
-which a browser cannot run, and the substrate fails to load from a deployed
-bundle. The page and every other contribution work. `test/kit/kitBundle.test.ts`
-marks the check as a known failure. Once the client shares the module the check
-passes, the marked test fails and the mark is removed.
+The client shares `react-dom` with a bundle but not `react-dom/client`, so a bundle that started a React root of its own would carry a CommonJS copy of that module, which a browser cannot run. The `aec` substrate draws its controls as plain DOM for that reason and `test/kit/kitBundle.test.ts` checks that the bundle holds no CommonJS `require`.
 
 ### Peers
 
@@ -328,6 +312,22 @@ reached with Tab and opened with Enter. Under the object panel, the model tree
 lists the objects by floor or by class and finds them by any word of their name,
 class, GlobalId or property values.
 
+## One Renderer
+
+The Buildings page and the `aec` substrate draw a building with the same code: the `Viewer` class of `./viewer`, which needs no framework. It owns the WebGL renderer, the scene, the camera, the orbit controls and the frame loop and gives the WebGL context back when it is unmounted.
+
+```js
+import { Viewer, loadGlb } from '@into-cps-association/bim-kit/viewer';
+
+const viewer = new Viewer();
+viewer.mount(element, { onSelect: (globalId) => console.log(globalId) });
+const handle = viewer.show(await loadGlb(url), { placed, tree });
+handle.look('top');
+viewer.unmount();
+```
+
+`element` must be positioned, since the labels are laid over the canvas. `placed` lists the bindings the resolver found an object for, `tree` is the property tree beside the model and `handle.view` is the `SceneView` the shortcuts drive. A marker can also be added after the model with `viewer.markers.add(binding, object)`, which returns a handle that colours, labels and hides that one marker. `BimCanvas` is a thin React component around this class.
+
 ## Checking a Re-Export
 
 `scripts/check-reexport.mjs` takes a manifest and another export of the same
@@ -368,27 +368,22 @@ yarn test
 | `yarn format:check`  | Check the formatting with Prettier (`yarn format` rewrites it)                        |
 | `yarn lint`          | Lint with ESLint                                                                      |
 | `yarn test:node`     | Build, then run `test/*.test.mjs` with the Node test runner against `dist/`           |
-| `yarn test:jest`     | Run the Jest tests of `test/aec/` and `test/kit/`                                     |
+| `yarn test:jest`     | Run the Jest tests of `test/aec/`, `test/viewer/` and `test/kit/`                     |
 | `yarn test`          | Both suites                                                                           |
 | `yarn test:coverage` | Both suites with their coverage gates                                                 |
 | `yarn test:e2e`      | Build, pack and install the package in a clean project, then import every entry point |
 
-The Node suite imports from `dist/`, not from `src/`. A test that passes on the
-source and fails on the artifact is a test that did not do its job. The tests of
-the `aec` substrate and of the deployed bundle run under Jest, against the
-TypeScript source and the built bundle.
+The Node suite imports from `dist/`, not from `src/`. A test that passes on the source and fails on the artifact is a test that did not do its job. The tests of the `Viewer` class, of the `aec` substrate and of the deployed bundle run under Jest, against the TypeScript source and the built bundle. jsdom has no WebGL, so those tests replace the renderer and the occlusion pass with stand-ins and keep the rest of three.js real.
 
 The coverage gates sit at or just below what the code reaches today, so a
 change that drops coverage fails and one that raises it can raise the gate.
 
 | Suite                              | Lines | Statements | Branches | Functions |
 | ---------------------------------- | ----- | ---------- | -------- | --------- |
-| Node test runner, over `dist/esm/` | 86 %  | not given  | 94 %     | 92 %      |
-| Jest, over `src/aec/`              | 88 %  | 87 %       | 73 %     | 85 %      |
+| Node test runner, over `dist/esm/` | 93 %  | not given  | 94 %     | 92 %      |
+| Jest, over `src/aec/` and `Viewer` | 96 %  | 95 %       | 85 %     | 94 %      |
 
-The Node test runner measures the built modules its tests import and leaves out
-the inlined WebAssembly. It reports no statement figure. The thresholds are in
-the `test:node:coverage` script and in `jest.config.json`.
+The Node test runner measures the built modules its tests import and leaves out the inlined WebAssembly and the files of the `Viewer` class, which the Jest suite measures. It reports no statement figure. The thresholds are in the `test:node:coverage` script and in `jest.config.json`.
 
 ESLint runs the recommended JavaScript and TypeScript rules, the classic React
 hooks rules and the import boundaries the SDK asks of every kit. The limits of
