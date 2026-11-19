@@ -144,7 +144,15 @@ export {
   type Target,
   type LookFrom,
 } from './framing.js';
-export { createMarkers, MARKER_LAYER, type MarkerSet } from './markers.js';
+export { createMarkers, MARKER_LAYER, type MarkerHandle, type MarkerSet } from './markers.js';
+export {
+  Viewer,
+  type Placed,
+  type ShowOptions,
+  type ViewerEvents,
+  type ViewerHandle,
+} from './viewer.js';
+export { loadGlb } from './loadGlb.js';
 export {
   markerScale,
   markerColour,

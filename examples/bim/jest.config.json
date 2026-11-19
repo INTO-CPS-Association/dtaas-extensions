@@ -21,8 +21,11 @@
   },
   "setupFiles": ["<rootDir>/test/aec/setupTests.ts"],
   "setupFilesAfterEnv": ["<rootDir>/test/aec/jest.setup.ts"],
-  "testRegex": "/test/(aec|kit)/.*\\.test\\.tsx?$",
-  "collectCoverageFrom": ["src/aec/**/*.{ts,tsx}"],
+  "testRegex": "/test/(aec|kit|viewer)/.*\\.test\\.tsx?$",
+  "collectCoverageFrom": [
+    "src/aec/**/*.{ts,tsx}",
+    "src/viewer/{viewer,stage,renderLoop,pointer,walkKeys,scenery,loadGlb}.ts"
+  ],
   "coverageDirectory": "coverage/jest",
   "coverageReporters": ["text-summary", "lcov", "json"],
   "coverageThreshold": {
