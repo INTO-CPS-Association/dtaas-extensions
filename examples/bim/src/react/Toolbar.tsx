@@ -7,7 +7,7 @@
  */
 
 import { Box, Chip, Stack, ToggleButton, Tooltip } from '@mui/material';
-import { SHORTCUTS, type SceneView, type ShortcutContext } from '../viewer/index.js';
+import { SHORTCUTS, type SceneView, type Shortcut, type ShortcutContext } from '../viewer/index.js';
 import { iconFor } from './icons.js';
 
 export interface ToolbarProps {
@@ -16,17 +16,26 @@ export interface ToolbarProps {
   context: ShortcutContext;
   /** Bumped by the page after any change, so the buttons redraw. */
   revision: number;
+  /** The table the buttons come from. The `aec` substrate changes two of its entries. */
+  shortcuts?: readonly Shortcut[];
 }
 
-export function Toolbar({ view, context, revision }: Readonly<ToolbarProps>) {
+export function Toolbar({
+  view,
+  context,
+  revision,
+  shortcuts = SHORTCUTS,
+}: Readonly<ToolbarProps>) {
   return (
     <Stack
+      role="toolbar"
+      aria-label="Options"
       direction="row"
       spacing={0.5}
       sx={{ flexWrap: 'wrap', gap: 0.5, mb: 1 }}
       data-revision={revision}
     >
-      {SHORTCUTS.map((shortcut) => {
+      {shortcuts.map((shortcut) => {
         const on = shortcut.on?.(view) ?? false;
         const badge = shortcut.badge?.(view);
         return (

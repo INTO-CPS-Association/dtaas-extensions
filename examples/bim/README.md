@@ -195,7 +195,7 @@ It declares:
   through `host.signals`. `REACT_APP_EXT_BIM_STALE_AFTER_S` sets how old a
   reading may be, in seconds, before the page stops counting it as current. Left
   out, it is 30 seconds.
-- The `aec` substrate, for `ifc-guid` anchors, loaded lazily when a visualisation draws a building. The SDK lists no building substrate of its own, so the kit that knows buildings contributes it. It draws the converted model with the same `Viewer` as the Buildings page, puts a marker on every anchored object and colours it from the visualisation's encodings. Its toolbar, floor picker, object panel, legends and list of keys are plain DOM in the colours of the host's theme and the substrate starts no React root of its own.
+- The `aec` substrate, for `ifc-guid` anchors, loaded lazily when a visualisation draws a building. The SDK lists no building substrate of its own, so the kit that knows buildings contributes it. It draws the converted model with the same `Viewer` as the Buildings page, puts a marker on every anchored object and colours it from the visualisation's encodings. Its toolbar, floor picker, object panel, legends and list of keys are the components of the Buildings page, drawn in a React root of their own and wrapped in the host's theme, so a building looks and works the same on the page and in a visualisation.
 - An `ifc-guid` anchor kind, the `bim.ifc-to-glb` converter, the
   `bim.thermal-comfort` and `bim.co2` presets, and the `bim.room` and
   `bim.storey` scopes, which a host's visualisation core can merge with those of
@@ -207,7 +207,7 @@ It declares:
 
 A deployment can load the extension without rebuilding the client. `yarn build:kit` writes one script, `dist/deploy/bim/index.js`, with the Vite settings of the SDK's `./deploy` entry. `DTAAS_KIT_OUT` names another output folder. The bundle takes React, the router, MUI, zod and the SDK from the client and carries everything else, three.js and the inlined `web-ifc` WebAssembly among it, so it is about 6.1 MB. An operator copies it to `extensions/bim/index.js` next to the client's `env.js` and lists it in `REACT_APP_EXTENSIONS_DEPLOYED`.
 
-The client shares `react-dom` with a bundle but not `react-dom/client`, so a bundle that started a React root of its own would carry a CommonJS copy of that module, which a browser cannot run. The `aec` substrate draws its controls as plain DOM for that reason and `test/kit/kitBundle.test.ts` checks that the bundle holds no CommonJS `require`.
+The client shares `react-dom/client` with a bundle, and the `aec` substrate starts its React root with that copy. A bundle that carried its own would hold a CommonJS module, which a browser cannot run, so `test/kit/kitBundle.test.ts` checks that the bundle holds no CommonJS `require` and reads `react-dom/client` from the host.
 
 ### Peers
 

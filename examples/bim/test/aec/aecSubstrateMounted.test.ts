@@ -116,7 +116,7 @@ describe('a mounted aec substrate', () => {
   it('draws a model whose property tree is missing', async () => {
     globalThis.fetch = jest.fn(async () => ({ ok: false })) as never;
     const { adapter, container } = await mounted();
-    expect(container.querySelector('select')).toBeNull();
+    expect(container.querySelector('[role="combobox"]')).toBeNull();
     globalThis.fetch = jest.fn(async () => Promise.reject(new Error('offline'))) as never;
     adapter.dispose();
     const again = await mounted();

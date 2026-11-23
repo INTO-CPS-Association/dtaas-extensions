@@ -5,6 +5,7 @@
  * stays out of the main bundle.
  */
 
+import type { ComponentType, ReactNode } from 'react';
 import { Color } from 'three';
 
 import type { Binding } from '../binding.js';
@@ -14,9 +15,10 @@ import { createControls, type Controls, type PaneRows } from './aecControls.js';
 import { loadTree, treeAddress } from './aecModel.js';
 import { followTheme } from './aecTheme.js';
 
-/** One anchored sensor: its name, the object it sits on and its marker. */
+/** One anchored sensor: its name, its binding and its marker. */
 interface AnchorMarker {
   readonly name: string;
+  readonly binding: Binding;
   readonly marker: MarkerHandle;
 }
 
@@ -58,7 +60,10 @@ export class AecPane {
   private controls: Controls | null = null;
   private stopTheme: () => void = () => undefined;
 
-  constructor(private readonly rows: PaneRows) {}
+  constructor(
+    private readonly rows: PaneRows,
+    private readonly Theme?: ComponentType<{ readonly children: ReactNode }>,
+  ) {}
 
   /** Draw the converted model at `url` and the property tree beside it. */
   async load(url: string): Promise<void> {
@@ -69,7 +74,8 @@ export class AecPane {
       rows: this.rows,
       handle,
       colours: this.colours,
-      sensorOn: (globalId) => this.sensorOn(globalId),
+      Theme: this.Theme,
+      bindingOn: (globalId) => this.bindingOn(globalId),
       recolour: () => this.recolour(),
     });
     this.stopTheme = followTheme(this.rows.frame);
@@ -84,9 +90,10 @@ export class AecPane {
       return false;
     }
     if (this.anchors.has(key)) return true;
-    const marker = markers.add(bindingOf(key, globalId, name), mesh);
+    const binding = bindingOf(key, globalId, name);
+    const marker = markers.add(binding, mesh);
     marker.setText(name);
-    this.anchors.set(key, { name, marker });
+    this.anchors.set(key, { name, binding, marker });
     this.controls?.redraw();
     return true;
   }
@@ -115,10 +122,9 @@ export class AecPane {
     return [...this.anchors].find(([, a]) => a.marker.globalId === globalId)?.[0] ?? null;
   }
 
-  /** The sensor anchored on an object, for the object panel. */
-  private sensorOn(globalId: string) {
-    const found = [...this.anchors].find(([, a]) => a.marker.globalId === globalId);
-    return found ? { name: found[1].name, signal: found[0] } : undefined;
+  /** The binding of the sensor anchored on an object, for the object panel. */
+  private bindingOn(globalId: string): Binding | undefined {
+    return [...this.anchors.values()].find((a) => a.marker.globalId === globalId)?.binding;
   }
 
   /** Paint every marker in the colour the heatmap option says it shows now. */

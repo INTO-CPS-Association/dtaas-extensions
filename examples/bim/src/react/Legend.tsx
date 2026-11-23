@@ -141,3 +141,42 @@ export function HeatLegend({ zones, unit, coloured }: Readonly<HeatLegendProps>)
     </Paper>
   );
 }
+
+export interface ScaleLegendProps {
+  /** The name of the colour scheme, as the visualisation declares it. */
+  scheme: string;
+  /** The scheme's colours from the low end to the high end, as CSS colours. */
+  stops: readonly string[];
+  /** The values at the two ends of the scale. */
+  domain: readonly [number, number] | readonly number[];
+  /** How many sensors the scale colours now. */
+  sensors: number;
+}
+
+/**
+ * The heatmap legend of a colour scale a visualisation declares, drawn as
+ * the Buildings page draws its own heatmap legend: the `aec` substrate
+ * colours its markers from the encodings and not from a manifest.
+ */
+export function ScaleLegend({ scheme, stops, domain, sensors }: Readonly<ScaleLegendProps>) {
+  return (
+    <Paper variant="outlined" sx={{ p: 1 }}>
+      <Typography variant="caption" color="text.secondary">
+        Heatmap
+      </Typography>
+      <Box
+        sx={{
+          mt: 0.5,
+          height: 10,
+          borderRadius: 0.5,
+          background: `linear-gradient(to right, ${stops.join(', ')})`,
+        }}
+      />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.3 }}>
+        <Typography variant="body2">{domain[0]}</Typography>
+        <Typography variant="body2">{domain[1]}</Typography>
+      </Box>
+      <Chip size="small" sx={{ mt: 0.5 }} label={`${sensors} sensors, ${scheme}`} />
+    </Paper>
+  );
+}

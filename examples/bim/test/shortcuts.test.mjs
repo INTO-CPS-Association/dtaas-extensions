@@ -146,6 +146,9 @@ test('typing in a field is typing, not a shortcut', () => {
     handleKey({ key: 't', target: { tagName: 'DIV', isContentEditable: true } }, ctx),
     false,
   );
+  // The open list of a MUI select is a listbox of plain elements, not a SELECT.
+  const inList = { tagName: 'LI', closest: (selector) => selector.includes('listbox') };
+  assert.equal(handleKey({ key: 't', target: inList }, ctx), false);
   assert.equal(scene.state.transparent, false);
 });
 

@@ -88,11 +88,67 @@ export function styleLabel(label: HTMLElement, selected: boolean, live: boolean)
   label.dataset.selected = String(selected);
 }
 
-/** Put a label above a point on screen, or hide it. */
-export function placeLabel(label: HTMLElement, at: ScreenPoint, shown: boolean): void {
+/**
+ * Put a label above a point on screen, or hide it. `lift` raises it further,
+ * in pixels, when another label already sits where it would go.
+ */
+export function placeLabel(label: HTMLElement, at: ScreenPoint, shown: boolean, lift = 0): void {
   const { style } = label;
   style.display = shown && at.visible ? 'block' : 'none';
   style.transform =
-    `translate(${Math.round(at.x)}px, ${Math.round(at.y)}px) ` +
+    `translate(${Math.round(at.x)}px, ${Math.round(at.y - lift)}px) ` +
     `translate(-50%, calc(-100% - ${LABEL_OFFSET_PX}px))`;
+}
+
+/** The space kept between two labels moved apart, in pixels. */
+export const LABEL_GAP_PX = 2;
+
+/** A label on screen: the point it belongs to and its size, in pixels. */
+export interface LabelBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** The rectangle of a label drawn as `placeLabel` draws it, raised by `lift`. */
+function rectOf(box: LabelBox, lift: number) {
+  const bottom = box.y - LABEL_OFFSET_PX - lift;
+  return {
+    left: box.x - box.width / 2,
+    right: box.x + box.width / 2,
+    top: bottom - box.height,
+    bottom,
+  };
+}
+
+/**
+ * How far to raise each label so that no two cover each other, in the order
+ * given. Labels are settled from the bottom of the screen up: each keeps its
+ * place unless it covers one already settled, and then it moves just above
+ * that one. Sensors close together on screen get a short stack of labels
+ * instead of one label hiding the others.
+ */
+export function spreadLabels(boxes: readonly LabelBox[]): number[] {
+  const lifts = boxes.map(() => 0);
+  const order = boxes.map((_, index) => index).sort((a, b) => boxes[b].y - boxes[a].y);
+  const settled: Array<ReturnType<typeof rectOf>> = [];
+  for (const index of order) {
+    const box = boxes[index];
+    // Each move clears one settled label, so there are at most as many moves as labels.
+    for (let tries = 0; tries <= settled.length; tries += 1) {
+      const rect = rectOf(box, lifts[index]);
+      const covered = settled.find(
+        (other) =>
+          rect.left < other.right &&
+          other.left < rect.right &&
+          rect.top < other.bottom &&
+          other.top < rect.bottom,
+      );
+      if (!covered) break;
+      lifts[index] = box.y - LABEL_OFFSET_PX - (covered.top - LABEL_GAP_PX);
+    }
+    settled.push(rectOf(box, lifts[index]));
+  }
+  return lifts;
 }

@@ -33,16 +33,21 @@ export class MarkerColours {
   /** The latest colour of each marker, by quantity, most recent last. */
   private readonly latest = new Map<string, Map<string, string>>();
 
-  /** Keep a marker's colour, and say whether its quantity is new. */
+  /**
+   * Keep a marker's colour, and say whether the legend changes: the quantity
+   * is new, or this marker is coloured by it for the first time, which
+   * changes how many sensors the legend counts.
+   */
   record(marker: string, encoding: Encoding, colour: string): boolean {
     const quantity = quantityOf(encoding);
     const known = this.quantities.some((q) => q.key === quantity.key);
     if (!known) this.quantities.push(quantity);
     const colours = this.latest.get(marker) ?? new Map<string, string>();
+    const counted = colours.has(quantity.key);
     colours.delete(quantity.key);
     colours.set(quantity.key, colour);
     this.latest.set(marker, colours);
-    return !known;
+    return !known || !counted;
   }
 
   /** The colour a marker shows now, or nothing when it is not coloured. */

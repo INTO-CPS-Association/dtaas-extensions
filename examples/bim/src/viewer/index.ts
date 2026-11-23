@@ -154,6 +154,7 @@ export {
   type ViewerHandle,
 } from './viewer.js';
 export { loadGlb } from './loadGlb.js';
+export { addMissingNormals } from './normals.js';
 export {
   markerScale,
   markerColour,
@@ -166,4 +167,11 @@ export {
   SELECTED_MARKER_MIN_PX,
   NO_READING_COLOUR,
 } from './markerStyle.js';
-export { toScreen, LABEL_OFFSET_PX, type ScreenPoint } from './markerLabels.js';
+export {
+  toScreen,
+  spreadLabels,
+  LABEL_OFFSET_PX,
+  LABEL_GAP_PX,
+  type LabelBox,
+  type ScreenPoint,
+} from './markerLabels.js';

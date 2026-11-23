@@ -8,7 +8,13 @@
  */
 
 export { BuildingModels, type BuildingModelsProps } from './BuildingModels.js';
-export { ClassLegend, HeatLegend, type HeatLegendProps } from './Legend.js';
+export {
+  ClassLegend,
+  HeatLegend,
+  ScaleLegend,
+  type HeatLegendProps,
+  type ScaleLegendProps,
+} from './Legend.js';
 export { SensorCards, type SensorCardsProps } from './SensorCards.js';
 export { FloorPicker, type FloorPickerProps } from './FloorPicker.js';
 export { Toolbar, type ToolbarProps } from './Toolbar.js';

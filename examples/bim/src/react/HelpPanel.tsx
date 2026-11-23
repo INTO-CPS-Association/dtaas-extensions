@@ -13,21 +13,23 @@ import {
   TableCell,
   TableRow,
 } from '@mui/material';
-import { SHORTCUTS } from '../viewer/index.js';
+import { SHORTCUTS, type Shortcut } from '../viewer/index.js';
 
 export interface HelpPanelProps {
   open: boolean;
   onClose: () => void;
+  /** The table the list comes from, the same one the toolbar draws. */
+  shortcuts?: readonly Shortcut[];
 }
 
-export function HelpPanel({ open, onClose }: Readonly<HelpPanelProps>) {
+export function HelpPanel({ open, onClose, shortcuts = SHORTCUTS }: Readonly<HelpPanelProps>) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle>Shortcuts</DialogTitle>
       <DialogContent>
         <Table size="small">
           <TableBody>
-            {SHORTCUTS.map((shortcut) => (
+            {shortcuts.map((shortcut) => (
               <TableRow key={shortcut.key}>
                 <TableCell sx={{ width: 48 }}>
                   <code>{shortcut.key}</code>

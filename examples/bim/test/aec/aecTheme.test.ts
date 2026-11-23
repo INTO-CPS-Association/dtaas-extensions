@@ -1,5 +1,4 @@
 import { applyTheme, followTheme, themeColours } from 'src/aec/aecTheme';
-import { stepFloor } from 'src/aec/aecFloors';
 
 afterEach(() => {
   document.body.innerHTML = '';
@@ -57,13 +56,5 @@ describe('the theme of the aec substrate', () => {
     document.body.setAttribute('style', 'background-color: rgb(1, 2, 3)');
     await Promise.resolve();
     expect(pane.style.getPropertyValue('--bim-label-bg')).toBe('rgb(18, 18, 18)');
-  });
-});
-
-describe('stepping between floors', () => {
-  it('starts from the lowest going up and the highest going down', () => {
-    expect(stepFloor(-1, 1, 3)).toBe(0);
-    expect(stepFloor(-1, -1, 3)).toBe(2);
-    expect(stepFloor(2, 1, 3)).toBeNull();
   });
 });

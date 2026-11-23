@@ -344,6 +344,11 @@ export function handleKey(
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target?.isContentEditable) {
     return false;
   }
+  // The open list of a select drawn by MUI is a listbox, where a letter
+  // picks an entry and must not switch an option of the model. The closed
+  // select keeps the focus after a choice and takes no letters, so a key
+  // pressed there still reaches the model.
+  if (target?.closest?.('[role="listbox"]')) return false;
 
   const shortcut = table.find((entry) => entry.key === event.key.toLowerCase());
   if (!shortcut) return false;

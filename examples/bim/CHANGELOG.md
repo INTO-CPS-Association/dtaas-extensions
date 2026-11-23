@@ -129,7 +129,8 @@ this package follows [semantic versioning](https://semver.org/).
 
 ### Changed
 
-- The `aec` substrate draws with the `Viewer` of the Buildings page instead of a renderer of its own, so it has every option of that page, the cuts, the measure, the shadows, the walk, the view cube and the grid among them. Its controls are plain DOM in the colours of the host's theme and it starts no React root, so the deployed bundle carries no CommonJS copy of `react-dom/client` and loads the substrate in a browser. The bundle is about 6.1 MB instead of 6.7 MB.
+- The `aec` substrate draws with the `Viewer` of the Buildings page instead of a renderer of its own, so it has every option of that page, the cuts, the measure, the shadows, the walk, the view cube and the grid among them.
+- The controls of the `aec` substrate are the components of the Buildings page: `Toolbar`, `FloorPicker`, `ObjectPanel`, `ClassLegend`, `HelpPanel` and the new `ScaleLegend`, in a React root of their own wrapped in the host's theme. The root is started with the host's `react-dom/client`, which the SDK now shares, so the bundle carries no copy of it. The plain DOM copies of those controls are gone, and with them the icons, the look and the behaviour that differed from the page. `Toolbar` and `HelpPanel` take an optional `shortcuts` table, and the toolbar has the role `toolbar`.
 - `BimCanvas` is a thin React component around the `Viewer` and `ViewerHandle` is defined in `./viewer`. `BimCanvas` still exports the type.
 - `SceneView` keeps its members and delegates to `viewState.ts`, `sceneHeat.ts`, `sceneCuts.ts`, `scenePaint.ts` and `sceneFacts.ts`, so no file of the viewer is above 250 lines except the shortcut table.
 - The tests use the SDK of the repository they sit in, installed by `yarn sdk`,
@@ -189,6 +190,10 @@ this package follows [semantic versioning](https://semver.org/).
 
 ### Fixed
 
+- A converted model whose GLB carries no normals, as `ifc_explorer.to_glb` writes it, is drawn lit and not as a black shape: the loader computes the normals of every mesh that has none. `addMissingNormals` is exported from `./viewer`.
+- Sensor labels that would cover one another on screen are raised one above the other, so a sensor close to another keeps its name and value in sight. `spreadLabels`, `LabelBox` and `LABEL_GAP_PX` are exported from `./viewer`.
+- The heatmap legend of the `aec` substrate counts every sensor its scale colours. It was drawn again only when a new scale appeared, so it kept the count of the first reading.
+- A key typed in the open list of a MUI select picks an entry and no longer switches an option of the model.
 - On the Per Sensor heatmap, the floor of an open room is split halfway between
   its sensors. The walk stepped along rows and columns only, so the split ran
   along 45-degree lines and along rows, and about one point in twenty of an open

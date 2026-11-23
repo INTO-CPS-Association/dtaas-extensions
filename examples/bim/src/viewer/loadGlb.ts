@@ -6,9 +6,11 @@
 
 import type { Object3D } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { addMissingNormals } from './normals.js';
 
 /** The scene of the GLB at `url`. Rejects when the file cannot be read as one. */
 export async function loadGlb(url: string): Promise<Object3D> {
   const gltf = await new GLTFLoader().loadAsync(url);
+  addMissingNormals(gltf.scene);
   return gltf.scene;
 }

@@ -24,6 +24,14 @@ describe('the marker colours of the aec substrate', () => {
     expect(colours.badge()).toBe('All');
   });
 
+  it('asks for a new legend each time another sensor is first coloured', () => {
+    const colours = new MarkerColours();
+    expect(colours.record('a', warm, '#f00')).toBe(true);
+    expect(colours.record('b', warm, '#ff0')).toBe(true);
+    expect(colours.record('b', warm, '#fa0')).toBe(false);
+    expect(colours.countOf(colours.quantities[0])).toBe(2);
+  });
+
   it('shows one colour rule at a time when there are several', () => {
     const colours = new MarkerColours();
     colours.record('a', warm, '#f00');

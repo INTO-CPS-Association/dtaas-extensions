@@ -3,14 +3,14 @@
  * building model in 3D, the peer of the `image` substrate. Each anchor names
  * an IFC object by its GlobalId, and the sensor gets a marker on that object
  * with a label, which the resolved encodings colour and fill with the value.
- * Around the canvas sit the options of the Buildings page, laid out as on
- * that page: the toolbar and floor picker above it, the facts of a picked
- * object and the legends below it.
+ * Around the canvas sit the controls of the Buildings page, the same
+ * components laid out as on that page: the toolbar and floor picker above it,
+ * the facts of a picked object and the legends below it.
  *
  * It draws the converted model (GLB), which the Buildings page of bim-kit
  * converts from IFC and stores beside the IFC, with the viewer that page
- * draws with. The controls are plain DOM, so the substrate starts no React
- * root and a deployed bundle carries no copy of `react-dom/client`.
+ * draws with. The controls render in a React root of their own, started with
+ * the host's `react-dom/client` and wrapped in the host's theme.
  */
 
 import type {
@@ -46,9 +46,9 @@ function paneRows(): PaneRows {
 }
 
 /** Load the scene code and draw the model in the pane. */
-async function drawModel(rows: PaneRows, url: string): Promise<AecPane> {
+async function drawModel(rows: PaneRows, url: string, host: HostServices): Promise<AecPane> {
   const { AecPane: Pane } = await import('./aecPane.js');
-  const pane = new Pane(rows);
+  const pane = new Pane(rows, host.ui.Theme);
   try {
     await pane.load(url);
   } catch {
@@ -98,7 +98,7 @@ export default function createAecSubstrate(host: HostServices): SubstrateAdapter
     async mount(container, descriptor: SubstrateDescriptor) {
       const url = modelUrl(host, descriptor);
       container.append(rows.frame);
-      pane = await drawModel(rows, await url);
+      pane = await drawModel(rows, await url, host);
     },
     resolve: (anchor: Anchor) => resolveAnchor(pane, anchor),
     apply: (target, resolved) => pane?.paint(target.id, paintOf(resolved)),

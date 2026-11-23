@@ -19,7 +19,13 @@ import type { Binding } from '../binding.js';
 import { isLive, DEFAULT_STALE_AFTER_S, type FeedState, type Reading } from '../readings.js';
 import { SELECTED_COLOUR } from './appearance.js';
 import { buildMarker, disposeMarker, MARKER_LAYER, type Marker } from './markerBuild.js';
-import { placeLabel, styleLabel, toScreen } from './markerLabels.js';
+import {
+  placeLabel,
+  spreadLabels,
+  styleLabel,
+  toScreen,
+  type ScreenPoint,
+} from './markerLabels.js';
 import { prefersReducedMotion } from './flight.js';
 import {
   labelText,
@@ -97,14 +103,14 @@ interface FrameOf {
   size: { width: number; height: number };
 }
 
-/** Size, colour and label one marker for this frame. */
+/** Size, colour and label one marker for this frame. Returns where its label points. */
 function placeOne(
   marker: Marker,
   { radius, camera, size }: FrameOf,
   selected: boolean,
   shown: boolean,
   pulse = 1,
-): void {
+): ScreenPoint {
   const where = marker.dot.getWorldPosition(new Vector3());
   const minPx = selected ? SELECTED_MARKER_MIN_PX : MARKER_MIN_PX;
   const scale =
@@ -115,7 +121,34 @@ function placeOne(
   marker.ring.visible = shown;
   marker.dot.material.color.setHex(selected ? SELECTED_COLOUR : marker.colour);
   styleLabel(marker.label, selected, marker.live);
-  placeLabel(marker.label, toScreen(where.project(camera), size.width, size.height), shown);
+  const at = toScreen(where.project(camera), size.width, size.height);
+  placeLabel(marker.label, at, shown);
+  return at;
+}
+
+/**
+ * Raise the labels that would cover one another. Runs after every label has
+ * its text and style for the frame, since its size depends on both.
+ */
+function separate(
+  markers: readonly Marker[],
+  spots: readonly ScreenPoint[],
+  shown: readonly boolean[],
+) {
+  const open = markers
+    .map((_, index) => index)
+    .filter((index) => shown[index] && spots[index].visible);
+  const lifts = spreadLabels(
+    open.map((index) => ({
+      x: spots[index].x,
+      y: spots[index].y,
+      width: markers[index].label.offsetWidth,
+      height: markers[index].label.offsetHeight,
+    })),
+  );
+  open.forEach((index, at) => {
+    if (lifts[at] > 0) placeLabel(markers[index].label, spots[index], true, lifts[at]);
+  });
 }
 
 /** The handle a caller paints one marker through. */
@@ -200,13 +233,15 @@ export function createMarkers(
       // The labels are projected with the camera of this frame and not the
       // one the last render left behind, or they trail the model as it turns.
       camera.updateMatrixWorld();
-      for (const marker of markers) {
-        const id = marker.globalId;
-        const picked = id !== undefined && id === selected;
-        const visible = !marker.hidden && (id === undefined || shown(id));
-        const frame = { radius, camera, size: { width, height } };
-        placeOne(marker, frame, picked, visible, picked ? growth : 1);
-      }
+      const frame = { radius, camera, size: { width, height } };
+      const visible = markers.map(
+        (marker) => !marker.hidden && (marker.globalId === undefined || shown(marker.globalId)),
+      );
+      const spots = markers.map((marker, index) => {
+        const picked = marker.globalId !== undefined && marker.globalId === selected;
+        return placeOne(marker, frame, picked, visible[index], picked ? growth : 1);
+      });
+      separate(markers, spots, visible);
     },
     pick: (ray) => pickFrom(markers, ray),
     dispose() {

@@ -5,6 +5,7 @@ import path from 'node:path';
 import * as react from 'react';
 import * as reactJsxRuntime from 'react/jsx-runtime';
 import * as reactDom from 'react-dom';
+import * as reactDomClient from 'react-dom/client';
 import * as reactRouterDom from 'react-router-dom';
 import * as muiMaterial from '@mui/material';
 import * as zod from 'zod';
@@ -23,6 +24,7 @@ const SHARED = {
   react,
   reactJsxRuntime,
   reactDom,
+  reactDomClient,
   reactRouterDom,
   muiMaterial,
   dtaasSdk,
@@ -66,11 +68,13 @@ describe('the deployed bundle', () => {
     expect(code).toContain(`${SHARED_MODULES_GLOBAL}.muiMaterial`);
   });
 
-  // The aec substrate draws its controls as plain DOM and starts no React
-  // root, so the bundle carries no CommonJS copy of react-dom/client, whose
-  // require('react') a browser cannot run.
+  // The aec substrate starts its React root with the host's react-dom/client,
+  // so the bundle carries no CommonJS copy of it, whose require('react') a
+  // browser cannot run.
   it('carries no CommonJS require, which a browser lacks', () => {
-    expect(readFileSync(bundle, 'utf-8')).not.toContain('require(');
+    const code = readFileSync(bundle, 'utf-8');
+    expect(code).not.toContain('require(');
+    expect(code).toContain(`${SHARED_MODULES_GLOBAL}.reactDomClient`);
   });
 
   it('registers the extension bim with its aec substrate', () => {
