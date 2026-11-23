@@ -19,6 +19,9 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   unit a source gave with a value. A kit compares it with the unit it expects
   and no longer has to assume one from the name of the quantity. A host that
   does not know the unit leaves the field out.
+- `react-dom/client` among the shared modules, under `reactDomClient`, so a
+  kit that draws the controls of a substrate starts its React root with the
+  host's copy. A host fills the key from its own `react-dom/client`.
 
 ### Changed
 

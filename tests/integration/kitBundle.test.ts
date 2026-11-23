@@ -5,6 +5,7 @@ import path from 'node:path';
 import * as react from 'react';
 import * as reactJsxRuntime from 'react/jsx-runtime';
 import * as reactDom from 'react-dom';
+import * as reactDomClient from 'react-dom/client';
 import * as reactRouterDom from 'react-router-dom';
 import * as muiMaterial from '@mui/material';
 import * as zod from 'zod';
@@ -26,6 +27,7 @@ const SHARED = {
   react,
   reactJsxRuntime,
   reactDom,
+  reactDomClient,
   reactRouterDom,
   muiMaterial,
   dtaasSdk,
