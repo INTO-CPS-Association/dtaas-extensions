@@ -13,7 +13,7 @@ the viewer and the transport can each be replaced without touching the others.
 
 This folder holds the source of `@into-cps-association/bim-kit` 0.2.0, the
 package published to npm from the ifc-utils repository, with the changes of its
-next release. Inside this repository it is an example kit of the SDK. It adds
+next release. Inside this repository it is one of the kits of the SDK. It adds
 two things to the published package: the `aec` substrate, which draws a building
 in the visualisation core, and the build of a deployed bundle.
 
@@ -351,7 +351,7 @@ it. Run it again after a change to the SDK.
 
 ```bash
 yarn install --frozen-lockfile --ignore-scripts   # once, at the repository root
-cd examples/bim
+cd kits/bim
 yarn install --frozen-lockfile --ignore-scripts
 yarn sdk
 yarn typecheck

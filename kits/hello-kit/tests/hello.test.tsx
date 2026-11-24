@@ -8,8 +8,8 @@ import {
   validateExtension,
   type SignalSample,
 } from '@into-cps-association/dtaas-sdk';
-import extension from 'examples/hello-kit/src/dtaas';
-import HelloPage from 'examples/hello-kit/src/dtaas/pages/HelloPage';
+import extension from '../src/dtaas';
+import HelloPage from '../src/dtaas/pages/HelloPage';
 
 const env = { REACT_APP_EXT_HELLO_GREETING: 'Hej' };
 

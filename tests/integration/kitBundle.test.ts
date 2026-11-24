@@ -40,14 +40,16 @@ const out = mkdtempSync(path.join(tmpdir(), 'dtaas-kit-'));
 
 afterAll(() => rmSync(out, { recursive: true, force: true }));
 
-/** Build a kit with `yarn build:kit` into a folder of its own. */
-function build(kit: string): string {
-  const folder = path.join(out, kit);
-  execFileSync('node', ['examples/buildKit.mjs', kit, folder], {
+/**
+ * Build the fixture kit with the SDK's `kitBuildConfig`. The kits of this
+ * repository are packages of their own and test their own bundles.
+ */
+function build(): string {
+  execFileSync('node', ['tests/fixtures/kit/build.mjs', out], {
     cwd: ROOT,
     stdio: 'pipe',
   });
-  return path.join(folder, 'index.js');
+  return path.join(out, 'index.js');
 }
 
 /** Run a bundle as the browser would and return what it registered. */
@@ -68,38 +70,40 @@ function evaluate(
   >;
 }
 
-describe.each([
-  ['hello-kit', 'hello', { REACT_APP_EXT_HELLO_GREETING: 'Hej' }],
-  ['soil-kit', 'soil', { REACT_APP_EXT_SOIL_TWIN: 'soil_p03' }],
-])('the deployed bundle of %s', (kit, id, env) => {
+describe('the deployed bundle of a kit', () => {
   let registered: Record<string, { extension: DtaasExtension }>;
   let bundle: string;
 
   beforeAll(() => {
-    bundle = build(kit);
+    bundle = build();
     registered = evaluate(bundle);
   }, 60_000);
 
   it('is one script that takes the shared modules from the host', () => {
     const code = readFileSync(bundle, 'utf-8');
+    // The page imports one icon. A bundle with every icon of
+    // @mui/icons-material would be several megabytes.
     expect(statSync(bundle).size).toBeLessThan(50_000);
     expect(code).toContain(`${SHARED_MODULES_GLOBAL}.react`);
     expect(code).not.toContain('require(');
   });
 
-  it(`registers the extension ${id}`, () => {
-    expect(Object.keys(registered)).toEqual([id]);
-    expect(registered[id].extension.id).toBe(id);
-    expect(validateExtension(registered[id].extension)).toEqual({
+  it('registers the extension it builds', () => {
+    expect(Object.keys(registered)).toEqual(['fixture']);
+    expect(validateExtension(registered.fixture.extension)).toEqual({
       valid: true,
       errors: [],
     });
   });
 
   it('mounts its pages through the host it is given', async () => {
-    const host = fakeHostServices({ extensionId: id, env });
+    const host = fakeHostServices({ extensionId: 'fixture' });
     await expect(
-      checkConformance(registered[id].extension, { host }),
+      checkConformance(registered.fixture.extension, { host }),
     ).resolves.toEqual({ passed: true, errors: [] });
+    expect(host.recorded.logs).toContainEqual({
+      level: 'info',
+      args: ['fixture ready'],
+    });
   });
 });

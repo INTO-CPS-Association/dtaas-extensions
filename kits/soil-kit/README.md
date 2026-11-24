@@ -6,33 +6,29 @@ compiled in: the client core, the signals gateway and Telegraf stay as they are.
 
 ## Development
 
-Inside this repository the kit uses the SDK it sits next to, as `hello-kit`
-does. The tooling at the repository root type-checks, lints and formats its
-files, runs its tests and builds its bundle:
+The kit is a package of its own, as every kit of `kits/` is, with its own
+lockfile, lint and format settings, tests and CI job. `yarn sdk` builds the SDK
+at the root of this repository, packs it and unpacks the tarball into
+`node_modules`, so the kit is tested against the SDK it sits next to:
 
 ```bash
-yarn install --frozen-lockfile --ignore-scripts   # at the repository root
-yarn typecheck
-yarn lint
+yarn install --frozen-lockfile --ignore-scripts   # once, at the repository root
+cd kits/soil-kit
+yarn install --frozen-lockfile --ignore-scripts
+yarn sdk
+yarn format:check && yarn lint && yarn typecheck
 yarn test:coverage
-yarn build:kit soil-kit   # writes examples/soil-kit/dist/deploy/soil/index.js
+yarn build:kit   # writes dist/deploy/soil/index.js
 ```
 
-The root tests also build the deployed bundle, run it with the client's shared
-modules and pass it through the conformance check. They check every source file
-against the SDK's lint rules for kits as well.
+`tests/integration/kitBundle.test.ts` builds the deployed bundle, runs it with
+the client's shared modules and passes it through the conformance check. The
+lint settings include the SDK's rules for kits.
 
-The folder is also a project of its own, with `package.json`, `tsconfig.json`,
-`vite.config.ts`, `jest.config.json` and `tests/`, so it can be copied out of
-this repository as it is. Its sources and tests use relative imports only.
-Outside the repository it installs `@into-cps-association/dtaas-sdk` 0.1.1 from
-npm, whose `./deploy` entry builds the deployed bundle:
-
-```bash
-yarn install
-yarn test    # type check and every test
-yarn build   # writes dist/deploy/soil/index.js
-```
+Its sources and tests use relative imports only, so the folder can be copied
+out of this repository. A copy deletes `scripts/install-sdk.mjs` and the `sdk`
+script and installs `@into-cps-association/dtaas-sdk` from npm, whose
+`./deploy` entry builds the deployed bundle.
 
 If the SDK release that the kit moves to is 0.2.0, the peer range `^0.1.1` has
 to be raised as well, because a caret range on a 0.x version admits patch
@@ -122,8 +118,7 @@ The tests are in `tests/unit/` and `tests/integration/`.
 
 ## Deploy
 
-1. Build the bundle, with `yarn build:kit soil-kit` at the root of this
-   repository or `yarn build` in a copy of the folder.
+1. Build the bundle with `yarn build:kit`.
 1. Copy `dist/deploy/soil/index.js` to `extensions/soil/index.js` next to the
    client's `env.js`.
 1. In `env.js`, list the bundle and name the twin folder under the digital twins

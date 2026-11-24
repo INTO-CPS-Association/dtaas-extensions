@@ -43,13 +43,14 @@ only.
 
    ```bash
    yarn install
+   yarn typecheck
    yarn test
    ```
 
 1. Build the deployed bundle:
 
    ```bash
-   yarn build
+   yarn build:kit
    ```
 
    The bundle is one script, `dist/deploy/wind/index.js`. `DTAAS_KIT_OUT`
@@ -62,10 +63,27 @@ only.
    example `'extensions/wind/index.js'`. The client loads it when it starts,
    without a rebuild.
 
-The soil-kit, next to this folder in `examples/soil-kit`, is a kit made
-this way, with its own unit and integration tests.
+The soil-kit, next to this folder in `kits/soil-kit`, is a kit made this
+way, with its own unit and integration tests.
 
-Inside this repository, `yarn build:kit hello-kit` builds the same bundle
-from the SDK's source and `tests/integration/kitBundle.test.ts` runs it with
-the client's shared modules and checks that it registers its extension and
-passes the conformance harness.
+## Develop Inside This Repository
+
+The kit is a package of its own, as every kit of `kits/` is. `yarn sdk` builds
+the SDK at the root of this repository, packs it and unpacks the tarball into
+`node_modules`, so the kit is tested against the SDK it sits next to. A copy
+outside this repository deletes `scripts/install-sdk.mjs` and the `sdk`
+script and installs the SDK from npm with
+`yarn add --dev @into-cps-association/dtaas-sdk`.
+
+```bash
+yarn install --frozen-lockfile --ignore-scripts   # once, at the repository root
+cd kits/hello-kit
+yarn install --frozen-lockfile --ignore-scripts
+yarn sdk
+yarn format:check && yarn lint && yarn typecheck
+yarn test:coverage
+```
+
+`tests/kitBundle.test.ts` builds the bundle, runs it with the client's shared
+modules and checks that it registers its extension and passes the conformance
+harness.

@@ -47,7 +47,7 @@ jobs:
       - name: Run the linting checks
         run: yarn lint
 
-      - name: Type-check sources, tests and examples
+      - name: Type-check sources and tests
         run: yarn typecheck
 
       - name: Run unit and integration tests with coverage gate
@@ -74,13 +74,19 @@ jobs:
           flags: dtaas-sdk-unit-integration-tests
           fail_ci_if_error: false
 
-  bim-example:
-    name: Validate bim example (Node 24)
+  # Each kit is a package of its own, with its lockfile, lint, type-check and
+  # tests, and is validated against the SDK built from this commit.
+  kits:
+    name: Validate ${{ matrix.kit }} (Node 24)
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        kit: [bim, hello-kit, soil-kit]
     defaults:
       run:
-        working-directory: examples/bim
+        working-directory: kits/${{ matrix.kit }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -94,11 +100,11 @@ jobs:
           cache: yarn
           cache-dependency-path: |
             yarn.lock
-            examples/bim/yarn.lock
+            kits/${{ matrix.kit }}/yarn.lock
       - name: Install SDK dependencies
         working-directory: .
         run: yarn install --frozen-lockfile --ignore-scripts --network-timeout 1000000
-      - name: Install bim dependencies
+      - name: Install kit dependencies
         run: yarn install --frozen-lockfile --ignore-scripts --network-timeout 1000000
       - name: Build and install the packed SDK
         run: yarn sdk
@@ -108,12 +114,13 @@ jobs:
         run: yarn lint
       - name: Type-check
         run: yarn typecheck
-      # The Node test runner suite runs against the built package, then Jest
-      # runs the aec substrate tests and builds and mounts the deployed bundle.
-      # Each suite has its own coverage gate.
-      - name: Node test runner and Jest suites with coverage gates
+      # Each kit's tests build and mount its deployed bundle. bim-kit's run
+      # the Node test runner against the built package and Jest, each with a
+      # coverage gate.
+      - name: Tests with coverage
         run: yarn test:coverage
       - name: Build, pack, install and smoke-test the package
+        if: matrix.kit == 'bim'
         run: yarn test:e2e
 
   # Publishing runs only in the association's repository, so a fork or a
