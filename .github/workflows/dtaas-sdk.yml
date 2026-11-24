@@ -83,7 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kit: [bim, hello-kit, soil-kit]
+        kit: [bim-kit, hello-kit, soil-kit]
     defaults:
       run:
         working-directory: kits/${{ matrix.kit }}
@@ -120,7 +120,7 @@ jobs:
       - name: Tests with coverage
         run: yarn test:coverage
       - name: Build, pack, install and smoke-test the package
-        if: matrix.kit == 'bim'
+        if: matrix.kit == 'bim-kit'
         run: yarn test:e2e
 
   # Publishing runs only in the association's repository, so a fork or a

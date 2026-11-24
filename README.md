@@ -93,7 +93,7 @@ the SDK built from this repository:
 - [`kits/soil-kit`](kits/soil-kit/README.md) is a kit made from that template:
   soil profiles drawn as a substrate of their own, with a page, an anchor kind,
   presets and the tables it adds to the services.
-- [`kits/bim`](kits/bim/README.md) is the source of bim-kit, with the `aec`
+- [`kits/bim-kit`](kits/bim-kit/README.md) is the source of bim-kit, with the `aec`
   substrate that draws a building.
 
 DTaaS compiles none of them. A deployment loads each kit's bundle at start.

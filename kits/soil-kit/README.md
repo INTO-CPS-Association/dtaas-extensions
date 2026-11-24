@@ -26,9 +26,9 @@ the client's shared modules and passes it through the conformance check. The
 lint settings include the SDK's rules for kits.
 
 Its sources and tests use relative imports only, so the folder can be copied
-out of this repository. A copy deletes `scripts/install-sdk.mjs` and the `sdk`
-script and installs `@into-cps-association/dtaas-sdk` from npm, whose
-`./deploy` entry builds the deployed bundle.
+out of this repository. A copy deletes the `sdk` script and installs
+`@into-cps-association/dtaas-sdk` from npm, whose `./deploy` entry builds the
+deployed bundle.
 
 If the SDK release that the kit moves to is 0.2.0, the peer range `^0.1.1` has
 to be raised as well, because a caret range on a 0.x version admits patch

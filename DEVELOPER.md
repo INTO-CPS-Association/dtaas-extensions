@@ -48,7 +48,7 @@ tests/
   fixtures/           junction-7 visualisation.json, recorded stream, the fixture kit
 kits/hello-kit/       the template layout of a domain kit
 kits/soil-kit/        a kit made from the template
-kits/bim/             bim-kit
+kits/bim-kit/         bim-kit
 ```
 
 ## Conventions
@@ -78,7 +78,7 @@ installed the way any consumer installs it. From the repository root:
 
 ```bash
 yarn install                # once, at the root
-cd kits/soil-kit            # or kits/hello-kit, kits/bim
+cd kits/soil-kit            # or kits/hello-kit, kits/bim-kit
 yarn install --frozen-lockfile --ignore-scripts
 yarn sdk                    # again after every change to the SDK
 yarn format:check

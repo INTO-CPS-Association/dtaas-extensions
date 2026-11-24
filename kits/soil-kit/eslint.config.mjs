@@ -47,11 +47,6 @@ export default [
     languageOptions: { globals: { ...globals.jest } },
   },
   {
-    // Command-line scripts report to the terminal.
-    files: ['scripts/**/*.mjs'],
-    rules: { 'no-console': 'off' },
-  },
-  {
     // AGENTS.md: functions stay under 25 lines and files under 250 lines.
     files: ['src/**/*.{ts,tsx}'],
     rules: {

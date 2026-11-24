@@ -11,6 +11,10 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `kits/soil-kit`, a kit made from the `hello-kit` template: the
   `soil-profile` substrate, the `soil-depth` anchor kind, the soil presets, a
   page and the `soil_sensor` table it adds to the services.
+- `./testing` gives `runDeployedBundle`, which runs the code of a deployed
+  bundle with the modules the host shares and returns what it registered, so a
+  kit's bundle test needs no runner of its own.
+- `scripts/install-sdk.mjs`, the one script behind `yarn sdk` in every kit.
 - `tests/fixtures/kit`, the smallest kit, which `kitBundle.test.ts` builds with
   `kitBuildConfig` and mounts, so the `./deploy` entry is tested without any of
   the kits.
@@ -32,7 +36,7 @@ package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   the root `yarn build:kit` is gone: each kit builds its bundle with its own
   `yarn build:kit`. The `hello-kit` tests that ran at the root moved into the
   kit.
-- `kits/bim` is the source of bim-kit 0.2.0 with the changes of its next
+- `kits/bim-kit` is the source of bim-kit 0.2.0 with the changes of its next
   release, in place of the port of bim-kit 0.1.1. It contributes the `aec`
   substrate, builds a deployed bundle with `kitBuildConfig` and keeps its own
   lockfile and CI job. Its tests run with the Node test runner against the

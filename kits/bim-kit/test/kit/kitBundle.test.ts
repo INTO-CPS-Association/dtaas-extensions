@@ -11,13 +11,13 @@ import * as muiMaterial from '@mui/material';
 import * as zod from 'zod';
 import * as dtaasSdk from '@into-cps-association/dtaas-sdk';
 import * as dtaasSdkSchema from '@into-cps-association/dtaas-sdk/schema';
-import { checkConformance, fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
 import {
-  DEPLOYED_EXTENSIONS_GLOBAL,
-  SHARED_MODULES_GLOBAL,
-  validateExtension,
-  type DtaasExtension,
-} from '@into-cps-association/dtaas-sdk';
+  checkConformance,
+  fakeHostServices,
+  runDeployedBundle,
+  type DeployedRegistry,
+} from '@into-cps-association/dtaas-sdk/testing';
+import { SHARED_MODULES_GLOBAL, validateExtension } from '@into-cps-association/dtaas-sdk';
 
 // The modules the host shares, by their keys under DTAAS_SHARED.
 const SHARED = {
@@ -32,26 +32,14 @@ const SHARED = {
   zod,
 };
 
-type Registered = Record<string, { extension: DtaasExtension }>;
-
 const root = path.join(__dirname, '../..');
 const out = mkdtempSync(path.join(tmpdir(), 'bim-kit-'));
 const bundle = path.join(out, 'index.js');
 
 afterAll(() => rmSync(out, { recursive: true, force: true }));
 
-/** Run the bundle as the browser would and return what it registered. */
-function evaluate(): Registered {
-  const window: Record<string, unknown> = {};
-  // A classic script runs with `this` as the window. The Function constructor
-  // runs the bundle the same way, with the shared modules as its one global.
-  // eslint-disable-next-line no-new-func
-  new Function(SHARED_MODULES_GLOBAL, readFileSync(bundle, 'utf-8')).call(window, SHARED);
-  return window[DEPLOYED_EXTENSIONS_GLOBAL] as Registered;
-}
-
 describe('the deployed bundle', () => {
-  let registered: Registered;
+  let registered: DeployedRegistry;
 
   beforeAll(() => {
     execFileSync('yarn', ['build:kit'], {
@@ -59,7 +47,7 @@ describe('the deployed bundle', () => {
       env: { ...process.env, DTAAS_KIT_OUT: out },
       stdio: 'pipe',
     });
-    registered = evaluate();
+    registered = runDeployedBundle(readFileSync(bundle, 'utf-8'), SHARED);
   }, 300_000);
 
   it('is one script that takes the shared modules from the host', () => {

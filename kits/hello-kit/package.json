@@ -14,7 +14,7 @@
   },
   "packageManager": "yarn@1.22.22",
   "scripts": {
-    "sdk": "node scripts/install-sdk.mjs",
+    "sdk": "node ../../scripts/install-sdk.mjs",
     "build:kit": "vite build",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",

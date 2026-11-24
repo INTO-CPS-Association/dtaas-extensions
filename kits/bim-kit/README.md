@@ -351,7 +351,7 @@ it. Run it again after a change to the SDK.
 
 ```bash
 yarn install --frozen-lockfile --ignore-scripts   # once, at the repository root
-cd kits/bim
+cd kits/bim-kit
 yarn install --frozen-lockfile --ignore-scripts
 yarn sdk
 yarn typecheck
