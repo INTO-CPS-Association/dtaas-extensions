@@ -1,6 +1,6 @@
 # Testing an extension
 
-`@into-cps-association/dtaas-sdk/testing` lets a kit prove it satisfies the
+`@into-cps-association/dtaas-extensions/testing` lets a kit prove it satisfies the
 contract without cloning or running DTaaS. It needs `@testing-library/react`
 and `react-router-dom` as dev dependencies, and a `jsdom` test environment.
 
@@ -9,7 +9,7 @@ and `react-router-dom` as dev dependencies, and a `jsdom` test environment.
 The one test every kit should have:
 
 ```ts
-import { checkConformance } from '@into-cps-association/dtaas-sdk/testing';
+import { checkConformance } from '@into-cps-association/dtaas-extensions/testing';
 
 it('satisfies the DTaaS extension contract', async () => {
   const report = await checkConformance(extension, {

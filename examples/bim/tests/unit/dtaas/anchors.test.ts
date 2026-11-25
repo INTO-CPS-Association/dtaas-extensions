@@ -1,4 +1,7 @@
-import type { Anchor, SubstrateAdapter } from '@into-cps-association/dtaas-sdk';
+import type {
+  Anchor,
+  SubstrateAdapter,
+} from '@into-cps-association/dtaas-extensions';
 import anchorKinds from 'src/dtaas/anchors';
 
 const [ifcGuid] = anchorKinds;

@@ -4,9 +4,9 @@
  * loaded back through a host exactly as the client would.
  */
 
-import { fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
-import { parseVisualisationAsset } from '@into-cps-association/dtaas-sdk/schema';
-import type { DigitalTwinSummary } from '@into-cps-association/dtaas-sdk';
+import { fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
+import { parseVisualisationAsset } from '@into-cps-association/dtaas-extensions/schema';
+import type { DigitalTwinSummary } from '@into-cps-association/dtaas-extensions';
 import { manifestToVisualisation, readManifest } from 'src/schema';
 import fixture from 'tests/fixtures/substation.manifest.json';
 

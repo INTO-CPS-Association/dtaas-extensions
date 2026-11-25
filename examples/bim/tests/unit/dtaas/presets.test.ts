@@ -1,4 +1,4 @@
-import { encodingPresetSchema } from '@into-cps-association/dtaas-sdk/schema';
+import { encodingPresetSchema } from '@into-cps-association/dtaas-extensions/schema';
 import presets from 'src/dtaas/presets';
 
 describe('bim presets', () => {

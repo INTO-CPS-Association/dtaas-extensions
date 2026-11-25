@@ -1,4 +1,4 @@
-import { parseVisualisationAsset } from '@into-cps-association/dtaas-sdk/schema';
+import { parseVisualisationAsset } from '@into-cps-association/dtaas-extensions/schema';
 import {
   manifestToVisualisation,
   readManifest,

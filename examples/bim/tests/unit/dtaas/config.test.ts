@@ -1,4 +1,4 @@
-import { readExtensionConfig } from '@into-cps-association/dtaas-sdk';
+import { readExtensionConfig } from '@into-cps-association/dtaas-extensions';
 import configSchema from 'src/dtaas/config';
 
 describe('bim config schema', () => {

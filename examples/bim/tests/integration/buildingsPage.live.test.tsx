@@ -9,7 +9,7 @@ import {
   fakeHostServices,
   renderWithHost,
   type FakeHostServices,
-} from '@into-cps-association/dtaas-sdk/testing';
+} from '@into-cps-association/dtaas-extensions/testing';
 import { BIM_ROOT } from 'src/dtaas/ids';
 import {
   canvas,

@@ -1,4 +1,4 @@
-import type { HostServices } from '@into-cps-association/dtaas-sdk';
+import type { HostServices } from '@into-cps-association/dtaas-extensions';
 import type { BimModel } from 'src/react/assets';
 
 /** Stores a browser conversion beside its IFC so the next visit loads it. */

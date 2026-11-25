@@ -5,7 +5,7 @@
  */
 
 import { defineConfig } from 'vite';
-import { kitBuildConfig } from '@into-cps-association/dtaas-sdk/deploy';
+import { kitBuildConfig } from '@into-cps-association/dtaas-extensions/deploy';
 import pkg from './package.json' with { type: 'json' };
 
 // A deployed bundle is always a production build. In another mode, such as

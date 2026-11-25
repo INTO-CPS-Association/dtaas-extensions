@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Alert, Stack } from '@mui/material';
-import { useHost } from '@into-cps-association/dtaas-sdk';
+import { useHost } from '@into-cps-association/dtaas-extensions';
 import { normaliseLibraryPath, type Binding } from 'src/core';
 import type { LibraryEntry } from 'src/react/assets';
 import { BuildingModels, DirectoryPicker } from 'src/react';

@@ -8,7 +8,7 @@
  * and edited on its own terms upstream.
  */
 
-import type { VisualisationAsset } from '@into-cps-association/dtaas-sdk';
+import type { VisualisationAsset } from '@into-cps-association/dtaas-extensions';
 import { objectOf, topicOf, displayOf, type Binding } from 'src/core';
 import type { Manifest } from 'src/schema/manifest.schema';
 

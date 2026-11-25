@@ -1,6 +1,6 @@
 {
-  "name": "@into-cps-association/dtaas-sdk",
-  "version": "0.1.1",
+  "name": "@into-cps-association/dtaas-extensions",
+  "version": "0.2.0",
   "description": "Contract for DTaaS web client extensions: extension and host-service types, visualisation schemas, validation helpers, a test harness and a shareable ESLint config.",
   "author": "prasadtalasila <prasad.talasila@gmail.com> (http://prasad.talasila.in/)",
   "license": "SEE LICENSE IN LICENSE.md",
@@ -11,10 +11,10 @@
     "sdk",
     "visualisation"
   ],
-  "homepage": "https://github.com/INTO-CPS-Association/dtaas-sdk#readme",
+  "homepage": "https://github.com/INTO-CPS-Association/dtaas-extensions#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/INTO-CPS-Association/dtaas-sdk.git"
+    "url": "git+https://github.com/INTO-CPS-Association/dtaas-extensions.git"
   },
   "type": "module",
   "sideEffects": false,
@@ -25,6 +25,16 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js",
+      "default": "./dist/core/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "default": "./dist/react/index.js"
     },
     "./schema": {
       "types": "./dist/schema/index.d.ts",
@@ -77,7 +87,7 @@
     "prep": "qlty fmt && yarn format && yarn syntax && qlty check --fix && yarn typecheck && yarn test:all",
     "validate:package": "yarn typecheck && yarn test:e2e && yarn check:package"
   },
-  "// build": "tsup emits ESM JavaScript for the four entries; tsc emits declarations; tsc-alias rewrites src/* aliases to relative paths; resolve-declaration-paths adds the .js extensions Node ESM consumers need.",
+  "// build": "tsup emits ESM JavaScript for the seven entries; tsc emits declarations; tsc-alias rewrites src/* aliases to relative paths; resolve-declaration-paths adds the .js extensions Node ESM consumers need.",
   "// test:coverage": "Runs unit and integration tests together and enforces the coverage gate that matches .codecov.yml.",
   "// test:e2e": "Builds, packs and installs the tarball into a clean project, then imports every subpath.",
   "prettier": {
@@ -147,5 +157,8 @@
     "esbuild": "0.28.1",
     "rolldown": "1.2.16",
     "**/@istanbuljs/load-nyc-config/js-yaml": "4.3.2"
+  },
+  "dependencies": {
+    "semver": "7.8.6"
   }
 }

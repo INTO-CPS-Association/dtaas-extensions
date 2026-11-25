@@ -3,7 +3,7 @@ import ApartmentIcon from '@mui/icons-material/Apartment';
 import {
   defineExtension,
   type LazySubstrateAdapterSpec,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 import anchorKinds from 'src/dtaas/anchors';
 import configSchema from 'src/dtaas/config';
 import converters from 'src/dtaas/converters';
@@ -27,7 +27,7 @@ export const extension = defineExtension({
   id: BIM_EXTENSION_ID,
   name: 'Buildings',
   version: '0.1.0',
-  sdk: 1,
+  sdk: 0,
   routes: [
     { path: '', element: BuildingsPage },
     { path: 'models/:model', element: BuildingsPage },

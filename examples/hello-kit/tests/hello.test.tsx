@@ -1,8 +1,8 @@
-import { validateExtension } from '@into-cps-association/dtaas-sdk';
+import { validateExtension } from '@into-cps-association/dtaas-extensions';
 import {
   checkConformance,
   fakeHostServices,
-} from '@into-cps-association/dtaas-sdk/testing';
+} from '@into-cps-association/dtaas-extensions/testing';
 import { extension } from '../src/dtaas';
 
 // The two checks every kit keeps: the host accepts the extension and each of

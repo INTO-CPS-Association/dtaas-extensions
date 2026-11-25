@@ -9,7 +9,7 @@ import {
   fakeHostServices,
   renderWithHost,
   type FakeHostServices,
-} from '@into-cps-association/dtaas-sdk/testing';
+} from '@into-cps-association/dtaas-extensions/testing';
 import type { BimCanvasProps } from 'src/react/BimCanvas';
 import { mountCanvas } from 'src/react/canvasMount';
 import { BIM_ROOT } from 'src/dtaas/ids';

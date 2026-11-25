@@ -3,11 +3,11 @@
  * SDK's runtime harness, its `setup()` guard, and twin detection.
  */
 
-import { validateExtension } from '@into-cps-association/dtaas-sdk';
+import { validateExtension } from '@into-cps-association/dtaas-extensions';
 import {
   checkConformance,
   fakeHostServices,
-} from '@into-cps-association/dtaas-sdk/testing';
+} from '@into-cps-association/dtaas-extensions/testing';
 import extension from 'src/dtaas';
 
 describe('the bim extension', () => {

@@ -1,4 +1,4 @@
-import type { Converter } from '@into-cps-association/dtaas-sdk';
+import type { Converter } from '@into-cps-association/dtaas-extensions';
 import { convertIfc } from 'src/converter';
 import exportGlb from 'src/react/exportGlb';
 import { meshesFrom } from 'src/react/ifcMeshes';

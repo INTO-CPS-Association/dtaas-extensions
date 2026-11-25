@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Sampled, SignalsService } from '@into-cps-association/dtaas-sdk';
+import type {
+  Sampled,
+  SignalsService,
+} from '@into-cps-association/dtaas-extensions';
 import {
   bindingsByTopic,
   objectOf,

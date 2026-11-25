@@ -1,4 +1,4 @@
-import type { ConverterSpec } from '@into-cps-association/dtaas-sdk';
+import type { ConverterSpec } from '@into-cps-association/dtaas-extensions';
 
 const converters: ConverterSpec[] = [
   {

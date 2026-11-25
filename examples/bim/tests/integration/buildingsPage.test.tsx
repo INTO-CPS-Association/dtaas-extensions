@@ -14,7 +14,7 @@ import { useLocation } from 'react-router-dom';
 import {
   fakeHostServices,
   renderWithHost,
-} from '@into-cps-association/dtaas-sdk/testing';
+} from '@into-cps-association/dtaas-extensions/testing';
 import { BIM_ROOT } from 'src/dtaas/ids';
 import { canvas, canvasProps } from 'tests/unit/react/buildingModels.support';
 import { LIBRARY_FILES, stubLibraryFetch } from 'tests/fixtures/library';

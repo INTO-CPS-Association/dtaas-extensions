@@ -22,7 +22,7 @@ yarn sdk   # builds the SDK root, packs it and installs the tarball here
 ```
 
 `yarn sdk` (`scripts/install-sdk.mjs`) is what makes
-`@into-cps-association/dtaas-sdk` resolvable during development. Run it again
+`@into-cps-association/dtaas-extensions` resolvable during development. Run it again
 after pulling in SDK changes.
 
 `three`, `web-ifc` and `zod` are dependencies. Everything a host must share

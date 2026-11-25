@@ -1,4 +1,4 @@
-import type { SubstrateAdapter } from '@into-cps-association/dtaas-sdk';
+import type { SubstrateAdapter } from '@into-cps-association/dtaas-extensions';
 import scopes from 'src/dtaas/scopes';
 
 const handles: Record<string, unknown> = {

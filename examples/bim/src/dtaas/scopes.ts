@@ -1,7 +1,7 @@
 import type {
   ScopeRule,
   SubstrateAdapter,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 
 type Fact = 'room' | 'storey';
 

@@ -3,7 +3,7 @@
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 
 const PEERS = [
   'react@19.2.0',
@@ -28,6 +28,8 @@ const REQUIRED = [
   ),
   ...[
     'index',
+    'core/index',
+    'react/index',
     'schema/index',
     'testing/index',
     'eslint/index',
@@ -62,8 +64,13 @@ const checkTarball = (archive) => {
 const importScript = (name) => `
 import assert from 'node:assert/strict';
 const root = await import('${name}');
-assert.equal(root.SDK_MAJOR, 1);
+assert.equal(root.API_MAJOR, 0);
 assert.equal(root.validateExtension({}).valid, false);
+const core = await import('${name}/core');
+assert.equal(core.validateExtension, root.validateExtension);
+assert.equal('HostProvider' in core, false);
+const react = await import('${name}/react');
+assert.equal(react.HostProvider, root.HostProvider);
 const schema = await import('${name}/schema');
 const junction7 = ${readFileSync('tests/fixtures/junction7.visualisation.json', 'utf8')};
 assert.equal(schema.parseVisualisationAsset(junction7).success, true);
@@ -84,8 +91,8 @@ import { defineExtension, type DtaasExtension, type HostServices } from '${name}
 import { encodingSchema } from '${name}/schema';
 import { fakeHostServices, type FakeHostServices } from '${name}/testing';
 import kitConfig from '${name}/eslint';
-const ext = defineExtension({ id: 'smoke', name: 'Smoke', version: '1.0.0', sdk: 1 });
-// @ts-expect-error sdk must be 1
+const ext = defineExtension({ id: 'smoke', name: 'Smoke', version: '1.0.0', sdk: 0 });
+// @ts-expect-error sdk must be 0
 const wrong: DtaasExtension = { id: 'x', name: 'x', version: '1', sdk: 2 };
 const fake: FakeHostServices = fakeHostServices();
 const host: HostServices = fake;
@@ -126,8 +133,35 @@ const typeCheckConsumer = (directory, name) => {
   });
 };
 
+const IMPORT_SOURCE = /(?:from|import)\s*['"]([^'"]+)['"]/g;
+const REACT_SOURCE = /^react(-dom)?(\/|$)/;
+
+/**
+ * Follows the relative imports of the built `./core` entry and fails if any
+ * module on the way imports React, so a host without React can load it.
+ */
+const checkCoreWithoutReact = () => {
+  const seen = new Set();
+  const pending = [resolve('dist/core/index.js')];
+  while (pending.length > 0) {
+    const file = pending.pop();
+    if (!seen.has(file)) {
+      seen.add(file);
+      const sources = [...readFileSync(file, 'utf8').matchAll(IMPORT_SOURCE)];
+      sources.forEach(([, source]) => {
+        if (REACT_SOURCE.test(source)) {
+          throw new Error(`./core imports ${source} through ${file}`);
+        }
+        if (source.startsWith('.'))
+          pending.push(resolve(dirname(file), source));
+      });
+    }
+  }
+};
+
 const runSmokeTest = () => {
-  const directory = mkdtempSync(join(tmpdir(), 'dtaas-sdk-smoke-'));
+  checkCoreWithoutReact();
+  const directory = mkdtempSync(join(tmpdir(), 'dtaas-extensions-smoke-'));
   const archive = join(directory, 'package.tgz');
   try {
     yarn(['pack', '--filename', archive], process.cwd());

@@ -1,4 +1,4 @@
-import type { DigitalTwinSummary } from '@into-cps-association/dtaas-sdk';
+import type { DigitalTwinSummary } from '@into-cps-association/dtaas-extensions';
 import isBimTwin from 'src/dtaas/detect';
 
 const twin = (

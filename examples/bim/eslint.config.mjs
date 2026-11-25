@@ -12,7 +12,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 // The SDK's kit config only resolves after `yarn sdk` unpacks the built
 // package into node_modules; it is an ordinary dependency import here,
 // unlike the SDK repo's own config which reads its in-tree src/eslint.
-import dtaasKitConfig from '@into-cps-association/dtaas-sdk/eslint';
+import dtaasKitConfig from '@into-cps-association/dtaas-extensions/eslint';
 
 const configDirectory = path.dirname(fileURLToPath(import.meta.url));
 const compat = new FlatCompat({

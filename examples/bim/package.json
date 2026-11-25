@@ -2,7 +2,7 @@
   "name": "@into-cps-association/bim-example",
   "version": "0.1.0",
   "private": true,
-  "description": "Buildings extension for DTaaS: bim-kit 0.1.1 ported onto the dtaas-sdk contract.",
+  "description": "Buildings extension for DTaaS: bim-kit 0.1.1 ported onto the dtaas-extensions contract.",
   "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "sideEffects": false,
@@ -74,7 +74,7 @@
   "peerDependencies": {
     "@emotion/react": ">=11",
     "@emotion/styled": ">=11",
-    "@into-cps-association/dtaas-sdk": "^0.1.0",
+    "@into-cps-association/dtaas-extensions": "^0.2.0",
     "@mui/icons-material": ">=5",
     "@mui/material": ">=5",
     "react": ">=19",

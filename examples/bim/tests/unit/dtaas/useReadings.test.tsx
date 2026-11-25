@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
-import { fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
-import type { SignalSample } from '@into-cps-association/dtaas-sdk';
+import { fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
+import type { SignalSample } from '@into-cps-association/dtaas-extensions';
 import type { Binding } from 'src/core';
 import useReadings from 'src/dtaas/useReadings';
 

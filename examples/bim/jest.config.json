@@ -20,7 +20,7 @@
     ]
   },
   "transformIgnorePatterns": [
-    "/node_modules/(?!(@into-cps-association/dtaas-sdk|three)/)"
+    "/node_modules/(?!(@into-cps-association/dtaas-extensions|three)/)"
   ],
   "collectCoverage": true,
   "coverageReporters": ["text", "cobertura", "clover", "lcov", "json"],

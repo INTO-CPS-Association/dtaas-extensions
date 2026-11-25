@@ -1,4 +1,4 @@
-import { fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
+import { fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
 import type { BimModel } from 'src/react/assets';
 import persistGeometry from 'src/dtaas/persistGeometry';
 
