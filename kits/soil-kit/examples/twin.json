@@ -1,35 +1,28 @@
 {
   "group": "ausoil",
-  "twin": "soil_p03_simulated",
-  "topic_prefix": "AUSoil/Site1/field/07/P03",
+  "twin": "hallway_plant",
+  "topic_prefix": "AUSoil/Greenhouse/hallway/01",
   "devices": [
     {
-      "topic": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0001"
+      "topic": "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001"
     },
     {
-      "topic": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0002"
+      "topic": "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-WAT-0001"
     },
     {
-      "topic": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0003"
+      "topic": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-TRH-0001"
+    },
+    {
+      "topic": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001"
     }
   ],
   "kits": {
     "soil": {
       "soil_sensor": [
         {
-          "device_id": "S-AUSoil-Site1-field-07-P03-VWC-0001",
+          "device_id": "S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001",
           "depth_from": 0.0,
-          "depth_to": 0.2
-        },
-        {
-          "device_id": "S-AUSoil-Site1-field-07-P03-VWC-0002",
-          "depth_from": 0.2,
-          "depth_to": 0.4
-        },
-        {
-          "device_id": "S-AUSoil-Site1-field-07-P03-VWC-0003",
-          "depth_from": 0.4,
-          "depth_to": 0.8
+          "depth_to": 0.1
         }
       ]
     }

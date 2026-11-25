@@ -5,7 +5,14 @@ import type {
   HostServices,
   VisualisationAsset,
 } from '@into-cps-association/dtaas-extensions';
-import { channelOf, profilesOf, type SoilSensor } from '../../core';
+import {
+  channelOf,
+  eventsOf,
+  profilesOf,
+  sitesOf,
+  type SoilSensor,
+  type SoilSignal,
+} from '../../core';
 
 export type SoilTwin =
   | { readonly status: 'loading' }
@@ -15,6 +22,10 @@ export type SoilTwin =
       readonly status: 'ready';
       readonly name: string;
       readonly profiles: ReadonlyMap<string, SoilSensor[]>;
+      /** The events of each profile, such as a watering. */
+      readonly events: ReadonlyMap<string, SoilSignal[]>;
+      /** The readings of each site, such as its air temperature. */
+      readonly sites: ReadonlyMap<string, SoilSignal[]>;
       /** The channel the twin's transports declare for a signal. */
       readonly channelOf: (signalPath: string) => Channel;
     };
@@ -26,6 +37,8 @@ const stateOf = (asset: VisualisationAsset | null, path: string): SoilTwin =>
         status: 'ready',
         name: asset.name,
         profiles: profilesOf(asset.anchors),
+        events: eventsOf(asset.anchors),
+        sites: sitesOf(asset.anchors),
         channelOf: (signalPath) => channelOf(asset.transports, signalPath),
       }
     : { status: 'missing', path };
@@ -41,7 +54,7 @@ export const twinSummary = (
   domain: 'soil',
 });
 
-/** The profiles of the soil twin, from the anchors of its visualisation. */
+/** The profiles and sites of the soil twin, from the anchors of its visualisation. */
 export default function useSoilTwin(host: HostServices, twin: string) {
   const [state, setState] = useState<SoilTwin>({ status: 'loading' });
   useEffect(() => {

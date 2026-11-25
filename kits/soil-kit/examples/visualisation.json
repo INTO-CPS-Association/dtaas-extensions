@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
-  "name": "Site 1, plot 07, profile P03 (simulated)",
-  "description": "Simulated example data: three probes of profile P03 at 0.00 to 0.20 m, 0.20 to 0.40 m and 0.40 to 0.80 m. No real soil twin is chosen yet.",
+  "name": "Hallway plant, a monstera in the greenhouse",
+  "description": "Measured data of the hallway plant setup at Aarhus University: one soil probe in the pot of a monstera, the watering of the plant and the air and light of the greenhouse around it. The data give no depth for the probe, so 0.00 to 0.10 m below the surface is assumed.",
   "domain": "soil",
   "layout": {
     "type": "split",
@@ -12,7 +12,6 @@
       "adapter": "soil-profile",
       "options": {
         "quantity": "soil_moisture",
-        "channel": "simulated",
         "windowHours": 24
       }
     },
@@ -20,7 +19,6 @@
       "adapter": "soil-profile",
       "options": {
         "quantity": "soil_temperature",
-        "channel": "simulated",
         "windowHours": 24
       }
     }
@@ -29,95 +27,110 @@
     {
       "adapter": "mqtt",
       "url": "mqtt://rabbitmq:1883",
-      "channel": "simulated",
       "topics": [
-        "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0001/electrical_conductivity",
-        "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0001/soil_moisture",
-        "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0001/soil_temperature",
-        "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0002/electrical_conductivity",
-        "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0002/soil_moisture",
-        "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0002/soil_temperature",
-        "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0003/electrical_conductivity",
-        "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0003/soil_moisture",
-        "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0003/soil_temperature"
+        "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001/soil_moisture",
+        "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001/soil_temperature",
+        "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001/electrical_conductivity",
+        "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-WAT-0001/watering",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-TRH-0001/air_temperature",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-TRH-0001/relative_humidity",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_415nm",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_445nm",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_480nm",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_515nm",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_555nm",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_590nm",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_630nm",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_680nm",
+        "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_infrared_910nm"
       ]
     }
   ],
   "anchors": [
     {
-      "signalPath": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0001/soil_moisture",
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001/soil_moisture",
       "kind": "soil-depth",
-      "ref": "P03/0.00-0.20"
+      "ref": "Monstera/0.00-0.10"
     },
     {
-      "signalPath": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0001/soil_temperature",
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001/soil_temperature",
       "kind": "soil-depth",
-      "ref": "P03/0.00-0.20"
+      "ref": "Monstera/0.00-0.10"
     },
     {
-      "signalPath": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0001/electrical_conductivity",
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001/electrical_conductivity",
       "kind": "soil-depth",
-      "ref": "P03/0.00-0.20"
+      "ref": "Monstera/0.00-0.10"
     },
     {
-      "signalPath": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0002/soil_moisture",
-      "kind": "soil-depth",
-      "ref": "P03/0.20-0.40"
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-WAT-0001/watering",
+      "kind": "soil-event",
+      "ref": "Monstera"
     },
     {
-      "signalPath": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0002/soil_temperature",
-      "kind": "soil-depth",
-      "ref": "P03/0.20-0.40"
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-TRH-0001/air_temperature",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
     },
     {
-      "signalPath": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0002/electrical_conductivity",
-      "kind": "soil-depth",
-      "ref": "P03/0.20-0.40"
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-TRH-0001/relative_humidity",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
     },
     {
-      "signalPath": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0003/soil_moisture",
-      "kind": "soil-depth",
-      "ref": "P03/0.40-0.80"
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_415nm",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
     },
     {
-      "signalPath": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0003/soil_temperature",
-      "kind": "soil-depth",
-      "ref": "P03/0.40-0.80"
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_445nm",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
     },
     {
-      "signalPath": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0003/electrical_conductivity",
-      "kind": "soil-depth",
-      "ref": "P03/0.40-0.80"
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_480nm",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
+    },
+    {
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_515nm",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
+    },
+    {
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_555nm",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
+    },
+    {
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_590nm",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
+    },
+    {
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_630nm",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
+    },
+    {
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_680nm",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
+    },
+    {
+      "signalPath": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001/light_level_infrared_910nm",
+      "kind": "soil-site",
+      "ref": "Greenhouse"
     }
   ],
   "encodings": [
     {
-      "target": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0001/soil_moisture",
+      "target": "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001/soil_moisture",
       "substrate": "moisture",
       "preset": "soil.moisture"
     },
     {
-      "target": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0001/soil_temperature",
-      "substrate": "temperature",
-      "preset": "soil.temperature"
-    },
-    {
-      "target": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0002/soil_moisture",
-      "substrate": "moisture",
-      "preset": "soil.moisture"
-    },
-    {
-      "target": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0002/soil_temperature",
-      "substrate": "temperature",
-      "preset": "soil.temperature"
-    },
-    {
-      "target": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0003/soil_moisture",
-      "substrate": "moisture",
-      "preset": "soil.moisture"
-    },
-    {
-      "target": "AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-0003/soil_temperature",
+      "target": "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001/soil_temperature",
       "substrate": "temperature",
       "preset": "soil.temperature"
     }

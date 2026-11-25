@@ -2,6 +2,7 @@ import { waitFor } from '@testing-library/react';
 import { fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
 import {
   SCHEMES,
+  type Anchor,
   type SignalSample,
   type SubstrateDescriptor,
 } from '@into-cps-association/dtaas-extensions';
@@ -13,7 +14,27 @@ const NOW = Date.UTC(2026, 10, 7, 12, 0);
 const pathOf = (device: number, quantity: string) =>
   `AUSoil/Site1/field/07/P03/S/S-AUSoil-Site1-field-07-P03-VWC-000${device}/${quantity}`;
 
-// The example is simulated, so its panes read the `simulated` channel.
+// A simulated profile of three probes, each with two quantities, and a site
+// reading the substrate leaves out. Its pane reads the `simulated` channel.
+const DEPTHS = ['0.00-0.20', '0.20-0.40', '0.40-0.80'];
+const PROFILE = {
+  options: { quantity: 'soil_moisture', channel: 'simulated', windowHours: 24 },
+  anchors: [
+    ...DEPTHS.flatMap((depth, i) =>
+      ['soil_moisture', 'soil_temperature'].map((quantity) => ({
+        signalPath: pathOf(i + 1, quantity),
+        kind: 'soil-depth',
+        ref: `P03/${depth}`,
+      })),
+    ),
+    {
+      signalPath: pathOf(4, 'air_temperature'),
+      kind: 'soil-site',
+      ref: 'Site1',
+    },
+  ],
+};
+
 const sample = (
   signalPath: string,
   ts: number,
@@ -21,16 +42,17 @@ const sample = (
   channel: SignalSample['channel'] = 'simulated',
 ): SignalSample => ({ twinId: 'soil', signalPath, channel, ts, value });
 
-/** A substrate mounted as the moisture pane of the example, with its anchors. */
+/** A substrate mounted as the moisture pane of a profile, with its anchors. */
 async function mounted(
-  options: SubstrateDescriptor['options'] = example.substrates.moisture.options,
+  options: SubstrateDescriptor['options'] = PROFILE.options,
+  anchors: readonly Anchor[] = PROFILE.anchors,
 ) {
   const host = fakeHostServices({ extensionId: 'soil' });
   const adapter = createSoilProfileSubstrate(host);
   const container = document.createElement('div');
   document.body.append(container);
   await adapter.mount(container, { adapter: 'soil-profile', options });
-  const refs = example.anchors.map((anchor) => adapter.resolve(anchor));
+  const refs = anchors.map((anchor) => adapter.resolve(anchor));
   return { host, adapter, container, refs };
 }
 
@@ -46,6 +68,25 @@ describe('the soil-profile substrate', () => {
       { substrate: 'soil-profile', id: pathOf(1, 'soil_moisture') },
       { substrate: 'soil-profile', id: pathOf(2, 'soil_moisture') },
       { substrate: 'soil-profile', id: pathOf(3, 'soil_moisture') },
+    ]);
+  });
+
+  it('draws the probe of the example as one row of its pane', async () => {
+    const { host, adapter, container } = await mounted(
+      example.substrates.moisture.options,
+      example.anchors,
+    );
+    const [moisture] = example.anchors;
+    host.signals.emit(
+      sample(moisture.signalPath, NOW - HOUR, 0.301, 'measured'),
+    );
+    adapter.setTime(NOW);
+    expect(container.querySelector('p')?.textContent).toBe(
+      'Volumetric water content',
+    );
+    expect(texts(container.querySelectorAll('svg')[0])).toEqual([
+      'Monstera, 0.00 to 0.10 m',
+      '30.1 %',
     ]);
   });
 
