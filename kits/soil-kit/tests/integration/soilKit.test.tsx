@@ -14,20 +14,32 @@ import SoilPage from '../../src/dtaas/pages/SoilPage';
 import { twinSummary } from '../../src/dtaas/pages/useSoilTwin';
 import example from '../../examples/visualisation.json';
 
-const env = { REACT_APP_EXT_SOIL_TWIN: 'soil_p03' };
+const env = { REACT_APP_EXT_SOIL_TWIN: 'hallway_plant' };
 const asset = parseVisualisationAsset(example);
 
 function exampleAsset(): VisualisationAsset {
   if (!asset.success) throw new Error('The example is not a valid asset');
   return asset.data;
 }
-const DEVICE = 'S-AUSoil-Site1-field-07-P03-VWC-0002';
-const MOISTURE = `AUSoil/Site1/field/07/P03/S/${DEVICE}/soil_moisture`;
+const PREFIX = 'AUSoil/Greenhouse/hallway/01';
+const DEVICE = 'S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001';
+const MOISTURE = `${PREFIX}/Monstera/S/${DEVICE}/soil_moisture`;
+const WATERING = `${PREFIX}/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-WAT-0001/watering`;
+const AIR = `${PREFIX}/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-TRH-0001/air_temperature`;
+
+/** A sample of the example twin on the measured channel. */
+const measured = (signalPath: string, ts: number, value: number) => ({
+  twinId: 'soil',
+  signalPath,
+  channel: 'measured' as const,
+  ts,
+  value,
+});
 
 /** A host whose library holds the example visualisation of the soil twin. */
 async function hostWithTwin() {
   const host = fakeHostServices({ extensionId: 'soil', env });
-  await host.viz.save(twinSummary(host, 'soil_p03'), exampleAsset());
+  await host.viz.save(twinSummary(host, 'hallway_plant'), exampleAsset());
   return host;
 }
 
@@ -72,12 +84,26 @@ describe('soil-kit', () => {
     expect(await detect?.(twin())).toBe(false);
   });
 
+  it('checks the reference of each of its anchor kinds', () => {
+    const kinds = extension.visualisation?.anchorKinds ?? [];
+    expect(kinds.map((kind) => kind.kind)).toEqual([
+      'soil-depth',
+      'soil-event',
+      'soil-site',
+    ]);
+    const [, event, site] = kinds;
+    expect(event.validateRef?.('Monstera')).toBe(true);
+    expect(site.validateRef?.('Greenhouse')).toBe(true);
+    expect(site.validateRef?.('Green house')).toBe(false);
+    expect(event.validateRef?.('')).toBe(false);
+  });
+
   it('resolves soil-depth anchors on its own substrate only', () => {
     const [kind] = extension.visualisation?.anchorKinds ?? [];
     const anchor = {
       signalPath: MOISTURE,
       kind: 'soil-depth',
-      ref: 'P03/0.20-0.40',
+      ref: 'Monstera/0.00-0.10',
     };
     type Adapter = Parameters<typeof kind.resolve>[1];
     const resolve = jest.fn(() => null);
@@ -100,99 +126,77 @@ describe('soil-kit', () => {
 });
 
 describe('the soil page', () => {
-  it('lists the profiles and the reading of each sensor at the playhead', async () => {
+  it('lists the profile, its event and the site with the readings at the playhead', async () => {
     const host = await hostWithTwin();
     host.signals.emit(
-      {
-        twinId: 'soil',
-        signalPath: MOISTURE,
-        channel: 'simulated',
-        ts: 1000,
-        value: 0.312,
-      },
-      {
-        twinId: 'soil',
-        signalPath: MOISTURE,
-        channel: 'simulated',
-        ts: 2000,
-        value: 0.25,
-      },
+      measured(MOISTURE, 1000, 0.312),
+      measured(MOISTURE, 2000, 0.25),
+      measured(WATERING, Date.UTC(2026, 9, 15, 12, 55), 0.05),
+      measured(AIR, 1000, 24.59),
     );
-    host.signals.playhead.set(1500);
+    host.signals.playhead.set(Date.UTC(2026, 9, 15, 13));
     renderWithHost(<SoilPage />, { host });
     expect(
-      await screen.findByRole('heading', { name: 'Profile P03' }),
+      await screen.findByRole('heading', { name: 'Profile Monstera' }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole('row')).toHaveLength(10);
-    expect(screen.getByText('31.2 % (simulated)')).toBeInTheDocument();
-    expect(screen.getAllByText('no reading')).toHaveLength(8);
-    act(() => host.signals.playhead.set(2000));
-    expect(screen.getByText('25.0 % (simulated)')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Site Greenhouse' }),
+    ).toBeInTheDocument();
+    // A header and four rows for the profile, a header and eleven for the site.
+    expect(screen.getAllByRole('row')).toHaveLength(17);
+    expect(screen.getByText('25.0 %')).toBeInTheDocument();
+    expect(
+      screen.getByText('50 ml at 2026-10-15 12:55 UTC'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('24.6 °C')).toBeInTheDocument();
+    expect(screen.getAllByText('no reading')).toHaveLength(12);
+    act(() => host.signals.playhead.set(1500));
+    expect(screen.getByText('31.2 %')).toBeInTheDocument();
   });
 
   it('shows a reading that arrives while it is open', async () => {
     const host = await hostWithTwin();
     host.signals.playhead.follow(true);
     renderWithHost(<SoilPage />, { host });
-    await screen.findByRole('heading', { name: 'Profile P03' });
-    act(() =>
-      host.signals.emit({
-        twinId: 'soil',
-        signalPath: MOISTURE,
-        channel: 'simulated',
-        ts: Date.now() - 1000,
-        value: 0.2,
-      }),
-    );
-    expect(screen.getByText('20.0 % (simulated)')).toBeInTheDocument();
+    await screen.findByRole('heading', { name: 'Profile Monstera' });
+    act(() => host.signals.emit(measured(MOISTURE, Date.now() - 1000, 0.2)));
+    expect(screen.getByText('20.0 %')).toBeInTheDocument();
   });
 
-  it('shows a measured reading without naming its channel', async () => {
+  it('names a channel other than measured beside the reading', async () => {
     const host = fakeHostServices({ extensionId: 'soil', env });
     const transports = exampleAsset().transports.map((transport) => ({
       ...transport,
-      channel: undefined,
+      channel: 'simulated' as const,
     }));
-    const measured: VisualisationAsset = { ...exampleAsset(), transports };
-    await host.viz.save(twinSummary(host, 'soil_p03'), measured);
-    host.signals.emit(
-      {
-        twinId: 'soil',
-        signalPath: MOISTURE,
-        channel: 'measured',
-        ts: 1000,
-        value: 0.312,
-      },
-      {
-        twinId: 'soil',
-        signalPath: MOISTURE,
-        channel: 'simulated',
-        ts: 1000,
-        value: 0.9,
-      },
-    );
+    const simulated: VisualisationAsset = { ...exampleAsset(), transports };
+    await host.viz.save(twinSummary(host, 'hallway_plant'), simulated);
+    host.signals.emit(measured(MOISTURE, 1000, 0.9), {
+      ...measured(MOISTURE, 1000, 0.312),
+      channel: 'simulated',
+    });
     host.signals.playhead.set(1500);
     renderWithHost(<SoilPage />, { host });
-    await screen.findByRole('heading', { name: 'Profile P03' });
-    expect(screen.getByText('31.2 %')).toBeInTheDocument();
-    expect(screen.queryByText(/simulated/)).not.toBeInTheDocument();
+    await screen.findByRole('heading', { name: 'Profile Monstera' });
+    expect(screen.getByText('31.2 % (simulated)')).toBeInTheDocument();
+    expect(screen.queryByText('90.0 %')).not.toBeInTheDocument();
   });
 
   it('says so when the twin has no visualisation', async () => {
     const host = fakeHostServices({ extensionId: 'soil', env });
     renderWithHost(<SoilPage />, { host });
     expect(await screen.findByRole('status')).toHaveTextContent(
-      'No visualisation.json in digital_twins/soil_p03.',
+      'No visualisation.json in digital_twins/hallway_plant.',
     );
   });
 
   it('says so when the twin has no soil anchors', async () => {
     const host = fakeHostServices({ extensionId: 'soil', env });
     const empty: VisualisationAsset = { ...exampleAsset(), anchors: [] };
-    await host.viz.save(twinSummary(host, 'soil_p03'), empty);
+    await host.viz.save(twinSummary(host, 'hallway_plant'), empty);
     renderWithHost(<SoilPage />, { host });
     expect(await screen.findByRole('status')).toHaveTextContent(
-      'has no soil-depth anchors.',
+      'has no soil anchors.',
     );
   });
 
