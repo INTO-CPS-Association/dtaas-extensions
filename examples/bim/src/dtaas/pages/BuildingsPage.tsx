@@ -9,7 +9,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { Alert, Stack } from '@mui/material';
-import { useHost } from '@into-cps-association/dtaas-sdk';
+import { useHost } from '@into-cps-association/dtaas-extensions';
 import type { Binding } from '../../binding.js';
 import { normaliseLibraryPath } from '../../libraryPath.js';
 import type { LibraryEntry } from '../../react/assets.js';

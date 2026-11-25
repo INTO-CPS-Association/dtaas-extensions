@@ -6,7 +6,7 @@
  * property.
  */
 
-import type { Anchor } from '@into-cps-association/dtaas-sdk';
+import type { Anchor } from '@into-cps-association/dtaas-extensions';
 import { parseDepthRef, type DepthRange } from './depth';
 import { parseSoilTopic } from './topic';
 

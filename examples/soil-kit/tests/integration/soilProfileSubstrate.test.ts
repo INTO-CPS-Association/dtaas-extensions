@@ -1,6 +1,10 @@
 import { waitFor } from '@testing-library/react';
-import { fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
-import { SCHEMES, type SignalSample } from '@into-cps-association/dtaas-sdk';
+import { fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
+import {
+  SCHEMES,
+  type SignalSample,
+  type SubstrateDescriptor,
+} from '@into-cps-association/dtaas-extensions';
 import createSoilProfileSubstrate from '../../src/dtaas/substrate/soilProfileSubstrate';
 import example from '../../examples/visualisation.json';
 
@@ -19,7 +23,7 @@ const sample = (
 
 /** A substrate mounted as the moisture pane of the example, with its anchors. */
 async function mounted(
-  options: Record<string, unknown> = example.substrates.moisture.options,
+  options: SubstrateDescriptor['options'] = example.substrates.moisture.options,
 ) {
   const host = fakeHostServices({ extensionId: 'soil' });
   const adapter = createSoilProfileSubstrate(host);
@@ -69,7 +73,7 @@ describe('the soil-profile substrate', () => {
     expect(latest.querySelectorAll('rect')).toHaveLength(4);
   });
 
-  it.each([{}, { channel: 'no-such-channel' }])(
+  it.each<SubstrateDescriptor['options']>([{}, { channel: 'no-such-channel' }])(
     'reads the measured channel when its options are %p',
     async (options) => {
       const { host, adapter, container } = await mounted(options);

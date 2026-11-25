@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import type { Encoding } from '@into-cps-association/dtaas-sdk';
+import type { Encoding } from '@into-cps-association/dtaas-extensions';
 import { initialState } from 'src/aec/aecAppearance';
 import { MarkerColours } from 'src/aec/aecColours';
 import { ClassLegend, HeatLegend, HelpPanel } from 'src/aec/aecLegend';

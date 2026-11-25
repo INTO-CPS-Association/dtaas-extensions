@@ -15,7 +15,7 @@
     "test": "yarn typecheck && jest"
   },
   "peerDependencies": {
-    "@into-cps-association/dtaas-sdk": "^0.1.1",
+    "@into-cps-association/dtaas-extensions": "^0.2.0",
     "@mui/icons-material": ">=9",
     "@mui/material": ">=9",
     "react": ">=19",
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
-    "@into-cps-association/dtaas-sdk": "0.1.1",
+    "@into-cps-association/dtaas-extensions": "0.2.0",
     "@mui/icons-material": "9.4.0",
     "@mui/material": "9.4.0",
     "@testing-library/dom": "10.4.2",

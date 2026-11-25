@@ -6,8 +6,8 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseVisualisationAsset } from '@into-cps-association/dtaas-sdk/schema';
-import { fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
+import { parseVisualisationAsset } from '@into-cps-association/dtaas-extensions/schema';
+import { fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
 import { readManifest } from '../dist/esm/schema.js';
 import { manifestToVisualisation } from '../dist/esm/dtaas/index.js';
 

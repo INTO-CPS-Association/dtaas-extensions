@@ -117,7 +117,7 @@ jobs:
         run: yarn test:e2e
 
   # Publishing runs only in the association's repository, so a fork or a
-  # personal copy never publishes @into-cps-association/dtaas-sdk.
+  # personal copy never publishes @into-cps-association/dtaas-extensions.
   publish-package-github:
     permissions:
       contents: read  # Required for checking out the code

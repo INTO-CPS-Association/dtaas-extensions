@@ -15,7 +15,10 @@
 
 import { lazy } from 'react';
 import ApartmentIcon from '@mui/icons-material/Apartment';
-import { defineExtension, type LazySubstrateAdapterSpec } from '@into-cps-association/dtaas-sdk';
+import {
+  defineExtension,
+  type LazySubstrateAdapterSpec,
+} from '@into-cps-association/dtaas-extensions';
 import anchorKinds from './anchors.js';
 import configSchema from './config.js';
 import converters from './converters.js';
@@ -40,7 +43,7 @@ export const extension = defineExtension({
   name: 'Buildings',
   // The package version, checked by a test so the two cannot drift apart.
   version: '0.2.0',
-  sdk: 1,
+  sdk: 0,
   routes: [
     { path: '', element: BuildingsPage },
     { path: 'models/:model', element: BuildingsPage },

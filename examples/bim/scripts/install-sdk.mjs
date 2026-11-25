@@ -7,8 +7,11 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '../../..');
-const target = resolve(import.meta.dirname, '../node_modules/@into-cps-association/dtaas-sdk');
-const work = mkdtempSync(join(tmpdir(), 'dtaas-sdk-'));
+const target = resolve(
+  import.meta.dirname,
+  '../node_modules/@into-cps-association/dtaas-extensions',
+);
+const work = mkdtempSync(join(tmpdir(), 'dtaas-extensions-'));
 const tarball = join(work, 'sdk.tgz');
 const run = (command, args) => execFileSync(command, args, { cwd: root, stdio: 'inherit' });
 

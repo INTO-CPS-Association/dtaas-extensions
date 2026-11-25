@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import type { Sampled, SignalsService } from '@into-cps-association/dtaas-sdk';
+import type { Sampled, SignalsService } from '@into-cps-association/dtaas-extensions';
 import { objectOf, type Binding } from '../binding.js';
 import type { FeedState, Reading } from '../readings.js';
 import { bindingsByTopic, topicsOf } from '../resolver.js';

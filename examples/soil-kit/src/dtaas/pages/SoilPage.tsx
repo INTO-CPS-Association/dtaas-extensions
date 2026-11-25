@@ -2,7 +2,7 @@ import {
   useHost,
   type Channel,
   type HostServices,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 import {
   formatDepth,
   formatReading,

@@ -3,7 +3,7 @@ import ForestIcon from '@mui/icons-material/Forest';
 import {
   defineExtension,
   type LazySubstrateAdapterSpec,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 import { isSoilTwin, SOIL_DEPTH, SOIL_PROFILE } from '../core';
 import anchorKinds from './anchors';
 import configSchema from './config';
@@ -21,8 +21,8 @@ export const extension = defineExtension({
   id: 'soil',
   name: 'Soil',
   version: '0.1.0',
-  sdk: 1,
-  apiRange: '^1.4',
+  sdk: 0,
+  apiRange: '^0.2',
   routes: [
     {
       path: '',

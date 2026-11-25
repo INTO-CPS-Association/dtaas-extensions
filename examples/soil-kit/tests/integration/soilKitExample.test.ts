@@ -1,4 +1,4 @@
-import { visualisationAssetSchema } from '@into-cps-association/dtaas-sdk/schema';
+import { visualisationAssetSchema } from '@into-cps-association/dtaas-extensions/schema';
 import example from '../../examples/visualisation.json';
 
 // The gateway serves only the topics of a twin's mqtt transports, so an

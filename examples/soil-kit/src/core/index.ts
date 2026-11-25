@@ -1,4 +1,4 @@
-import type { DigitalTwinSummary } from '@into-cps-association/dtaas-sdk';
+import type { DigitalTwinSummary } from '@into-cps-association/dtaas-extensions';
 
 /** Framework-free domain logic: usable outside React and outside DTaaS. */
 export const isSoilTwin = (dt: DigitalTwinSummary): boolean =>

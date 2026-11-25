@@ -1,4 +1,4 @@
-import type { AnchorKindSpec } from '@into-cps-association/dtaas-sdk';
+import type { AnchorKindSpec } from '@into-cps-association/dtaas-extensions';
 import { parseNodeRef } from '../core';
 
 /** `hello-node` anchors name a node on a photograph: `node:<id>`. */

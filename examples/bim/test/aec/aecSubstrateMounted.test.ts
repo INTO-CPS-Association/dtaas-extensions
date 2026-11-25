@@ -1,4 +1,4 @@
-import { fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
+import { fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
 import createAecSubstrate from 'src/aec/aecSubstrate';
 
 // The scene draws with WebGL, which jsdom lacks, so these tests replace it

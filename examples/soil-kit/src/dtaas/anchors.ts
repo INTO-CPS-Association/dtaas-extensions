@@ -1,4 +1,4 @@
-import type { AnchorKindSpec } from '@into-cps-association/dtaas-sdk';
+import type { AnchorKindSpec } from '@into-cps-association/dtaas-extensions';
 import { parseDepthRef, SOIL_DEPTH, SOIL_PROFILE } from '../core';
 
 /**

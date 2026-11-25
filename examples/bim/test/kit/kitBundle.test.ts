@@ -8,15 +8,15 @@ import * as reactDom from 'react-dom';
 import * as reactRouterDom from 'react-router-dom';
 import * as muiMaterial from '@mui/material';
 import * as zod from 'zod';
-import * as dtaasSdk from '@into-cps-association/dtaas-sdk';
-import * as dtaasSdkSchema from '@into-cps-association/dtaas-sdk/schema';
-import { checkConformance, fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
+import * as dtaasExtensions from '@into-cps-association/dtaas-extensions';
+import * as dtaasExtensionsSchema from '@into-cps-association/dtaas-extensions/schema';
+import { checkConformance, fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
 import {
   DEPLOYED_EXTENSIONS_GLOBAL,
   SHARED_MODULES_GLOBAL,
   validateExtension,
   type DtaasExtension,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 
 // The modules the host shares, by their keys under DTAAS_SHARED.
 const SHARED = {
@@ -25,8 +25,8 @@ const SHARED = {
   reactDom,
   reactRouterDom,
   muiMaterial,
-  dtaasSdk,
-  dtaasSdkSchema,
+  dtaasExtensions,
+  dtaasExtensionsSchema,
   zod,
 };
 

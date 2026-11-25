@@ -53,4 +53,17 @@ describe('createMemoryContents', () => {
       'dir',
     ]);
   });
+
+  it('strips leading and trailing slashes in linear time', async () => {
+    const contents = createMemoryContents({ 'a.txt': 'a' });
+    const slashes = '/'.repeat(100_000);
+    const started = Date.now();
+    await expect(contents.exists(`${slashes}a.txt${slashes}`)).resolves.toBe(
+      true,
+    );
+    await expect(contents.exists(`${slashes}x${slashes}y`)).resolves.toBe(
+      false,
+    );
+    expect(Date.now() - started).toBeLessThan(1000);
+  });
 });

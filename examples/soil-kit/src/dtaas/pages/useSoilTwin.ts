@@ -4,7 +4,7 @@ import type {
   DigitalTwinSummary,
   HostServices,
   VisualisationAsset,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 import { channelOf, profilesOf, type SoilSensor } from '../../core';
 
 export type SoilTwin =

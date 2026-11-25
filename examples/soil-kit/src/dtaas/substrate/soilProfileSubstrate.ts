@@ -21,7 +21,7 @@ import {
   type ResolvedEncoding,
   type SubstrateAdapter,
   type SubstrateDescriptor,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 import {
   byDepth,
   heatmapGrid,

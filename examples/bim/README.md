@@ -23,15 +23,15 @@ Seven entry points, so a consumer takes what it needs and nothing else. The
 package is private here, so the entry points describe how the published package
 is cut.
 
-| Entry point      | What it holds                                                                      | What it pulls in                                                                            |
-| ---------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `.`              | The manifest, the binding, the resolver, the readings, the alerts, the colour ramp | nothing                                                                                     |
-| `./schema`       | Validating a manifest a person wrote                                               | `zod`                                                                                       |
-| `./converter`    | IFC to geometry, in the browser                                                    | the inlined `web-ifc` WebAssembly                                                           |
-| `./viewer`       | The three.js scene, the floor filter, the heatmap, the selection                   | `three`                                                                                     |
-| `./react`        | The whole page as components                                                       | `react`, `@mui/material` and `zod`, which validates a manifest before the page uses it      |
-| `./react/canvas` | The 3D canvas alone, which `./react` loads lazily                                  | `react` and `three`                                                                         |
-| `./dtaas`        | The extension the DTaaS client loads, with the `aec` substrate                     | `@into-cps-association/dtaas-sdk`, `react-router-dom` and `zod`, besides those of `./react` |
+| Entry point      | What it holds                                                                      | What it pulls in                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `.`              | The manifest, the binding, the resolver, the readings, the alerts, the colour ramp | nothing                                                                                            |
+| `./schema`       | Validating a manifest a person wrote                                               | `zod`                                                                                              |
+| `./converter`    | IFC to geometry, in the browser                                                    | the inlined `web-ifc` WebAssembly                                                                  |
+| `./viewer`       | The three.js scene, the floor filter, the heatmap, the selection                   | `three`                                                                                            |
+| `./react`        | The whole page as components                                                       | `react`, `@mui/material` and `zod`, which validates a manifest before the page uses it             |
+| `./react/canvas` | The 3D canvas alone, which `./react` loads lazily                                  | `react` and `three`                                                                                |
+| `./dtaas`        | The extension the DTaaS client loads, with the `aec` substrate                     | `@into-cps-association/dtaas-extensions`, `react-router-dom` and `zod`, besides those of `./react` |
 
 The core entry point imports nothing at all, which is what lets manifest logic
 be tested in jsdom where WebGL, workers and WebAssembly do not exist. Everything
@@ -178,7 +178,7 @@ know.
 ## The DTaaS Extension
 
 `./dtaas` exports `extension`, a declaration built with `defineExtension` from
-`@into-cps-association/dtaas-sdk`, the SDK of this repository. The DTaaS client
+`@into-cps-association/dtaas-extensions`, the contract package of this repository. The DTaaS client
 lists it in its extension manifest and mounts it under `/bim`:
 
 ```js
@@ -386,8 +386,7 @@ change that drops coverage fails and one that raises it can raise the gate.
 | Node test runner, over `dist/esm/` | 86 %  | not given  | 94 %     | 92 %      |
 | Jest, over `src/aec/`              | 88 %  | 87 %       | 73 %     | 85 %      |
 
-The Node test runner measures the built modules its tests import and leaves out
-the inlined WebAssembly. It reports no statement figure. The thresholds are in
+The Node test runner measures the built modules its tests import and leaves out the inlined WebAssembly and `dist/esm/aec/`, which the conformance check loads and Jest measures from the source. It reports no statement figure. The thresholds are in
 the `test:node:coverage` script and in `jest.config.json`.
 
 ESLint runs the recommended JavaScript and TypeScript rules, the classic React

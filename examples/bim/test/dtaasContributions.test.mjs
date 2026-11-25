@@ -11,8 +11,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { readExtensionConfig } from '@into-cps-association/dtaas-sdk';
-import { encodingPresetSchema } from '@into-cps-association/dtaas-sdk/schema';
+import { readExtensionConfig } from '@into-cps-association/dtaas-extensions';
+import { encodingPresetSchema } from '@into-cps-association/dtaas-extensions/schema';
 import { default as configSchema } from '../dist/esm/dtaas/config.js';
 import { default as converters } from '../dist/esm/dtaas/converters.js';
 import { default as presets } from '../dist/esm/dtaas/presets/index.js';
