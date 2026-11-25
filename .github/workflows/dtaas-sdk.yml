@@ -119,6 +119,10 @@ jobs:
       # coverage gate.
       - name: Tests with coverage
         run: yarn test:coverage
+      # The replay tool of soil-kit is Python with no dependency in its tests.
+      - name: Test the replay tool
+        if: matrix.kit == 'soil-kit'
+        run: python3 -I -m unittest discover -s tools
       - name: Build, pack, install and smoke-test the package
         if: matrix.kit == 'bim-kit'
         run: yarn test:e2e
