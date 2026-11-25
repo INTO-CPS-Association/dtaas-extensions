@@ -18,7 +18,7 @@ import { act, cleanup, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Group } from 'three';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { fakeHostServices, renderWithHost } from '@into-cps-association/dtaas-sdk/testing';
+import { fakeHostServices, renderWithHost } from '@into-cps-association/dtaas-extensions/testing';
 import { SceneView } from '../dist/esm/viewer/index.js';
 
 mockCanvas();

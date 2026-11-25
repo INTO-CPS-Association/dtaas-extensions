@@ -3,7 +3,7 @@ import {
   CHANNELS,
   type Channel,
   type HostServices,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

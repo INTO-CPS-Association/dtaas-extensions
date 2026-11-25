@@ -14,8 +14,8 @@ import { mockCanvas } from './support/canvas.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { validateExtension } from '@into-cps-association/dtaas-sdk';
-import { checkConformance, fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
+import { validateExtension } from '@into-cps-association/dtaas-extensions';
+import { checkConformance, fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
 
 mockCanvas();
 

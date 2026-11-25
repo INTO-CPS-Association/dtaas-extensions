@@ -9,7 +9,7 @@
 import type {
   Channel,
   VisualisationAsset,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 
 type Transport = VisualisationAsset['transports'][number];
 

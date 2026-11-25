@@ -30,8 +30,8 @@ if (!isKit) {
   process.exit(2);
 }
 
-const target = join(kit, 'node_modules/@into-cps-association/dtaas-sdk');
-const work = mkdtempSync(join(tmpdir(), 'dtaas-sdk-'));
+const target = join(kit, 'node_modules/@into-cps-association/dtaas-extensions');
+const work = mkdtempSync(join(tmpdir(), 'dtaas-extensions-'));
 const tarball = join(work, 'sdk.tgz');
 const run = (command, args) =>
   execFileSync(command, args, { cwd: root, stdio: 'inherit' });

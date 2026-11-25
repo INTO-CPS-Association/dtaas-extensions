@@ -9,18 +9,18 @@ import * as reactDomClient from 'react-dom/client';
 import * as reactRouterDom from 'react-router-dom';
 import * as muiMaterial from '@mui/material';
 import * as zod from 'zod';
-import * as dtaasSdk from '@into-cps-association/dtaas-sdk';
-import * as dtaasSdkSchema from '@into-cps-association/dtaas-sdk/schema';
+import * as dtaasExtensions from '@into-cps-association/dtaas-extensions';
+import * as dtaasExtensionsSchema from '@into-cps-association/dtaas-extensions/schema';
 import {
   checkConformance,
   fakeHostServices,
   runDeployedBundle,
   type DeployedRegistry,
-} from '@into-cps-association/dtaas-sdk/testing';
+} from '@into-cps-association/dtaas-extensions/testing';
 import {
   SHARED_MODULES_GLOBAL,
   validateExtension,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 
 // The modules the host shares, by their keys under DTAAS_SHARED. Only those
 // the kit imports are needed to run its bundle.
@@ -31,8 +31,8 @@ const SHARED = {
   reactDomClient,
   reactRouterDom,
   muiMaterial,
-  dtaasSdk,
-  dtaasSdkSchema,
+  dtaasExtensions,
+  dtaasExtensionsSchema,
   zod,
 };
 

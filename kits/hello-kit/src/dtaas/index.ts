@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { defineExtension } from '@into-cps-association/dtaas-sdk';
+import { defineExtension } from '@into-cps-association/dtaas-extensions';
 import { isHelloTwin } from '../core';
 import anchorKinds from './anchors';
 import configSchema from './config';
@@ -10,7 +10,7 @@ export const extension = defineExtension({
   id: 'hello',
   name: 'Hello',
   version: '0.1.0',
-  sdk: 1,
+  sdk: 0,
   routes: [
     {
       path: '',

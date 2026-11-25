@@ -1,4 +1,4 @@
-import type { EncodingPreset } from '@into-cps-association/dtaas-sdk';
+import type { EncodingPreset } from '@into-cps-association/dtaas-extensions';
 import { QUANTITIES, SOIL_PROFILE } from '../../core';
 
 /** A colour scale over the kit's range of one quantity, at every depth. */

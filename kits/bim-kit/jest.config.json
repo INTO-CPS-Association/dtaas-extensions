@@ -14,7 +14,7 @@
       }
     ]
   },
-  "transformIgnorePatterns": ["/node_modules/(?!(@into-cps-association/dtaas-sdk|three)/)"],
+  "transformIgnorePatterns": ["/node_modules/(?!(@into-cps-association/dtaas-extensions|three)/)"],
   "moduleNameMapper": {
     "^src/(.*?)(\\.js)?$": "<rootDir>/src/$1",
     "^(\\.{1,2}/.*)\\.js$": "$1"

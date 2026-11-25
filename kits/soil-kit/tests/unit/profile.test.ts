@@ -1,4 +1,4 @@
-import type { Anchor } from '@into-cps-association/dtaas-sdk';
+import type { Anchor } from '@into-cps-association/dtaas-extensions';
 import { binMeans, heatmapGrid, profilesOf, sensorOf } from '../../src/core';
 
 const path = (profile: string, device: string, quantity = 'soil_moisture') =>

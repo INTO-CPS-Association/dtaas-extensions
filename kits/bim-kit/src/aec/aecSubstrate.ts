@@ -20,7 +20,7 @@ import type {
   ResolvedEncoding,
   SubstrateAdapter,
   SubstrateDescriptor,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 import type { PaneRows } from './aecControls.js';
 import { modelAddress, sensorName } from './aecModel.js';
 import type { AecPane, Paint } from './aecPane.js';

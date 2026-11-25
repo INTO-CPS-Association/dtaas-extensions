@@ -5,7 +5,7 @@
  * schemes. No text is drawn on them.
  */
 
-import { colourAt, position } from '@into-cps-association/dtaas-sdk';
+import { colourAt, position } from '@into-cps-association/dtaas-extensions';
 import type { QuantitySpec } from '../../core';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';

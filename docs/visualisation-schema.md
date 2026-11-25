@@ -2,11 +2,11 @@
 
 A visualisation is a library asset (R7): a JSON document committed beside a
 twin's models and functions, reviewed as a merge request, and reused by
-swapping its substrates and anchors. `@into-cps-association/dtaas-sdk/schema`
+swapping its substrates and anchors. `@into-cps-association/dtaas-extensions/schema`
 validates it.
 
 ```ts
-import { parseVisualisationAsset } from '@into-cps-association/dtaas-sdk/schema';
+import { parseVisualisationAsset } from '@into-cps-association/dtaas-extensions/schema';
 
 const result = parseVisualisationAsset(json);
 if (result.success) render(result.data);
@@ -70,14 +70,14 @@ worldPoints, units?, reprojectionError? }` with at least four point pairs
 
 Discriminated on `adapter`:
 
-| `adapter`     | Required fields         | Optional                                       | `url` schemes                              |
-| ------------- | ----------------------- | ---------------------------------------------- | ------------------------------------------ |
-| `mqtt`        | `topics[]`              | `url`, `channel`, `qos`                        | `ws`, `wss`, `mqtt`, `mqtts`               |
-| `stomp`       | `url`, `destinations[]` | `channel`                                      | `ws`, `wss`, `mqtt`, `mqtts`               |
-| `thingsboard` | `url`, `entityIds[]`    | `keys[]`, `channel`                            | `http`, `https`, `ws`, `wss`               |
-| `influx`      | `org`, `bucket`         | `url`, `measurement`, `role: "history"`        | `http`, `https`                            |
-| `http`        | `url`                   | `method`, `intervalMs`, `channel`              | `http`, `https`                            |
-| `file`        | `url`                   | `format` (`csv`, `parquet`, `json`), `channel` | `http`, `https`, `lib`, or a relative path |
+| `adapter`     | Required fields         | Optional                                         | `url` schemes                              |
+| ------------- | ----------------------- | ------------------------------------------------ | ------------------------------------------ |
+| `mqtt`        | `topics[]`              | `url`, `channel`, `qos`                          | `ws`, `wss`, `mqtt`, `mqtts`               |
+| `stomp`       | `url`, `destinations[]` | `channel`                                        | `ws`, `wss`, `mqtt`, `mqtts`               |
+| `thingsboard` | `url`, `entityIds[]`    | `keys[]`, `channel`                              | `http`, `https`, `ws`, `wss`               |
+| `influx`      | `org`, `bucket`         | `url`, `measurement`, `role: "history"`          | `http`, `https`                            |
+| `http`        | `url`                   | `method`, `intervalMs` (1000 or more), `channel` | `http`, `https`                            |
+| `file`        | `url`                   | `format` (`csv`, `parquet`, `json`), `channel`   | `http`, `https`, `lib`, or a relative path |
 
 `channel` is one of `measured`, `simulated`, `predicted`, `setpoint`.
 
@@ -128,7 +128,15 @@ a signal-path pattern such as `building/*/temperature`.
 
 ## Limits
 
-Every string in the asset, including each URL, is at most 2048 characters, and every list (`layout.panes`, `transports`, `anchors`, `encodings`, `presets`, topics, destinations, entity ids, keys, homography points and the encodings of a preset) holds at most 1000 items. An asset over a limit is refused, so an oversized file in a library cannot stall the host that parses and renders it. The `substrates` record and a substrate's `options` have no item limit.
+Every string in the asset, including each URL, is at most 2048 characters, every list (`layout.panes`, `transports`, `anchors`, `encodings`, `presets`, topics, destinations, entity ids, keys, homography points and the encodings of a preset) holds at most 1000 items and the `substrates` record holds at most 1000 entries. A substrate's `options` hold at most 64 settings, and each setting is a string, a number, a boolean, `null`, a list of these or one level of named values of these. Nested lists multiply, so `readVisualisationAsset` also refuses a file of more than 1 MiB (`MAX_ASSET_BYTES`) before it parses the JSON. An asset over a limit is refused, so an oversized file in a library cannot stall the host that parses and renders it.
+
+An `http` transport polls at most once a second (`intervalMs` of 1000 or more), because every viewer of the asset polls.
+
+A relative path, a `lib:` URL and a `git:` URL are resolved by the host inside the twin or its library, so a `..` segment, written plainly or percent-encoded, is refused.
+
+## Origins a Deployment Allows
+
+The asset comes from a repository its editors can change, so a transport URL could point every viewer at a broker or endpoint the deployment did not choose. A host reads the asset with `readVisualisationAsset(text, { allowedOrigins })`, which refuses a transport whose `scheme://host:port` is not in `allowedOrigins`. An empty list allows no direct transport, which suits a host whose signals come through its gateway. `parseVisualisationAsset(json)` without a policy checks the shape only and is meant for kits and tests. A host never sends its own credentials to an origin named in an asset.
 
 ## Example
 

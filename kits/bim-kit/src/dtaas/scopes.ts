@@ -1,4 +1,4 @@
-import type { ScopeRule, SubstrateAdapter } from '@into-cps-association/dtaas-sdk';
+import type { ScopeRule, SubstrateAdapter } from '@into-cps-association/dtaas-extensions';
 import { ANCHOR_KIND } from './ids.js';
 
 type Fact = 'room' | 'storey';

@@ -69,7 +69,7 @@
     "test:node": "yarn build && node --test --experimental-test-module-mocks 'test/*.test.mjs'",
     "test:jest": "yarn wasm && jest",
     "test": "yarn test:node && yarn test:jest",
-    "test:node:coverage": "yarn build && node --test --experimental-test-module-mocks --experimental-test-coverage --test-coverage-include='dist/esm/**/*.js' --test-coverage-exclude='dist/esm/generated/**' --test-coverage-exclude='dist/esm/viewer/{viewer,stage,renderLoop,pointer,walkKeys,scenery,loadGlb}.js' --test-coverage-lines=93 --test-coverage-branches=94 --test-coverage-functions=92 'test/*.test.mjs'",
+    "test:node:coverage": "yarn build && node --test --experimental-test-module-mocks --experimental-test-coverage --test-coverage-include='dist/esm/**/*.js' --test-coverage-exclude='dist/esm/generated/**' --test-coverage-exclude='dist/esm/aec/**' --test-coverage-exclude='dist/esm/viewer/{viewer,stage,renderLoop,pointer,walkKeys,scenery,loadGlb}.js' --test-coverage-lines=93 --test-coverage-branches=94 --test-coverage-functions=92 'test/*.test.mjs'",
     "test:jest:coverage": "yarn wasm && jest --coverage",
     "test:coverage": "yarn test:node:coverage && yarn test:jest:coverage",
     "test:e2e": "yarn build && node test/e2e/smoke-package.mjs"
@@ -84,7 +84,7 @@
     "web-ifc": "0.0.77"
   },
   "peerDependencies": {
-    "@into-cps-association/dtaas-sdk": "^0.1.1",
+    "@into-cps-association/dtaas-extensions": "^0.2.0",
     "@mui/icons-material": ">=5",
     "@mui/material": ">=5",
     "react": ">=18",
@@ -109,7 +109,7 @@
     "@mui/icons-material": {
       "optional": true
     },
-    "@into-cps-association/dtaas-sdk": {
+    "@into-cps-association/dtaas-extensions": {
       "optional": true
     },
     "react-router-dom": {

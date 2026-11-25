@@ -1,4 +1,4 @@
-import type { EncodingPreset } from '@into-cps-association/dtaas-sdk';
+import type { EncodingPreset } from '@into-cps-association/dtaas-extensions';
 import { CHANNEL, COLOR_SCHEME, SUBSTRATE_ADAPTER } from '../ids.js';
 
 /** A colour scale on the measured value, the encoding both presets share. */

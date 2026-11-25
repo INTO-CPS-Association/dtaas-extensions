@@ -4,7 +4,7 @@
  * its display unit beside the bar, never on it.
  */
 
-import { position } from '@into-cps-association/dtaas-sdk';
+import { position } from '@into-cps-association/dtaas-extensions';
 import {
   formatDepth,
   formatReading,

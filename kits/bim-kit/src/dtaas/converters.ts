@@ -1,4 +1,4 @@
-import type { ConverterSpec } from '@into-cps-association/dtaas-sdk';
+import type { ConverterSpec } from '@into-cps-association/dtaas-extensions';
 
 /**
  * IFC to GLB, loaded only when the host converts, so the IFC parser and

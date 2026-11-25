@@ -72,7 +72,7 @@ The kit is a package of its own, as every kit of `kits/` is. `yarn sdk` builds
 the SDK at the root of this repository, packs it and unpacks the tarball into
 `node_modules`, so the kit is tested against the SDK it sits next to. A copy
 outside this repository deletes the `sdk` script and installs the SDK from
-npm with `yarn add --dev @into-cps-association/dtaas-sdk`.
+npm with `yarn add --dev @into-cps-association/dtaas-extensions`.
 
 ```bash
 yarn install --frozen-lockfile --ignore-scripts   # once, at the repository root

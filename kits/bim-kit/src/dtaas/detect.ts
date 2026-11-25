@@ -1,4 +1,4 @@
-import type { DigitalTwinSummary } from '@into-cps-association/dtaas-sdk';
+import type { DigitalTwinSummary } from '@into-cps-association/dtaas-extensions';
 import { BIM_DOMAIN } from './ids.js';
 
 /** A twin is a building when it says so, or when it carries an IFC file. */

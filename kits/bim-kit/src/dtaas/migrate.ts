@@ -12,7 +12,7 @@
  * not need the SDK's types to compile.
  */
 
-import type { VisualisationAsset } from '@into-cps-association/dtaas-sdk';
+import type { VisualisationAsset } from '@into-cps-association/dtaas-extensions';
 import { displayOf, objectOf, topicOf, type Binding } from '../binding.js';
 import type { Manifest } from '../schema.js';
 import { ANCHOR_KIND, BIM_DOMAIN, CHANNEL, COLOR_SCHEME, SUBSTRATE_ADAPTER } from './ids.js';

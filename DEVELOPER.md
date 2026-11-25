@@ -94,7 +94,7 @@ kit.
 
 ## Releasing
 
-1. Bump `version` in `package.json` and add a `CHANGELOG.md` entry.
+1. Bump `version` in `package.json` and `API_VERSION` in `src/extension/constants.ts` to the same value (a unit test checks that they match), and add a `CHANGELOG.md` entry.
 2. Merge to `main`. The `DTaaS SDK npm package` workflow validates the package
    and, in the `INTO-CPS-Association` organisation only, publishes it to
    GitHub Packages and npmjs. A prerelease version (`x.y.z-alpha.n`) is

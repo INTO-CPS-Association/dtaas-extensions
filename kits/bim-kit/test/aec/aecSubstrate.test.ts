@@ -1,4 +1,4 @@
-import { fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
+import { fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
 import { loadTree, modelAddress, sensorName, treeAddress } from 'src/aec/aecModel';
 import createAecSubstrate from 'src/aec/aecSubstrate';
 

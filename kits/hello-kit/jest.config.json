@@ -15,7 +15,7 @@
     ]
   },
   "transformIgnorePatterns": [
-    "/node_modules/(?!@into-cps-association/dtaas-sdk/)"
+    "/node_modules/(?!@into-cps-association/dtaas-extensions/)"
   ],
   "setupFiles": ["<rootDir>/tests/setupTests.ts"],
   "setupFilesAfterEnv": ["<rootDir>/tests/jest.setup.ts"],

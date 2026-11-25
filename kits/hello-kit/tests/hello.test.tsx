@@ -3,11 +3,11 @@ import {
   checkConformance,
   fakeHostServices,
   renderWithHost,
-} from '@into-cps-association/dtaas-sdk/testing';
+} from '@into-cps-association/dtaas-extensions/testing';
 import {
   validateExtension,
   type SignalSample,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 import extension from '../src/dtaas';
 import HelloPage from '../src/dtaas/pages/HelloPage';
 

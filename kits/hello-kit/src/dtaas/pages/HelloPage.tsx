@@ -1,4 +1,4 @@
-import { useHost } from '@into-cps-association/dtaas-sdk';
+import { useHost } from '@into-cps-association/dtaas-extensions';
 import Reading from '../../react/Reading';
 import configSchema from '../config';
 

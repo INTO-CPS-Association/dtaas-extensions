@@ -5,7 +5,7 @@
  */
 
 import { BoxGeometry, Group, Mesh, MeshStandardMaterial } from 'three';
-import { fakeHostServices } from '@into-cps-association/dtaas-sdk/testing';
+import { fakeHostServices } from '@into-cps-association/dtaas-extensions/testing';
 import createAecSubstrate from 'src/aec/aecSubstrate';
 import { installBrowser, nextFrame } from '../viewer/viewerSetup';
 

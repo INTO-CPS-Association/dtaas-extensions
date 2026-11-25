@@ -1,4 +1,4 @@
-import type { EncodingPreset } from '@into-cps-association/dtaas-sdk';
+import type { EncodingPreset } from '@into-cps-association/dtaas-extensions';
 
 const presets: EncodingPreset[] = [
   {

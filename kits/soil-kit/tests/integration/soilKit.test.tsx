@@ -3,12 +3,12 @@ import {
   checkConformance,
   fakeHostServices,
   renderWithHost,
-} from '@into-cps-association/dtaas-sdk/testing';
+} from '@into-cps-association/dtaas-extensions/testing';
 import {
   validateExtension,
   type VisualisationAsset,
-} from '@into-cps-association/dtaas-sdk';
-import { parseVisualisationAsset } from '@into-cps-association/dtaas-sdk/schema';
+} from '@into-cps-association/dtaas-extensions';
+import { parseVisualisationAsset } from '@into-cps-association/dtaas-extensions/schema';
 import extension from '../../src/dtaas';
 import SoilPage from '../../src/dtaas/pages/SoilPage';
 import { twinSummary } from '../../src/dtaas/pages/useSoilTwin';

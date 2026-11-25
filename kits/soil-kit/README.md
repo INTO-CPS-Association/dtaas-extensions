@@ -25,14 +25,9 @@ yarn build:kit   # writes dist/deploy/soil/index.js
 the client's shared modules and passes it through the conformance check. The
 lint settings include the SDK's rules for kits.
 
-Its sources and tests use relative imports only, so the folder can be copied
-out of this repository. A copy deletes the `sdk` script and installs
-`@into-cps-association/dtaas-sdk` from npm, whose `./deploy` entry builds the
-deployed bundle.
+Its sources and tests use relative imports only, so the folder can be copied out of this repository. A copy deletes the `sdk` script and installs `@into-cps-association/dtaas-extensions` 0.2.0 from npm, whose `./deploy` entry builds the deployed bundle.
 
-If the SDK release that the kit moves to is 0.2.0, the peer range `^0.1.1` has
-to be raised as well, because a caret range on a 0.x version admits patch
-releases only.
+The peer range is `^0.2.0`. A caret range on a 0.x version admits patch releases only, so a kit that moves to 0.3.0 raises the range as well.
 
 The soil twin of Aarhus University that the kit serves is not chosen yet. The
 devices of `examples/` are simulated: three probes of profile `P03` at 0.00 to

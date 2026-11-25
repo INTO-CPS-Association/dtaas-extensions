@@ -1,4 +1,4 @@
-import type { AnchorKindSpec } from '@into-cps-association/dtaas-sdk';
+import type { AnchorKindSpec } from '@into-cps-association/dtaas-extensions';
 import { GLOBAL_ID_PATTERN } from '../binding.js';
 import { ANCHOR_KIND, SUBSTRATE_ADAPTER } from './ids.js';
 

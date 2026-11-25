@@ -12,7 +12,7 @@ import { Fragment, type ComponentType, type ReactNode } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import { createRoot, type Root } from 'react-dom/client';
 import { Alert, Box, Stack } from '@mui/material';
-import { colourAt } from '@into-cps-association/dtaas-sdk';
+import { colourAt } from '@into-cps-association/dtaas-extensions';
 
 import type { Binding } from '../binding.js';
 import {

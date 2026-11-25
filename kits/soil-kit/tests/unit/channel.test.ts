@@ -1,4 +1,4 @@
-import type { VisualisationAsset } from '@into-cps-association/dtaas-sdk';
+import type { VisualisationAsset } from '@into-cps-association/dtaas-extensions';
 import { channelOf, withChannel } from '../../src/core';
 
 type Transports = VisualisationAsset['transports'];

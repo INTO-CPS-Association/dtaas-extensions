@@ -4,6 +4,8 @@ export default defineConfig({
   format: ['esm'],
   entry: {
     index: 'src/index.ts',
+    'core/index': 'src/core/index.ts',
+    'react/index': 'src/react/index.ts',
     'schema/index': 'src/schema/index.ts',
     'testing/index': 'src/testing/index.ts',
     'eslint/index': 'src/eslint/index.ts',
