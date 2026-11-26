@@ -1,0 +1,67 @@
+{
+  "name": "@into-cps-association/hello-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Minimal DTaaS domain extension: the template layout for a kit (architecture §7.2).",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "type": "module",
+  "sideEffects": false,
+  "dtaas": {
+    "id": "hello"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "yarn@1.22.22",
+  "scripts": {
+    "contract": "node ../../scripts/install-contract.mjs",
+    "build:kit": "vite build",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "peerDependencies": {
+    "@into-cps-association/dtaas-extensions": "^0.2.0",
+    "react": ">=19",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@types/jest": "30.0.0",
+    "@types/node": "26.6.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@typescript-eslint/eslint-plugin": "8.64.0",
+    "@typescript-eslint/parser": "8.64.0",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "globals": "17.7.0",
+    "jest": "30.5.2",
+    "jest-environment-jsdom": "30.5.2",
+    "prettier": "3.9.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-router-dom": "7.18.4",
+    "ts-jest": "29.4.14",
+    "typescript": "6.0.3",
+    "vite": "8.3.5",
+    "zod": "4.6.7"
+  },
+  "// resolutions": "handlebars and source-map-js take the releases that fix their advisories. rolldown is held at 1.2.16, inside the ~1.2.14 range of vite 8.3.5, because later releases are younger than the ten days a dependency waits before it is installed.",
+  "resolutions": {
+    "handlebars": "4.7.10",
+    "rolldown": "1.2.16",
+    "source-map-js": "1.2.2"
+  }
+}

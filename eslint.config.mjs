@@ -39,7 +39,8 @@ export default [
       '**/dist/',
       '**/node_modules/',
       'docs/visualization/',
-      'examples/bim/**',
+      // Each kit is a package with its own lint configuration.
+      'kits/**',
     ],
   },
   ...compat.extends(
@@ -152,12 +153,7 @@ export default [
   },
   {
     // AGENTS.md: functions stay under 25 lines and files under 250 lines.
-    files: [
-      'src/**/*.ts',
-      'src/**/*.tsx',
-      'examples/*/src/**/*.ts',
-      'examples/*/src/**/*.tsx',
-    ],
+    files: ['src/**/*.ts', 'src/**/*.tsx'],
     rules: {
       'max-lines-per-function': ['error', { max: 25 }],
       'max-lines': ['error', { max: 250 }],
@@ -183,9 +179,9 @@ export default [
       ],
     },
   },
-  // The example kit obeys the rules the SDK asks of every kit.
+  // The fixture kit of the tests obeys the rules the SDK asks of every kit.
   ...dtaasKitConfig.map((config) => ({
     ...config,
-    files: ['examples/**/*.ts', 'examples/**/*.tsx'],
+    files: ['tests/fixtures/kit/**/*.ts', 'tests/fixtures/kit/**/*.tsx'],
   })),
 ];

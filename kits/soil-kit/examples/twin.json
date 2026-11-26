@@ -1,0 +1,30 @@
+{
+  "group": "ausoil",
+  "twin": "hallway_plant",
+  "topic_prefix": "AUSoil/Greenhouse/hallway/01",
+  "devices": [
+    {
+      "topic": "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001"
+    },
+    {
+      "topic": "AUSoil/Greenhouse/hallway/01/Monstera/S/S-AUSoil-Greenhouse-hallway-01-Monstera-WAT-0001"
+    },
+    {
+      "topic": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-TRH-0001"
+    },
+    {
+      "topic": "AUSoil/Greenhouse/hallway/01/Site/S/S-AUSoil-Greenhouse-hallway-01-Site-SPC-0001"
+    }
+  ],
+  "kits": {
+    "soil": {
+      "soil_sensor": [
+        {
+          "device_id": "S-AUSoil-Greenhouse-hallway-01-Monstera-VWC-0001",
+          "depth_from": 0.0,
+          "depth_to": 0.1
+        }
+      ]
+    }
+  }
+}

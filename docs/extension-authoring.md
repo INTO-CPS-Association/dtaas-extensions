@@ -23,7 +23,7 @@ substrates come from the common core through `HostServices`
 ```
 
 The host imports only the `./dtaas` subpath. `./core` and `./react` keep
-working outside DTaaS. [`examples/hello-kit`](../examples/hello-kit) follows
+working outside DTaaS. [`kits/hello-kit`](../kits/hello-kit) follows
 this layout.
 
 Declare this package, React, MUI and zod as **peer** dependencies:

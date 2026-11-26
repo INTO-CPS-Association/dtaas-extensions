@@ -89,11 +89,18 @@ it('satisfies the DTaaS extension contract', async () => {
 });
 ```
 
-[`examples/hello-kit`](examples/hello-kit) is a complete, tested example.
+The kits live in [`kits/`](kits). Each one is a package of its own, with its
+own lockfile, lint and format settings, tests and CI job, and is tested against
+the contract built from this repository:
 
-[`examples/bim`](examples/bim/README.md) is a larger, standalone example: a
-full port of bim-kit 0.1.1 onto the contract, with its own package, build, test
-suite and CI job.
+- [`kits/hello-kit`](kits/hello-kit/README.md) is the template of a new kit.
+- [`kits/soil-kit`](kits/soil-kit/README.md) is a kit made from that template:
+  soil profiles drawn as a substrate of their own, with a page, an anchor kind,
+  presets and the tables it adds to the services.
+- [`kits/bim-kit`](kits/bim-kit/README.md) is the source of bim-kit, with the `aec`
+  substrate that draws a building.
+
+DTaaS compiles none of them. A deployment loads each kit's bundle at start.
 
 ## 🔢 Versions
 
