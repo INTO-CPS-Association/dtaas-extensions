@@ -74,6 +74,17 @@ export function directionAt(point: { x: number; y: number; z: number }, edge = C
   return new Vector3(near(point.x), near(point.y), near(point.z));
 }
 
+/** The colour of a face and of the cube's edges, as numbers for three.js. */
+const CUBE_FACE_COLOUR = 0xf4f6f7;
+const CUBE_EDGE_COLOUR = 0x8a9aa4;
+/** The colour of a face's name, dark on the pale face in both themes. */
+const CUBE_TEXT_COLOUR = 0x1f3a46;
+
+/** A colour number as the CSS string a canvas pen takes. */
+function css(colour: number): string {
+  return `#${colour.toString(16).padStart(6, '0')}`;
+}
+
 function faceTexture(text: string): CanvasTexture | null {
   const canvas = globalThis.document?.createElement('canvas');
   if (!canvas) return null;
@@ -81,9 +92,9 @@ function faceTexture(text: string): CanvasTexture | null {
   canvas.height = 128;
   const pen = canvas.getContext('2d');
   if (!pen) return null;
-  pen.fillStyle = '#f4f6f7';
+  pen.fillStyle = css(CUBE_FACE_COLOUR);
   pen.fillRect(0, 0, 128, 128);
-  pen.fillStyle = '#1f3a46';
+  pen.fillStyle = css(CUBE_TEXT_COLOUR);
   pen.font = '700 30px system-ui, sans-serif';
   pen.textAlign = 'center';
   pen.textBaseline = 'middle';
@@ -105,10 +116,6 @@ export interface ViewCube {
   pick(x: number, y: number, width: number, height: number): Vector3 | null;
   dispose(): void;
 }
-
-/** The colour of a face with no name on it and of the cube's edges. */
-const CUBE_FACE_COLOUR = 0xf4f6f7;
-const CUBE_EDGE_COLOUR = 0x8a9aa4;
 
 export function createViewCube(): ViewCube {
   const scene = new Scene();

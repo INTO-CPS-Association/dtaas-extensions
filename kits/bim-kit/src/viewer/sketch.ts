@@ -25,7 +25,10 @@ export interface Stroke {
 /** The type a note on the view is written in. Bold, so it reads over a busy model. */
 export const SKETCH_FONT = '600 16px system-ui, sans-serif';
 
-/** The colour of the drawing: the accent the labels use, so it reads on any background. */
+/**
+ * The colour of the drawing. It is drawn over the model and not over the page,
+ * so it stays the same in both themes.
+ */
 export const SKETCH_COLOUR = '#d6336c';
 
 /** The width of a line, in pixels. */
