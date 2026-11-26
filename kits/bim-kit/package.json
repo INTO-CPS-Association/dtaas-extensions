@@ -58,7 +58,7 @@
     "THIRD-PARTY-NOTICES.md"
   ],
   "scripts": {
-    "sdk": "node ../../scripts/install-sdk.mjs",
+    "contract": "node ../../scripts/install-contract.mjs",
     "wasm": "node scripts/inline-wasm.mjs",
     "build": "node scripts/clean.mjs && yarn wasm && tsc -p tsconfig.esm.json",
     "build:kit": "yarn wasm && vite build",

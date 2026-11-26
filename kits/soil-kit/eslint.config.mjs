@@ -8,7 +8,7 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import reactHooks from 'eslint-plugin-react-hooks';
 import prettier from 'eslint-config-prettier';
 import globals from 'globals';
-// Resolves after `yarn sdk` unpacks the built SDK into node_modules.
+// Resolves after `yarn contract` unpacks the built contract into node_modules.
 import dtaasKitConfig from '@into-cps-association/dtaas-extensions/eslint';
 
 export default [

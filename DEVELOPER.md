@@ -71,16 +71,16 @@ kits/bim-kit/         bim-kit
 
 Every folder of `kits/` is a package of its own, with its `package.json`,
 `yarn.lock`, lint and format settings, tests and a job in the CI matrix. The
-root tooling does not read them. A kit takes the SDK from `yarn sdk`, which
-builds the SDK at the repository root, packs it and unpacks the tarball into
-the kit's `node_modules`, so each kit is tested against this commit of the SDK,
+root tooling does not read them. A kit takes the contract from `yarn contract`,
+which builds the package at the repository root, packs it and unpacks the
+tarball into the kit's `node_modules`, so each kit is tested against this commit,
 installed the way any consumer installs it. From the repository root:
 
 ```bash
 yarn install                # once, at the root
 cd kits/soil-kit            # or kits/hello-kit, kits/bim-kit
 yarn install --frozen-lockfile --ignore-scripts
-yarn sdk                    # again after every change to the SDK
+yarn contract               # again after every change at the root
 yarn format:check
 yarn lint
 yarn typecheck
@@ -88,14 +88,14 @@ yarn test:coverage          # also builds the deployed bundle and mounts it
 yarn build:kit              # the deployed bundle, dist/deploy/<id>/index.js
 ```
 
-The SDK's own tests build a fixture kit, `tests/fixtures/kit/`, with
+The package's own tests build a fixture kit, `tests/fixtures/kit/`, with
 `kitBuildConfig`, so the `./deploy` entry is tested without depending on any
 kit.
 
 ## Releasing
 
 1. Bump `version` in `package.json` and `API_VERSION` in `src/extension/constants.ts` to the same value (a unit test checks that they match), and add a `CHANGELOG.md` entry.
-2. Merge to `main`. The `DTaaS SDK npm package` workflow validates the package
+2. Merge to `main`. The `dtaas-extensions npm package` workflow validates the package
    and, in the `INTO-CPS-Association` organisation only, publishes it to
    GitHub Packages and npmjs. A prerelease version (`x.y.z-alpha.n`) is
    published under the `next` tag.

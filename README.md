@@ -91,7 +91,7 @@ it('satisfies the DTaaS extension contract', async () => {
 
 The kits live in [`kits/`](kits). Each one is a package of its own, with its
 own lockfile, lint and format settings, tests and CI job, and is tested against
-the SDK built from this repository:
+the contract built from this repository:
 
 - [`kits/hello-kit`](kits/hello-kit/README.md) is the template of a new kit.
 - [`kits/soil-kit`](kits/soil-kit/README.md) is a kit made from that template:

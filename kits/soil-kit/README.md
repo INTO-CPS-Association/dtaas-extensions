@@ -4,13 +4,13 @@ A DTaaS domain extension for soil twins, built from the `hello-kit` template of 
 
 ## Development
 
-The kit is a package of its own, as every kit of `kits/` is, with its own lockfile, lint and format settings, tests and CI job. `yarn sdk` builds the SDK at the root of this repository, packs it and unpacks the tarball into `node_modules`, so the kit is tested against the SDK it sits next to:
+The kit is a package of its own, as every kit of `kits/` is, with its own lockfile, lint and format settings, tests and CI job. `yarn contract` builds the contract at the root of this repository, packs it and unpacks the tarball into `node_modules`, so the kit is tested against the contract it sits next to:
 
 ```bash
 yarn install --frozen-lockfile --ignore-scripts   # once, at the repository root
 cd kits/soil-kit
 yarn install --frozen-lockfile --ignore-scripts
-yarn sdk
+yarn contract
 yarn format:check && yarn lint && yarn typecheck
 yarn test:coverage
 python3 -I -m unittest discover -s tools   # the replay tool, no dependency needed
@@ -19,7 +19,7 @@ yarn build:kit   # writes dist/deploy/soil/index.js
 
 `tests/integration/kitBundle.test.ts` builds the deployed bundle, runs it with the client's shared modules and passes it through the conformance check. The lint settings include the SDK's rules for kits.
 
-Its sources and tests use relative imports only, so the folder can be copied out of this repository. A copy deletes the `sdk` script and installs `@into-cps-association/dtaas-extensions` 0.2.0 from npm, whose `./deploy` entry builds the deployed bundle.
+Its sources and tests use relative imports only, so the folder can be copied out of this repository. A copy deletes the `contract` script and installs `@into-cps-association/dtaas-extensions` 0.2.0 from npm, whose `./deploy` entry builds the deployed bundle.
 
 The peer range is `^0.2.0`. A caret range on a 0.x version admits patch releases only, so a kit that moves to 0.3.0 raises the range as well.
 

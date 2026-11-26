@@ -344,23 +344,24 @@ node scripts/check-reexport.mjs room.manifest.json room-reexported.glb --json
 
 ## Develop
 
-The SDK is not taken from npm. `yarn sdk` builds the SDK at the root of this
-repository, packs it and unpacks the tarball into `node_modules`, so the kit is
-tested against the SDK it sits next to, installed the way any consumer installs
-it. Run it again after a change to the SDK.
+The contract is not taken from npm. `yarn contract` builds
+`@into-cps-association/dtaas-extensions` at the root of this repository, packs
+it and unpacks the tarball into `node_modules`, so the kit is tested against the
+contract it sits next to, installed the way any consumer installs it. Run it
+again after a change at the root.
 
 ```bash
 yarn install --frozen-lockfile --ignore-scripts   # once, at the repository root
 cd kits/bim-kit
 yarn install --frozen-lockfile --ignore-scripts
-yarn sdk
+yarn contract
 yarn typecheck
 yarn test
 ```
 
 | Command              | What it does                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------- |
-| `yarn sdk`           | Build, pack and install the SDK of this repository                                    |
+| `yarn contract`      | Build, pack and install the contract of this repository                               |
 | `yarn wasm`          | Inline `web-ifc.wasm` into `src/generated/wasm.ts`                                    |
 | `yarn build`         | ES modules and type declarations into `dist/esm/`                                     |
 | `yarn build:kit`     | The deployed bundle, into `dist/deploy/bim/index.js`                                  |

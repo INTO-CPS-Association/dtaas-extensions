@@ -68,17 +68,17 @@ way, with its own unit and integration tests.
 
 ## Develop Inside This Repository
 
-The kit is a package of its own, as every kit of `kits/` is. `yarn sdk` builds
-the SDK at the root of this repository, packs it and unpacks the tarball into
-`node_modules`, so the kit is tested against the SDK it sits next to. A copy
-outside this repository deletes the `sdk` script and installs the SDK from
-npm with `yarn add --dev @into-cps-association/dtaas-extensions`.
+The kit is a package of its own, as every kit of `kits/` is. `yarn contract`
+builds the contract at the root of this repository, packs it and unpacks the
+tarball into `node_modules`, so the kit is tested against the contract it sits
+next to. A copy outside this repository deletes the `contract` script and
+installs the contract from npm with `yarn add --dev @into-cps-association/dtaas-extensions`.
 
 ```bash
 yarn install --frozen-lockfile --ignore-scripts   # once, at the repository root
 cd kits/hello-kit
 yarn install --frozen-lockfile --ignore-scripts
-yarn sdk
+yarn contract
 yarn format:check && yarn lint && yarn typecheck
 yarn test:coverage
 ```

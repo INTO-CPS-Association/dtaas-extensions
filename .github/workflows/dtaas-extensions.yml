@@ -1,4 +1,4 @@
-name: DTaaS SDK npm package
+name: dtaas-extensions npm package
 
 'on':
   push:
@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   validate:
-    name: Validate DTaaS SDK npm package (Node ${{ matrix.node-version }})
+    name: Validate dtaas-extensions npm package (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
@@ -71,11 +71,11 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           files: coverage/all/coverage-final.json
-          flags: dtaas-sdk-unit-integration-tests
+          flags: dtaas-extensions-unit-integration-tests
           fail_ci_if_error: false
 
   # Each kit is a package of its own, with its lockfile, lint, type-check and
-  # tests, and is validated against the SDK built from this commit.
+  # tests, and is validated against the contract built from this commit.
   kits:
     name: Validate ${{ matrix.kit }} (Node 24)
     runs-on: ubuntu-latest
@@ -101,13 +101,13 @@ jobs:
           cache-dependency-path: |
             yarn.lock
             kits/${{ matrix.kit }}/yarn.lock
-      - name: Install SDK dependencies
+      - name: Install contract dependencies
         working-directory: .
         run: yarn install --frozen-lockfile --ignore-scripts --network-timeout 1000000
       - name: Install kit dependencies
         run: yarn install --frozen-lockfile --ignore-scripts --network-timeout 1000000
-      - name: Build and install the packed SDK
-        run: yarn sdk
+      - name: Build and install the packed contract
+        run: yarn contract
       - name: Check formatting
         run: yarn format:check
       - name: Lint

@@ -133,8 +133,8 @@ this package follows [semantic versioning](https://semver.org/).
 - The controls of the `aec` substrate are the components of the Buildings page: `Toolbar`, `FloorPicker`, `ObjectPanel`, `ClassLegend`, `HelpPanel` and the new `ScaleLegend`, in a React root of their own wrapped in the host's theme. The root is started with the host's `react-dom/client`, which the SDK now shares, so the bundle carries no copy of it. The plain DOM copies of those controls are gone, and with them the icons, the look and the behaviour that differed from the page. `Toolbar` and `HelpPanel` take an optional `shortcuts` table, and the toolbar has the role `toolbar`.
 - `BimCanvas` is a thin React component around the `Viewer` and `ViewerHandle` is defined in `./viewer`. `BimCanvas` still exports the type.
 - `SceneView` keeps its members and delegates to `viewState.ts`, `sceneHeat.ts`, `sceneCuts.ts`, `scenePaint.ts` and `sceneFacts.ts`, so no file of the viewer is above 250 lines except the shortcut table.
-- The tests use the SDK of the repository they sit in, installed by `yarn sdk`,
-  and the peer range of the SDK is `^0.1.1`.
+- The tests use the contract of the repository they sit in, installed by
+  `yarn contract`, and its peer range is `^0.2.0`.
 - The package is private and built with Yarn and TypeScript 6.0.3, as the rest
   of the repository. The subpath stub folders and the licence copy made at pack
   time are gone, since the package is not packed from here.
