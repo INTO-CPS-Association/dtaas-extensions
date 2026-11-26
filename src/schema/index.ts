@@ -1,28 +1,34 @@
-// Shared building blocks
+// Shared building blocks and bounds
 export {
   channelSchema,
   domainSchema,
+  MAX_ASSET_BYTES,
+  MAX_LIST_LENGTH,
+  MAX_RECORD_ENTRIES,
+  MAX_STRING_LENGTH,
   pointSchema,
-} from 'src/schema/common.schema';
+} from './common.schema';
 
 // Layer 1: transports
-export { transportSchema } from 'src/schema/transport.schema';
+export { MIN_POLL_INTERVAL_MS, transportSchema } from './transport.schema';
 
 // Layer 3: anchors
-export { anchorSchema } from 'src/schema/anchor.schema';
+export { anchorSchema } from './anchor.schema';
 
 // Layer 4: encodings and presets
-export { encodingSchema } from 'src/schema/encoding.schema';
-export { encodingPresetSchema } from 'src/schema/preset.schema';
+export { encodingSchema } from './encoding.schema';
+export { encodingPresetSchema } from './preset.schema';
 
 // Layer 5: substrates
 export {
   calibrationSchema,
   substrateDescriptorSchema,
-} from 'src/schema/substrate.schema';
+} from './substrate.schema';
 
 // visualisation.json
 export {
   parseVisualisationAsset,
+  readVisualisationAsset,
   visualisationAssetSchema,
-} from 'src/schema/visualisation.schema';
+} from './visualisation.schema';
+export type { AssetPolicy } from './visualisation.schema';

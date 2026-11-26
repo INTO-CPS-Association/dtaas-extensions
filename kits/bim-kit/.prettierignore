@@ -1,0 +1,7 @@
+dist/
+coverage/
+node_modules/
+# Written by scripts/inline-wasm.mjs.
+src/generated/
+test/fixtures/
+yarn.lock

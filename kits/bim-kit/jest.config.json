@@ -1,0 +1,39 @@
+{
+  "testEnvironment": "jsdom",
+  "transform": {
+    "^.+\\.[tj]sx?$": [
+      "ts-jest",
+      {
+        "tsconfig": {
+          "jsx": "react-jsx",
+          "allowJs": true,
+          "esModuleInterop": true,
+          "isolatedModules": true,
+          "rootDir": "."
+        }
+      }
+    ]
+  },
+  "transformIgnorePatterns": ["/node_modules/(?!(@into-cps-association/dtaas-extensions|three)/)"],
+  "moduleNameMapper": {
+    "^src/(.*?)(\\.js)?$": "<rootDir>/src/$1",
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+  },
+  "setupFiles": ["<rootDir>/test/aec/setupTests.ts"],
+  "setupFilesAfterEnv": ["<rootDir>/test/aec/jest.setup.ts"],
+  "testRegex": "/test/(aec|kit|viewer)/.*\\.test\\.tsx?$",
+  "collectCoverageFrom": [
+    "src/aec/**/*.{ts,tsx}",
+    "src/viewer/{viewer,stage,renderLoop,pointer,walkKeys,scenery,loadGlb}.ts"
+  ],
+  "coverageDirectory": "coverage/jest",
+  "coverageReporters": ["text-summary", "lcov", "json"],
+  "coverageThreshold": {
+    "global": {
+      "statements": 95,
+      "branches": 85,
+      "functions": 94,
+      "lines": 96
+    }
+  }
+}

@@ -1,0 +1,81 @@
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import * as react from 'react';
+import * as reactJsxRuntime from 'react/jsx-runtime';
+import * as reactDom from 'react-dom';
+import * as reactDomClient from 'react-dom/client';
+import * as reactRouterDom from 'react-router-dom';
+import * as muiMaterial from '@mui/material';
+import * as zod from 'zod';
+import * as dtaasExtensions from '@into-cps-association/dtaas-extensions';
+import * as dtaasExtensionsSchema from '@into-cps-association/dtaas-extensions/schema';
+import {
+  checkConformance,
+  fakeHostServices,
+  runDeployedBundle,
+  type DeployedRegistry,
+} from '@into-cps-association/dtaas-extensions/testing';
+import {
+  SHARED_MODULES_GLOBAL,
+  validateExtension,
+} from '@into-cps-association/dtaas-extensions';
+
+// The modules the host shares, by their keys under DTAAS_SHARED. Only those
+// the kit imports are needed to run its bundle.
+const SHARED = {
+  react,
+  reactJsxRuntime,
+  reactDom,
+  reactDomClient,
+  reactRouterDom,
+  muiMaterial,
+  dtaasExtensions,
+  dtaasExtensionsSchema,
+  zod,
+};
+
+const root = path.join(__dirname, '../..');
+const out = mkdtempSync(path.join(tmpdir(), 'soil-kit-'));
+const bundle = path.join(out, 'index.js');
+
+afterAll(() => rmSync(out, { recursive: true, force: true }));
+
+describe('the deployed bundle', () => {
+  let registered: DeployedRegistry;
+
+  beforeAll(() => {
+    execFileSync('yarn', ['build:kit'], {
+      cwd: root,
+      env: { ...process.env, DTAAS_KIT_OUT: out },
+      stdio: 'pipe',
+    });
+    registered = runDeployedBundle(readFileSync(bundle, 'utf-8'), SHARED);
+  }, 120_000);
+
+  it('is one small script that takes the shared modules from the host', () => {
+    const code = readFileSync(bundle, 'utf-8');
+    expect(statSync(bundle).size).toBeLessThan(50_000);
+    expect(code).toContain(`${SHARED_MODULES_GLOBAL}.react`);
+    expect(code).not.toContain('require(');
+  });
+
+  it('registers the extension soil', () => {
+    expect(Object.keys(registered)).toEqual(['soil']);
+    expect(validateExtension(registered.soil.extension)).toEqual({
+      valid: true,
+      errors: [],
+    });
+  });
+
+  it('mounts its pages through the host it is given', async () => {
+    const host = fakeHostServices({
+      extensionId: 'soil',
+      env: { REACT_APP_EXT_SOIL_TWIN: 'soil_p03' },
+    });
+    await expect(
+      checkConformance(registered.soil.extension, { host }),
+    ).resolves.toEqual({ passed: true, errors: [] });
+  });
+});

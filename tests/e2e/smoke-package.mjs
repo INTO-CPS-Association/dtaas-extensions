@@ -3,7 +3,7 @@
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 
 const PEERS = [
   'react@19.2.0',
@@ -26,9 +26,18 @@ const REQUIRED = [
   ...['README.md', 'LICENSE.md', 'CHANGELOG.md'].map(
     (file) => `package/${file}`,
   ),
-  ...['index', 'schema/index', 'testing/index', 'eslint/index'].flatMap(
-    (entry) => [`package/dist/${entry}.js`, `package/dist/${entry}.d.ts`],
-  ),
+  ...[
+    'index',
+    'core/index',
+    'react/index',
+    'schema/index',
+    'testing/index',
+    'eslint/index',
+    'deploy/index',
+  ].flatMap((entry) => [
+    `package/dist/${entry}.js`,
+    `package/dist/${entry}.d.ts`,
+  ]),
 ];
 
 // Argument arrays, no shell; output stays visible so failures are easy to diagnose.
@@ -55,8 +64,13 @@ const checkTarball = (archive) => {
 const importScript = (name) => `
 import assert from 'node:assert/strict';
 const root = await import('${name}');
-assert.equal(root.SDK_MAJOR, 1);
+assert.equal(root.API_MAJOR, 0);
 assert.equal(root.validateExtension({}).valid, false);
+const core = await import('${name}/core');
+assert.equal(core.validateExtension, root.validateExtension);
+assert.equal('HostProvider' in core, false);
+const react = await import('${name}/react');
+assert.equal(react.HostProvider, root.HostProvider);
 const schema = await import('${name}/schema');
 const junction7 = ${readFileSync('tests/fixtures/junction7.visualisation.json', 'utf8')};
 assert.equal(schema.parseVisualisationAsset(junction7).success, true);
@@ -67,6 +81,8 @@ host.ui.snackbar('ok', 'info');
 assert.equal(host.recorded.snackbars.length, 1);
 const eslint = await import('${name}/eslint');
 assert.ok(Array.isArray(eslint.default));
+const deploy = await import('${name}/deploy');
+assert.equal(deploy.kitBuildConfig({ id: 'smoke', entry: 'x.ts' }).lib.fileName(), 'index.js');
 `;
 
 // The @ts-expect-error lines fail if the SDK's types silently degrade to any.
@@ -75,8 +91,8 @@ import { defineExtension, type DtaasExtension, type HostServices } from '${name}
 import { encodingSchema } from '${name}/schema';
 import { fakeHostServices, type FakeHostServices } from '${name}/testing';
 import kitConfig from '${name}/eslint';
-const ext = defineExtension({ id: 'smoke', name: 'Smoke', version: '1.0.0', sdk: 1 });
-// @ts-expect-error sdk must be 1
+const ext = defineExtension({ id: 'smoke', name: 'Smoke', version: '1.0.0', sdk: 0 });
+// @ts-expect-error sdk must be 0
 const wrong: DtaasExtension = { id: 'x', name: 'x', version: '1', sdk: 2 };
 const fake: FakeHostServices = fakeHostServices();
 const host: HostServices = fake;
@@ -117,8 +133,35 @@ const typeCheckConsumer = (directory, name) => {
   });
 };
 
+const IMPORT_SOURCE = /(?:from|import)\s*['"]([^'"]+)['"]/g;
+const REACT_SOURCE = /^react(-dom)?(\/|$)/;
+
+/**
+ * Follows the relative imports of the built `./core` entry and fails if any
+ * module on the way imports React, so a host without React can load it.
+ */
+const checkCoreWithoutReact = () => {
+  const seen = new Set();
+  const pending = [resolve('dist/core/index.js')];
+  while (pending.length > 0) {
+    const file = pending.pop();
+    if (!seen.has(file)) {
+      seen.add(file);
+      const sources = [...readFileSync(file, 'utf8').matchAll(IMPORT_SOURCE)];
+      sources.forEach(([, source]) => {
+        if (REACT_SOURCE.test(source)) {
+          throw new Error(`./core imports ${source} through ${file}`);
+        }
+        if (source.startsWith('.'))
+          pending.push(resolve(dirname(file), source));
+      });
+    }
+  }
+};
+
 const runSmokeTest = () => {
-  const directory = mkdtempSync(join(tmpdir(), 'dtaas-sdk-smoke-'));
+  checkCoreWithoutReact();
+  const directory = mkdtempSync(join(tmpdir(), 'dtaas-extensions-smoke-'));
   const archive = join(directory, 'package.tgz');
   try {
     yarn(['pack', '--filename', archive], process.cwd());

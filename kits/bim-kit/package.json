@@ -1,0 +1,157 @@
+{
+  "name": "@into-cps-association/bim-kit",
+  "version": "0.2.0",
+  "private": true,
+  "description": "DTaaS domain extension for buildings: binds live sensor readings to the objects of a BIM model by IFC GlobalId, converts IFC to GLB in the browser and draws the building with the aec substrate.",
+  "keywords": [
+    "ifc",
+    "bim",
+    "glb",
+    "gltf",
+    "digital-twin",
+    "dtaas"
+  ],
+  "license": "SEE LICENSE IN LICENSE.md",
+  "type": "module",
+  "sideEffects": false,
+  "dtaas": {
+    "id": "bim"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "yarn@1.22.22",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "default": "./dist/esm/index.js"
+    },
+    "./react": {
+      "types": "./dist/esm/react/index.d.ts",
+      "default": "./dist/esm/react/index.js"
+    },
+    "./schema": {
+      "types": "./dist/esm/schema.d.ts",
+      "default": "./dist/esm/schema.js"
+    },
+    "./react/canvas": {
+      "types": "./dist/esm/react/BimCanvas.d.ts",
+      "default": "./dist/esm/react/BimCanvas.js"
+    },
+    "./viewer": {
+      "types": "./dist/esm/viewer/index.d.ts",
+      "default": "./dist/esm/viewer/index.js"
+    },
+    "./converter": {
+      "types": "./dist/esm/converter.d.ts",
+      "default": "./dist/esm/converter.js"
+    },
+    "./dtaas": {
+      "types": "./dist/esm/dtaas/index.d.ts",
+      "default": "./dist/esm/dtaas/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE.md",
+    "CHANGELOG.md",
+    "THIRD-PARTY-NOTICES.md"
+  ],
+  "scripts": {
+    "contract": "node ../../scripts/install-contract.mjs",
+    "wasm": "node scripts/inline-wasm.mjs",
+    "build": "node scripts/clean.mjs && yarn wasm && tsc -p tsconfig.esm.json",
+    "build:kit": "yarn wasm && vite build",
+    "typecheck": "yarn wasm && tsc -p tsconfig.esm.json --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "test:node": "yarn build && node --test --experimental-test-module-mocks 'test/*.test.mjs'",
+    "test:jest": "yarn wasm && jest",
+    "test": "yarn test:node && yarn test:jest",
+    "test:node:coverage": "yarn build && node --test --experimental-test-module-mocks --experimental-test-coverage --test-coverage-include='dist/esm/**/*.js' --test-coverage-exclude='dist/esm/generated/**' --test-coverage-exclude='dist/esm/aec/**' --test-coverage-exclude='dist/esm/viewer/{viewer,stage,renderLoop,pointer,walkKeys,scenery,loadGlb}.js' --test-coverage-lines=93 --test-coverage-branches=94 --test-coverage-functions=92 'test/*.test.mjs'",
+    "test:jest:coverage": "yarn wasm && jest --coverage",
+    "test:coverage": "yarn test:node:coverage && yarn test:jest:coverage",
+    "test:e2e": "yarn build && node test/e2e/smoke-package.mjs"
+  },
+  "// test:coverage": "The Node test runner measures dist/esm, which its tests import, and Jest measures src/aec and the framework-free viewer class, which its tests import. The Node run leaves those viewer files out, since only the Jest suite drives them. The thresholds sit at or just below what the code reaches now.",
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "printWidth": 100
+  },
+  "dependencies": {
+    "web-ifc": "0.0.77"
+  },
+  "peerDependencies": {
+    "@into-cps-association/dtaas-extensions": "^0.2.0",
+    "@mui/icons-material": ">=5",
+    "@mui/material": ">=5",
+    "react": ">=18",
+    "react-dom": ">=18",
+    "react-router-dom": ">=7",
+    "three": ">=0.160.0",
+    "zod": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@mui/material": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "three": {
+      "optional": true
+    },
+    "@mui/icons-material": {
+      "optional": true
+    },
+    "@into-cps-association/dtaas-extensions": {
+      "optional": true
+    },
+    "react-router-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@emotion/react": "11.14.0",
+    "@emotion/styled": "11.14.1",
+    "@eslint/js": "10.0.1",
+    "@mui/icons-material": "9.4.0",
+    "@mui/material": "9.4.0",
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.7",
+    "@types/jest": "30.0.0",
+    "@types/node": "26.6.3",
+    "@types/react": "19.3.0",
+    "@types/three": "0.186.0",
+    "@typescript-eslint/eslint-plugin": "8.64.0",
+    "@typescript-eslint/parser": "8.64.0",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "globals": "17.7.0",
+    "jest": "30.5.2",
+    "jest-environment-jsdom": "30.5.2",
+    "jsdom": "30.0.1",
+    "prettier": "3.9.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-router-dom": "7.18.4",
+    "three": "0.186.0",
+    "ts-jest": "29.4.14",
+    "typescript": "6.0.3",
+    "vite": "8.3.5",
+    "zod": "4.6.7"
+  },
+  "// resolutions": "handlebars takes the release that fixes its advisories. rolldown is held at 1.2.16, inside the ~1.2.14 range of vite 8.3.5, because later releases are younger than the ten days a dependency waits before it is installed.",
+  "resolutions": {
+    "handlebars": "4.7.10",
+    "rolldown": "1.2.16"
+  }
+}
