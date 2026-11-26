@@ -10,8 +10,12 @@ Version 0.2.0, the first under the name `@into-cps-association/dtaas-extensions`
 
 ### Added
 
-- `examples/soil-kit`, a kit made from the `hello-kit` template: the `soil-profile` substrate, the `soil-depth` anchor kind, the soil presets, a page and the `soil_sensor` table it adds to the services. The root checks and tests it as it does `hello-kit`. `kitBundle.test.ts` builds and mounts its deployed bundle.
-- `@mui/icons-material` as a development dependency, for the icon of the soil-kit's page.
+- `kits/soil-kit`, a kit made from the `hello-kit` template: the `soil-profile` substrate, the `soil-depth` anchor kind, the soil presets, a page and the `soil_sensor` table it adds to the services.
+- `./testing` gives `runDeployedBundle`, which runs the code of a deployed bundle with the modules the host shares and returns what it registered, so a kit's bundle test needs no runner of its own.
+- `scripts/install-contract.mjs`, the one script behind `yarn contract` in every kit.
+- `tests/fixtures/kit`, the smallest kit, which `kitBundle.test.ts` builds with `kitBuildConfig` and mounts, so the `./deploy` entry is tested without any of the kits.
+- `@mui/icons-material` as a development dependency, for the icon of the fixture kit's page.
+- `react-dom/client` among the shared modules, under `reactDomClient`, so a kit that draws the controls of a substrate starts its React root with the host's copy. A host fills the key from its own `react-dom/client`.
 - `./core` and `./react` entries. `./core` holds the constants, the validation, the API range helpers and the types, and imports no React at run time, so a host or tool that runs without React can import it. `./react` holds `HostProvider` and `useHost`. The root entry re-exports both, so every import of 0.1 keeps working. The package smoke test fails if any module `./core` loads imports React.
 - `API_VERSION`, the version of the extension API, which is the version of the package, and `API_MAJOR`, derived from it. A unit test checks that `API_VERSION` matches `package.json`.
 - `readVisualisationAsset(input, { allowedOrigins })` in `./schema`, the way a host reads a `visualisation.json`. It refuses more than 1 MiB (`MAX_ASSET_BYTES`) before parsing, parses the JSON, checks the schema and refuses a transport whose origin the deployment does not allow. `parseVisualisationAsset` takes the same policy as an optional second argument.
@@ -27,7 +31,8 @@ Version 0.2.0, the first under the name `@into-cps-association/dtaas-extensions`
 - The `./eslint` rules for dynamic imports are built from the same list as the static ones. Their documentation says what they are: guards against the usual mistakes and not a security boundary.
 - Internal names that read as something else are renamed: `describe` is `printable` and no longer prints an object through its own `toString`, and `Loose` is `UntypedExtension`. `LibraryService.resolve` documents `workspace://` for workspace files, since `ws://` names a WebSocket elsewhere in the contract.
 - The fakes of `./testing` return promises without `async` functions that await nothing, `replayFixture` computes each frame time from its index and `createMemoryContents` strips slashes without a regular expression that backtracks.
-- `examples/bim` is the source of bim-kit 0.2.0 with the changes of its next release, in place of the port of bim-kit 0.1.1. It contributes the `aec` substrate, builds a deployed bundle with `kitBuildConfig` and keeps its own lockfile and CI job. Its tests run with the Node test runner against the built package and with Jest for the substrate and the bundle.
+- `examples/` is now `kits/`. Every kit is a package of its own, with its lockfile, lint and format settings, tests and a job in the CI matrix, and takes the contract from `yarn contract`. The root tooling no longer reads the kits, and the root `yarn build:kit` is gone: each kit builds its bundle with its own `yarn build:kit`. The `hello-kit` tests that ran at the root moved into the kit.
+- `kits/bim-kit` is the source of bim-kit 0.2.0 with the changes of its next release, in place of the port of bim-kit 0.1.1. It contributes the `aec` substrate, builds a deployed bundle with `kitBuildConfig` and keeps its own lockfile and CI job. Its tests run with the Node test runner against the built package and with Jest for the substrate and the bundle.
 
 ### Fixed
 

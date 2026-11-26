@@ -18,7 +18,7 @@ This package follows the coding standards of the DTaaS client and of
 | `yarn syntax`                       | Lint and fix with ESLint                                           |
 | `yarn lint`                         | Lint without fixing (used in CI)                                   |
 | `yarn format` / `yarn format:check` | Format with Prettier / check formatting                            |
-| `yarn typecheck`                    | Type-check sources, tests and examples                             |
+| `yarn typecheck`                    | Type-check sources and tests                                       |
 | `yarn test:unit`                    | Unit tests (`tests/unit`)                                          |
 | `yarn test:int`                     | Integration tests (`tests/integration`)                            |
 | `yarn test:coverage`                | Unit and integration tests with the coverage gate                  |
@@ -43,12 +43,12 @@ src/
   deploy/             ./deploy entry: Vite settings for a deployed kit bundle
 tests/
   unit/               mirrors src/
-  integration/        hello-kit conformance, fixture replay, asset round trips, ESLint rules
+  integration/        deployed bundle, fixture replay, asset round trips, ESLint rules
   e2e/                packed-tarball smoke test
-  fixtures/           junction-7 visualisation.json, recorded stream, extension fixtures
-examples/hello-kit/   the template layout of a domain kit
-examples/soil-kit/    a kit made from the template, checked and tested by the root
-examples/bim/         bim-kit, a standalone package with its own lockfile and CI job
+  fixtures/           junction-7 visualisation.json, recorded stream, the fixture kit
+kits/hello-kit/       the template layout of a domain kit
+kits/soil-kit/        a kit made from the template
+kits/bim-kit/         bim-kit
 ```
 
 ## Conventions
@@ -60,39 +60,42 @@ examples/bim/         bim-kit, a standalone package with its own lockfile and CI
   PascalCase for components, camelCase otherwise.
 - A module with one export uses a default export (airbnb-base).
 - Imports inside `src/` are relative, so the sources can be copied into a
-  host as they are. Tests use the `src/*`, `tests/*` and `examples/*`
-  aliases.
+  host as they are. Tests use the `src/*` and `tests/*` aliases.
 - Types that have a schema are inferred from it with `z.infer`, so the two
   cannot drift. The root entry imports schema modules with `import type` only,
   so `zod` is not a runtime import of the host bundle.
 - `globalThis` instead of `window`; `node:` prefixes for Node built-ins.
 - Tests live in `tests/`, never next to the source, and match `*.test.ts(x)`.
 
-## Example Kits
+## Kits
 
-`examples/hello-kit` and `examples/soil-kit` are checked by the commands
-above: `yarn lint`, `yarn typecheck` and `yarn format:check` cover their files,
-`yarn test:coverage` runs their tests with the SDK's source, and
-`tests/integration/kitBundle.test.ts` builds each one with
-`yarn build:kit <kit folder>` and mounts the bundle on a fake host.
-
-`examples/bim` is a standalone package (its own `package.json`, `yarn.lock`,
-tests and CI job), not part of this workspace, because it brings three.js,
-web-ifc and a test suite of its own. From the repository root:
+Every folder of `kits/` is a package of its own, with its `package.json`,
+`yarn.lock`, lint and format settings, tests and a job in the CI matrix. The
+root tooling does not read them. A kit takes the contract from `yarn contract`,
+which builds the package at the repository root, packs it and unpacks the
+tarball into the kit's `node_modules`, so each kit is tested against this commit,
+installed the way any consumer installs it. From the repository root:
 
 ```bash
 yarn install                # once, at the root
-cd examples/bim
+cd kits/soil-kit            # or kits/hello-kit, kits/bim-kit
 yarn install --frozen-lockfile --ignore-scripts
-yarn sdk                    # builds, packs and installs this SDK as a tarball
+yarn contract               # again after every change at the root
+yarn format:check
+yarn lint
 yarn typecheck
-yarn test                   # the Node test runner suite, then the Jest suite
+yarn test:coverage          # also builds the deployed bundle and mounts it
+yarn build:kit              # the deployed bundle, dist/deploy/<id>/index.js
 ```
+
+The package's own tests build a fixture kit, `tests/fixtures/kit/`, with
+`kitBuildConfig`, so the `./deploy` entry is tested without depending on any
+kit.
 
 ## Releasing
 
 1. Bump `version` in `package.json` and `API_VERSION` in `src/extension/constants.ts` to the same value (a unit test checks that they match), and add a `CHANGELOG.md` entry.
-2. Merge to `main`. The `DTaaS SDK npm package` workflow validates the package
+2. Merge to `main`. The `dtaas-extensions npm package` workflow validates the package
    and, in the `INTO-CPS-Association` organisation only, publishes it to
    GitHub Packages and npmjs. A prerelease version (`x.y.z-alpha.n`) is
    published under the `next` tag.
