@@ -34,6 +34,10 @@ Version 0.2.0, the first under the name `@into-cps-association/dtaas-extensions`
 - `examples/` is now `kits/`. Every kit is a package of its own, with its lockfile, lint and format settings, tests and a job in the CI matrix, and takes the contract from `yarn contract`. The root tooling no longer reads the kits, and the root `yarn build:kit` is gone: each kit builds its bundle with its own `yarn build:kit`. The `hello-kit` tests that ran at the root moved into the kit.
 - `kits/bim-kit` is the source of bim-kit 0.2.0 with the changes of its next release, in place of the port of bim-kit 0.1.1. It contributes the `aec` substrate, builds a deployed bundle with `kitBuildConfig` and keeps its own lockfile and CI job. Its tests run with the Node test runner against the built package and with Jest for the substrate and the bundle.
 
+### Removed
+
+- `RESERVED_EXTENSION_IDS`. The reserved ids are the first segments of the host's own routes, so the host keeps the list and passes it to `validateExtension` as `reservedIds`. Without that option no id is reserved. The package keeps the rules on the shape of an id.
+
 ### Fixed
 
 - `colourAt` keeps a position off the scale at the nearer end of the scheme and gives the first colour for `NaN`, as `position` does for a domain with no width. It threw for a negative position and returned an invalid colour above 1.

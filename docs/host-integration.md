@@ -43,8 +43,8 @@ extensions stay in the host's registry:
 
 - duplicate extension ids across kits;
 - duplicate anchor kinds, preset ids and substrate ids across kits;
-- route collisions with host routes the default `RESERVED_EXTENSION_IDS`
-  does not list (pass `{ reservedIds }` to override).
+- route collisions with the host's own routes. The host owns that list and
+  passes it as `{ reservedIds }`. Without it, no id is reserved.
 
 ## Providing host services
 
