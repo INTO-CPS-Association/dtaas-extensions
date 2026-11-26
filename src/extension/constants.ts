@@ -1,5 +1,30 @@
-/** Major version of the extension contract. Extensions declare it as `sdk`. */
-export const SDK_MAJOR = 1 as const;
+/**
+ * The version of the extension API this package describes, which a host built
+ * on it implements. It is the version of the npm package, so one number names
+ * both. An extension's `apiRange` is checked against it. While the API is at
+ * `0.x`, a change an existing extension would notice raises the minor number
+ * and any other change raises the patch number (K10).
+ */
+export const API_VERSION = '0.2.0' as const;
+
+/** The leading number of a `major.minor.patch` version, as a literal type. */
+type MajorOf<V extends string> = V extends `${infer M extends number}.${string}`
+  ? M
+  : never;
+
+/**
+ * Major version of the extension API, derived from `API_VERSION` so the two
+ * cannot drift. Extensions declare it as `sdk`.
+ */
+export const API_MAJOR = Number(API_VERSION.split('.')[0]) as MajorOf<
+  typeof API_VERSION
+>;
+
+/** @deprecated Use `API_VERSION`. Kept so that imports of 0.1 still compile. */
+export const SDK_VERSION = API_VERSION;
+
+/** @deprecated Use `API_MAJOR`. Kept so that imports of 0.1 still compile. */
+export const SDK_MAJOR = API_MAJOR;
 
 /** The value channels every signal can carry (R5). */
 export const CHANNELS = [
@@ -9,10 +34,12 @@ export const CHANNELS = [
   'setpoint',
 ] as const;
 
-/** Substrates owned by the common core; a kit may never register these ids. */
+/**
+ * Substrates owned by the common core. A kit may never register these ids.
+ * `aec` is not one of them: the bim extension contributes it.
+ */
 export const STANDARD_SUBSTRATES = [
   'image',
-  'aec',
   'mesh',
   'video',
   'embed',
@@ -53,3 +80,43 @@ export const EXTENSIONS_DISABLED_KEY = 'REACT_APP_EXTENSIONS_DISABLED';
 
 /** Prefix of the env.js keys that belong to one extension. */
 export const EXTENSION_ENV_PREFIX = 'REACT_APP_EXT_';
+
+/**
+ * env.js key listing the bundles of deployed extensions, which the client
+ * loads when it starts, for example `'extensions/soil/index.js'`. Each path
+ * sits under `extensions/<id>/` on the client's own origin (K9).
+ */
+export const EXTENSIONS_DEPLOYED_KEY = 'REACT_APP_EXTENSIONS_DEPLOYED';
+
+/** Global object a deployed extension's bundle registers its entry on. */
+export const DEPLOYED_EXTENSIONS_GLOBAL = 'DTAAS_EXTENSIONS';
+
+/** Global object the host fills with the modules it shares. */
+export const SHARED_MODULES_GLOBAL = 'DTAAS_SHARED';
+
+/**
+ * Modules a deployed extension takes from the host instead of bundling its
+ * own copy, by the key it reads under `DTAAS_SHARED`. One copy of React, the
+ * router, MUI and this contract keeps their contexts, such as the theme and
+ * `HostProvider`, the same on both sides.
+ */
+export const SHARED_MODULES = {
+  react: 'react',
+  'react/jsx-runtime': 'reactJsxRuntime',
+  'react-dom': 'reactDom',
+  // A kit that draws the controls of a substrate starts a React root of its own.
+  'react-dom/client': 'reactDomClient',
+  'react-router-dom': 'reactRouterDom',
+  '@mui/material': 'muiMaterial',
+  '@into-cps-association/dtaas-extensions': 'dtaasExtensions',
+  '@into-cps-association/dtaas-extensions/core': 'dtaasExtensionsCore',
+  '@into-cps-association/dtaas-extensions/react': 'dtaasExtensionsReact',
+  '@into-cps-association/dtaas-extensions/schema': 'dtaasExtensionsSchema',
+  zod: 'zod',
+} as const;
+
+/**
+ * The key of a deployed extension under `DTAAS_EXTENSIONS`. An id may hold a
+ * hyphen, which a dotted global name cannot.
+ */
+export const deployedKeyOf = (id: string): string => id.replace(/-/g, '_');

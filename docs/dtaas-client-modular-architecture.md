@@ -207,7 +207,7 @@ flowchart TB
     Anchor --> Encoding
     Components --> Substrates
   end
-  subgraph sdk["@into-cps-association/dtaas-sdk (contract)"]
+  subgraph sdk["@into-cps-association/dtaas-extensions (contract)"]
     Types["DtaasExtension · HostServices<br/>DomainContribution · substrate & anchor types"]
     Testing["/testing<br/>host harness · fixture replay"]
   end
@@ -234,7 +234,7 @@ Four package roles:
 
 | Role | Package | Owner / repo | Ships runtime code? |
 | --- | --- | --- | --- |
-| Contract | `@into-cps-association/dtaas-sdk` | DTaaS monorepo, `client/sdk/` (published) | Types, a few tiny helpers, a test harness. No React components. |
+| Contract | `@into-cps-association/dtaas-extensions` | DTaaS monorepo, `client/sdk/` (published) | Types, a few tiny helpers, a test harness. No React components. |
 | Common core | `@into-cps-association/dtaas-visualisation` | DTaaS monorepo, `client/viz/` (published) | Yes: transport, store, anchors, encodings, standard substrates, viewer components. Reusable by other web-based DT platforms, which is the stated goal of the companion report. |
 | Host | `@into-cps-association/dtaas-web` | DTaaS monorepo, `client/` | Yes |
 | Extension | `@into-cps-association/<domain>-kit` | One repo per domain (e.g. `ifc-utils` for `bim-kit`) | Yes, lazily loaded by the host |
@@ -302,12 +302,12 @@ those substrates meaningful for a turbine.
 After migration `bim-kit` is smaller, and `wind-kit` starts from the same
 size instead of from zero.
 
-## 6. The extension contract (`dtaas-sdk`)
+## 6. The extension contract (`dtaas-extensions`)
 
 ### 6.1 Shape of an extension
 
 ```ts
-// @into-cps-association/dtaas-sdk
+// @into-cps-association/dtaas-extensions
 import type { ComponentType, LazyExoticComponent, ReactElement } from 'react';
 import type { Reducer } from '@reduxjs/toolkit';
 
@@ -316,8 +316,8 @@ export interface DtaasExtension<S = unknown> {
   id: string;                      // 'bim', 'wind', 'pump'
   name: string;
   version: string;
-  /** Highest dtaas-sdk major this extension was built against. */
-  sdk: 1;
+  /** Highest dtaas-extensions major this extension was built against. */
+  sdk: 0;
 
   /** Pages. Each becomes `/<id>` or `/<id>/<path>`. `element` MUST be lazy. */
   routes?: ExtensionRoute[];
@@ -381,7 +381,7 @@ export interface HostServices {
     baseUrl(): Promise<string>;
     useBaseUrl(): string | null;
     conventions: { modelsDirectory: string; digitalTwinsDirectory: string; visualisationsDirectory: string };
-    /** Resolve lib:// and ws:// (workspace) URLs to fetchable URLs. */
+    /** Resolve lib:// (library) and workspace:// (workspace) URLs to fetchable URLs. */
     resolve(url: string): Promise<string>;
   };
   contents: {
@@ -442,7 +442,7 @@ what the SDK major version tracks.
 
 | Extension may | Extension may not |
 | --- | --- |
-| Import from `@into-cps-association/dtaas-sdk` (types, `useHost`) | Import anything from `@into-cps-association/dtaas-web` |
+| Import from `@into-cps-association/dtaas-extensions` (types, `useHost`) | Import anything from `@into-cps-association/dtaas-web` |
 | Import from `@into-cps-association/dtaas-visualisation` **only** its public `contribute/*` helpers (preset builders, anchor-kind helpers, `defineSubstrate`) | Import `dtaas-visualisation/transport`, `/store` or `/substrates/*` internals; open its own MQTT/STOMP/WebSocket; hold its own sample history |
 | Import React, MUI, zod as **peer** dependencies | Bundle its own copy of React/MUI |
 | Import three.js / konva / cesium **only** inside a contributed `SubstrateAdapter` or converter, as a peer dependency | Render a standard substrate with its own copy of a rendering library |
@@ -508,7 +508,7 @@ The viewer moves out (§5.3); the converter stays; one layer is added.
   package.json
     "exports": { ".": …, "./react": …, "./dtaas": "./dist/esm/dtaas/index.js", … }
     "peerDependencies": {
-      "@into-cps-association/dtaas-sdk": "^1",
+      "@into-cps-association/dtaas-extensions": "^1",
       "@into-cps-association/dtaas-visualisation": "^1",   // contribute/* only
       "react": ">=18", "@mui/material": ">=5", …
     }
@@ -546,7 +546,7 @@ and it plugs in through the same interface the standard substrates use.
 
 ```text
 client/
-  sdk/                              # published as @into-cps-association/dtaas-sdk
+  sdk/                              # published as @into-cps-association/dtaas-extensions
     src/index.ts                    # types from §6
     src/testing.tsx                 # renderWithHost(), fakeHostServices(), replayFixture()
     package.json
@@ -565,7 +565,7 @@ client/
 `src/extensions.ts` in full:
 
 ```ts
-import type { DtaasExtension } from '@into-cps-association/dtaas-sdk';
+import type { DtaasExtension } from '@into-cps-association/dtaas-extensions';
 import { extension as bim } from '@into-cps-association/bim-kit/dtaas';
 import { extension as wind } from '@into-cps-association/wind-kit/dtaas';
 
@@ -626,7 +626,7 @@ Pure function, fully unit-testable without React.
 | Core substrate readback | `client/viz/test/` | For each standard substrate, mount, apply an encoding, read back the rendered property (encoding fidelity); frame-time vs. changed-element count (R6). |
 | Host with zero extensions | CI job `client-no-ext` | `extensions.ts = []`; build + unit + e2e pass; the Visualise tab still works for a DT with a `visualisation.json` and an image substrate |
 | Host with all extensions | existing CI | current suite |
-| Extension conformance | `dtaas-sdk/testing` | `renderWithHost(extension, fakeHostServices())` mounts every route and tab; asserts no import of `dtaas-web` or of `dtaas-visualisation` internals; asserts no socket is opened; runs `replayFixture()` against the kit's presets |
+| Extension conformance | `dtaas-extensions/testing` | `renderWithHost(extension, fakeHostServices())` mounts every route and tab; asserts no import of `dtaas-web` or of `dtaas-visualisation` internals; asserts no socket is opened; runs `replayFixture()` against the kit's presets |
 | Extension e2e | kit repo | Playwright against a local DTaaS compose with the kit's build mounted over `intocps/dtaas-web`, as `route/bim/README.md` documents today |
 
 The conformance harness is what makes "developed separately" safe: a kit can

@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.esm.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "noEmit": true,
+    "declaration": false,
+    "rootDir": ".",
+    "types": ["jest", "node"],
+    "paths": {
+      "src/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "test/aec", "test/kit", "vite.config.ts"]
+}

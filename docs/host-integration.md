@@ -1,7 +1,7 @@
-# Integrating the SDK into a host
+# Integrating the Contract into a Host
 
 This guide is for the DTaaS client (`dtaas-web`) or any other platform that
-loads DTaaS extensions. It covers what the SDK provides to a host; the host's
+loads DTaaS extensions. It covers what the contract provides to a host; the host's
 own registry (`createExtensionHost`) and service implementations are
 described in the architecture proposal (§8).
 
@@ -9,7 +9,7 @@ described in the architecture proposal (§8).
 
 ```ts
 // src/extensions.ts
-import type { DtaasExtension } from '@into-cps-association/dtaas-sdk';
+import type { DtaasExtension } from '@into-cps-association/dtaas-extensions';
 import { extension as bim } from '@into-cps-association/bim-kit/dtaas';
 
 export const extensions: readonly DtaasExtension[] = [bim];
@@ -22,7 +22,7 @@ import {
   isExtensionDisabled,
   readExtensionConfig,
   validateExtension,
-} from '@into-cps-association/dtaas-sdk';
+} from '@into-cps-association/dtaas-extensions';
 
 const env = globalThis.env ?? {};
 
@@ -53,7 +53,7 @@ extension's `REACT_APP_EXT_<ID>_*` keys, and wrap the extension's elements in
 `HostProvider`:
 
 ```tsx
-import { HostProvider } from '@into-cps-association/dtaas-sdk';
+import { HostProvider } from '@into-cps-association/dtaas-extensions';
 
 const servicesFor = (ext: DtaasExtension): HostServices => ({
   ...sharedServices,
@@ -94,22 +94,25 @@ nested relative `<Routes>` to define its route hierarchy.
 ## Validating `visualisation.json`
 
 ```ts
-import { parseVisualisationAsset } from '@into-cps-association/dtaas-sdk/schema';
+import { readVisualisationAsset } from '@into-cps-association/dtaas-extensions/schema';
 
-const result = parseVisualisationAsset(JSON.parse(text));
+// The origins come from the deployment's configuration, never from the asset.
+const result = readVisualisationAsset(bytes, { allowedOrigins });
 if (!result.success) ui.snackbar(result.error.issues[0].message, 'error');
 ```
 
+`readVisualisationAsset` refuses a file over 1 MiB before parsing it, parses the JSON, checks the schema and refuses a transport whose origin is not in `allowedOrigins`. A host never attaches its session tokens or other credentials to a request to an origin the asset names.
+
 ## Jest in a CommonJS host
 
-The SDK is published as ESM only. That is deliberate: a dual ESM/CJS package
+The package is published as ESM only. That is deliberate: a dual ESM/CJS package
 could load two copies of the React context behind `useHost()`. A host whose
 Jest runs ts-jest in CommonJS mode must let Jest transform the package:
 
 ```json
 {
   "transformIgnorePatterns": [
-    "/node_modules/(?!(@into-cps-association/dtaas-sdk)/).+\\.js$"
+    "/node_modules/(?!(@into-cps-association/dtaas-extensions)/).+\\.js$"
   ],
   "transform": {
     "^.+\\.[jt]sx?$": ["ts-jest", { "tsconfig": { "allowJs": true } }]
@@ -119,5 +122,4 @@ Jest runs ts-jest in CommonJS mode must let Jest transform the package:
 
 ## Bundle impact
 
-The root entry imports only `react`. `./schema` (zod), `./testing` and
-`./eslint` are separate entries and are not bundled unless imported.
+The root entry imports `react` and `semver`. `./core` imports `semver` and no React. `./schema` (zod), `./testing` and `./eslint` are separate entries and are not bundled unless imported.

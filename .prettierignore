@@ -5,7 +5,8 @@ docs/superpowers/
 .superpowers/
 dist/
 coverage/
-examples/bim/
+# Each kit is a package with its own Prettier settings.
+kits/
 # yamllint owns YAML formatting, as in DTaaS.
 *.yml
 *.yaml

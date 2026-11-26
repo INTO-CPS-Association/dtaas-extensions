@@ -1,8 +1,15 @@
 import { z } from 'zod';
-import { channelSchema, listOf, nonEmpty } from 'src/schema/common.schema';
-import { urlSchema } from 'src/schema/url.schema';
+import { channelSchema, listOf, nonEmpty } from './common.schema';
+import { urlSchema } from './url.schema';
 
 const channel = channelSchema.optional();
+
+/**
+ * The shortest polling interval of an `http` transport. Every viewer of an
+ * asset polls, so a shorter interval written into a shared asset would let
+ * one editor make every browser send requests in a near-tight loop.
+ */
+export const MIN_POLL_INTERVAL_MS = 1000;
 const names = listOf(nonEmpty).min(1);
 
 /** Brokers speak MQTT or STOMP over a WebSocket, or MQTT over TCP. */
@@ -54,7 +61,7 @@ const http = z.object({
   adapter: z.literal('http'),
   url: httpUrl,
   method: z.enum(['GET', 'POST']).optional(),
-  intervalMs: z.number().positive().optional(),
+  intervalMs: z.number().min(MIN_POLL_INTERVAL_MS).optional(),
   channel,
 });
 

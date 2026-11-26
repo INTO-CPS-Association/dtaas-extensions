@@ -23,15 +23,15 @@ substrates come from the common core through `HostServices`
 ```
 
 The host imports only the `./dtaas` subpath. `./core` and `./react` keep
-working outside DTaaS. [`examples/hello-kit`](../examples/hello-kit) follows
+working outside DTaaS. [`kits/hello-kit`](../kits/hello-kit) follows
 this layout.
 
-Declare the SDK, React, MUI and zod as **peer** dependencies:
+Declare this package, React, MUI and zod as **peer** dependencies:
 
 ```json
 {
   "peerDependencies": {
-    "@into-cps-association/dtaas-sdk": "^0.1.0",
+    "@into-cps-association/dtaas-extensions": "^0.2.0",
     "react": ">=19",
     "zod": "^4.0.0"
   }
@@ -45,7 +45,8 @@ export const extension = defineExtension({
   id: 'pump', // lowercase; route prefix, Redux key, env.js key
   name: 'Water Networks',
   version: '0.1.0',
-  sdk: 1, // contract revision
+  sdk: 0, // API_MAJOR
+  apiRange: '^0.2', // the API versions this kit works with
   routes: [{ path: '', element: lazy(() => import('./pages/PumpPage')) }],
   navigation: [{ label: 'Water Networks', path: '/pump', order: 30 }],
   digitalTwinTabs: [
@@ -87,7 +88,7 @@ export const extension = defineExtension({
 
 - `id` does not match `^[a-z][a-z0-9-]*$` or collides with a core route
   (`library`, `digitaltwins`, `workbench`, …);
-- `name` or `version` is empty, or `sdk` is not `1`;
+- `name` or `version` is empty, `sdk` is not `API_MAJOR` (`0`), or `apiRange` is not a semver range or does not include the host's `API_VERSION`;
 - a contribution list is not an array, one of its items is not an object, or
   an item lacks a field the host reads (a route's `path`, a navigation item's
   `label` and `path`, a tab's `applies`, an anchor kind's `resolve`, …);
@@ -95,17 +96,19 @@ export const extension = defineExtension({
 - a route, tab or preview `element`, or the `inspectorPanel`, is not a
   `React.lazy` component;
 - a converter, field kernel or substrate `load` is not a zero-argument
-  `() => import(...)` loader;
+  `() => import(...)` loader (`checkConformance` also calls each loader and
+  refuses one that does not return a promise);
 - two entries of one list share an identifier;
 - a navigation path is not `/<id>` or below it, or its path part has a `.` or
   `..` segment, a backslash, a control character, or a percent-encoded `.`,
   `/` or `\`;
+- a route path starts with `/` or has one of the same segments or characters;
 - a contributed substrate reuses a standard id (`image`, `aec`, `mesh`,
   `video`, `embed`, `geo`, `field`);
 - a preset targets a substrate that is neither standard nor contributed.
 
 Laziness keeps heavy code (WASM kernels, renderers) out of the host's entry
-chunk.
+chunk. The functions the host calls from the manifest itself (`setup`, `detect`, an anchor kind's `resolve`, a scope's `group` and the `reducer`) are loaded with the manifest, so they stay small and import nothing heavy.
 
 ## Using host services
 
@@ -146,10 +149,10 @@ A deployment disables a compiled-in kit with
 
 ## Lint rules
 
-Spread the SDK's rules into the kit's `eslint.config.mjs`:
+Spread the contract's rules into the kit's `eslint.config.mjs`. They catch the usual mistakes and are not a security boundary:
 
 ```js
-import dtaasKitConfig from '@into-cps-association/dtaas-sdk/eslint';
+import dtaasKitConfig from '@into-cps-association/dtaas-extensions/eslint';
 
 export default [
   // ...your own configuration
