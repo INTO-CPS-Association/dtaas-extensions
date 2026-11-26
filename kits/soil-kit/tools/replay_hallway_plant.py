@@ -16,9 +16,10 @@ it expects. Run it with uv, which installs the one dependency:
 
     uv run tools/replay_hallway_plant.py --data <export>/csv --dry-run
 
-The broker account comes from the environment, or from an env file, under the
-names `--user-var` and `--password-var` give. The password is never printed
-and never passed on the command line.
+The broker address and account come from the environment, or from an env
+file, under the names `--host-var`, `--port-var`, `--user-var` and
+`--password-var` give. `--host` and `--port` override the address. The
+password is never printed and never passed on the command line.
 """
 
 from __future__ import annotations
@@ -169,11 +170,30 @@ def read_env_file(path: Path) -> dict[str, str]:
     return values
 
 
-def account(args: argparse.Namespace) -> tuple[str, str]:
-    """The broker user and password, from the environment or the env file."""
+def settings(args: argparse.Namespace) -> dict[str, str]:
+    """The environment, with the env file on top when one is named."""
     values = dict(os.environ)
     if args.env_file:
         values.update(read_env_file(Path(args.env_file).expanduser()))
+    return values
+
+
+def address(args: argparse.Namespace) -> tuple[str, int]:
+    """The broker host and port, from the options or else the environment."""
+    values = settings(args)
+    host = args.host or values.get(args.host_var)
+    port = args.port or values.get(args.port_var)
+    if not host or not port:
+        sys.exit(f"Set {args.host_var} and {args.port_var}, pass --host and --port, or name an env file.")
+    try:
+        return host, int(port)
+    except ValueError:
+        sys.exit(f"The broker port must be a number, not {port!r}.")
+
+
+def account(args: argparse.Namespace) -> tuple[str, str]:
+    """The broker user and password, from the environment or the env file."""
+    values = settings(args)
     user = values.get(args.user_var)
     password = values.get(args.password_var)
     if not user or not password:
@@ -195,11 +215,12 @@ def publish(readings: list[Reading], offset: timedelta, args: argparse.Namespace
     """Send every reading to the broker, at most `args.rate` a second."""
     import paho.mqtt.client as mqtt  # Imported here, so the dry run needs no dependency.
 
+    host, port = address(args)
     user, password = account(args)
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=args.client_id)
     client.username_pw_set(user, password)
     client.tls_set(ca_certs=str(Path(args.ca).expanduser()), cert_reqs=ssl.CERT_REQUIRED)
-    client.connect(args.host, args.port, keepalive=30)
+    client.connect(host, port, keepalive=30)
     client.loop_start()
     started = time.monotonic()
     try:
@@ -246,8 +267,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--rate", type=int, default=1000, help="messages a second, 0 for no limit")
     parser.add_argument("--dry-run", action="store_true", help="count the readings and publish nothing")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8883)
+    parser.add_argument("--host", help="the broker host, instead of the one in --host-var")
+    parser.add_argument("--port", type=int, help="the broker port, instead of the one in --port-var")
+    parser.add_argument("--host-var", default="MQTT_HOST")
+    parser.add_argument("--port-var", default="MQTT_PORT")
     parser.add_argument("--ca", default="ca.pem", help="the certificate authority of the broker")
     parser.add_argument("--client-id", default="soil_replay_hallway_plant")
     parser.add_argument("--env-file", help="a file with the broker account, read by variable name")

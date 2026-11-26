@@ -91,18 +91,19 @@ The export writes the soil moisture in per cent with the unit `%RH` and does not
 ```bash
 uv run tools/replay_hallway_plant.py --data <export>/csv --dry-run
 uv run tools/replay_hallway_plant.py --data <export>/csv \
-  --host 127.0.0.1 --port 8883 --ca <broker CA certificate> \
-  --env-file <file with the broker account> --hours 24 --clock now
+  --ca <broker CA certificate> \
+  --env-file <file with the broker address and account> --hours 24 --clock now
 ```
 
-| Option                         | Meaning                                                                                                                    |
-| :----------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `--hours`                      | The last hours of the export, 24 by default and 0 for all of it                                                            |
-| `--from`, `--to`               | A window in ISO 8601 times instead, in UTC when they carry no offset                                                       |
-| `--clock`                      | `original` keeps the times of the export. `now` moves every time by one offset, so the last one is the start of the replay |
-| `--rate`                       | Messages a second, 1000 by default and 0 for no limit                                                                      |
-| `--user-var`, `--password-var` | The names of the variables that hold the broker account, `MQTT_USER` and `MQTT_PASSWORD` by default                        |
-| `--dry-run`                    | Count the readings of each topic and publish nothing                                                                       |
+| Option                         | Meaning                                                                                                                              |
+| :----------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `--hours`                      | The last hours of the export, 24 by default and 0 for all of it                                                                      |
+| `--from`, `--to`               | A window in ISO 8601 times instead, in UTC when they carry no offset                                                                 |
+| `--clock`                      | `original` keeps the times of the export. `now` moves every time by one offset, so the last one is the start of the replay           |
+| `--rate`                       | Messages a second, 1000 by default and 0 for no limit                                                                                |
+| `--host-var`, `--port-var`     | The names of the variables that hold the broker address, `MQTT_HOST` and `MQTT_PORT` by default. `--host` and `--port` override them |
+| `--user-var`, `--password-var` | The names of the variables that hold the broker account, `MQTT_USER` and `MQTT_PASSWORD` by default                                  |
+| `--dry-run`                    | Count the readings of each topic and publish nothing                                                                                 |
 
 The account is read from the environment or from the `--env-file`, by variable name. The password never appears on the command line or in the log. Only the files the tool knows and only rows with the expected unit are read. A row with another unit, a bad time or a value that is not a number is skipped and counted in the log.
 

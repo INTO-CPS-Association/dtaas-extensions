@@ -5,8 +5,10 @@ need no broker and no dependency.
 """
 
 import json
+import os
 import tempfile
 import unittest
+from unittest import mock
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -100,6 +102,31 @@ class PayloadTest(unittest.TestCase):
             json.loads(replay.payload(reading, timedelta(hours=1))),
             {"value": 0.301, "ts": "2026-10-15T14:00:00.000+00:00", "unit": "/"},
         )
+
+
+class AddressTest(unittest.TestCase):
+    def test_reads_the_broker_address_from_an_env_file(self):
+        env = Path(tempfile.mkdtemp()) / "broker.env"
+        env.write_text("LOCAL_HOST=broker.example\nLOCAL_PORT=8883\n", encoding="utf-8")
+        args = replay.parse_args(
+            ["--data", ".", "--env-file", str(env), "--host-var", "LOCAL_HOST", "--port-var", "LOCAL_PORT"]
+        )
+        self.assertEqual(replay.address(args), ("broker.example", 8883))
+
+    def test_the_options_override_the_environment(self):
+        args = replay.parse_args(["--data", ".", "--host", "other.example", "--port", "1883"])
+        self.assertEqual(replay.address(args), ("other.example", 1883))
+
+    def test_stops_without_an_address(self):
+        args = replay.parse_args(["--data", ".", "--host-var", "NO_SUCH_HOST_VAR", "--port-var", "NO_SUCH_PORT_VAR"])
+        with self.assertRaises(SystemExit):
+            replay.address(args)
+
+    def test_stops_on_a_port_that_is_not_a_number(self):
+        args = replay.parse_args(["--data", ".", "--host", "broker.example", "--port-var", "BAD_PORT_VAR"])
+        with mock.patch.dict(os.environ, {"BAD_PORT_VAR": "eighty"}):
+            with self.assertRaises(SystemExit):
+                replay.address(args)
 
 
 class AccountTest(unittest.TestCase):
